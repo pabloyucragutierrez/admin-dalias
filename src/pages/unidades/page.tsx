@@ -1,0 +1,286 @@
+import { Loader2, Plus, X } from "lucide-react";
+import { useUnidades } from "@/hooks/use-unidades";
+import UnidadesTable from "./ui/unidades-table";
+import { useState } from "react";
+import type { Unidades, UnidadesDto } from "@/interfaces";
+import { useForm } from "react-hook-form";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  activeOrinactiveUnidades,
+  createUnidades,
+  updateUnidades,
+} from "@/services/unidades.service";
+import { toast } from "sonner";
+
+interface FormInputs {
+  name: string;
+  code: string;
+}
+
+export default function UnidadesPage() {
+  const {
+    unidades,
+    loading,
+    error,
+    hasMore,
+    fetchMoreUnidades,
+    selectedUnidades,
+    toggleUnidadSelection,
+    selectAllUnidades,
+    refreshUnidades,
+  } = useUnidades();
+
+  const [unidadesSelect, setUnidadesSelect] = useState<Unidades | null>(null);
+  const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
+
+  const handleChangeStatus = async (unidades: Unidades) => {
+    setShowModalStatus(true);
+    setUnidadesSelect(unidades);
+  };
+
+  const changeStatusFn = async () => {
+    setLoadingStatus(true);
+
+    const response = await activeOrinactiveUnidades(unidadesSelect?.id || "", {
+      status: !unidadesSelect?.status,
+    });
+
+    setLoadingStatus(false);
+
+    if (!response?.success) {
+      toast.warning(response?.message, { position: "top-center" });
+      return;
+    }
+
+    toast.success(response?.message, { position: "top-center" });
+    refreshUnidades();
+    handleCancelStatus();
+  };
+
+  const {
+    handleSubmit,
+    register,
+
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormInputs>({
+    defaultValues: {
+      name: "",
+      code: "",
+    },
+  });
+
+  const handleEdit = async (unidades: Unidades) => {
+    setShowModal(true);
+    reset({
+      name: unidades.name,
+      code: unidades.code,
+    });
+    setUnidadesSelect(unidades);
+  };
+
+  const onSubmit = async (values: FormInputs) => {
+    const payload: UnidadesDto = {
+      name: values.name,
+      code: values.code,
+    };
+
+    const response = unidadesSelect?.id
+      ? await updateUnidades(unidadesSelect?.id, payload)
+      : await createUnidades(payload);
+
+    if (!response?.success) {
+      toast.warning(response?.message, { position: "top-center" });
+      return;
+    }
+
+    toast.success(response?.message, { position: "top-center" });
+    handleCancel();
+    refreshUnidades();
+  };
+
+  const handleCancel = () => {
+    setShowModal(false);
+    setUnidadesSelect(null);
+    reset({
+      name: "",
+      code: "",
+    });
+  };
+
+  const handleCancelStatus = () => {
+    setShowModalStatus(false);
+    setUnidadesSelect(null);
+  };
+
+  return (
+    <>
+      <div className="flex flex-row items-center justify-between">
+        <h1 className="text-4xl text-blue-600 font-bold">Unidades</h1>
+        <button
+          type="button"
+          className="bg-blue-600 flex flex-row items-center gap-2 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+          onClick={() => setShowModal(true)}
+        >
+          <Plus size={20} />
+          Nueva Unidad
+        </button>
+      </div>
+
+      {selectedUnidades.length > 0 && (
+        <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
+          <p className="text-blue-800">
+            {selectedUnidades.length} unidad
+            {selectedUnidades.length !== 1 ? "s" : ""} seleccionado
+            {selectedUnidades.length !== 1 ? "s" : ""}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 rounded-md">
+          <p className="text-red-800">{error}</p>
+        </div>
+      )}
+
+      <UnidadesTable
+        unidades={unidades}
+        loading={loading}
+        hasMore={hasMore}
+        fetchMoreUnidades={fetchMoreUnidades}
+        selectedUnidades={selectedUnidades}
+        toggleUnidadSelection={toggleUnidadSelection}
+        selectAllUnidades={selectAllUnidades}
+        changeStatusFn={handleChangeStatus}
+        editFn={handleEdit}
+      />
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-lg w-[400px]">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-bold">
+                {unidadesSelect ? "Editar Unidad" : "Nueva Unidad"}
+              </h2>
+              <button
+                type="button"
+                className="cursor-pointer"
+                onClick={handleCancel}
+              >
+                <X />
+              </button>
+            </div>
+
+            <hr className="mt-1 mb-4" />
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="flex flex-col space-y-1 w-full">
+                <Label htmlFor="code">Código</Label>
+                <Input
+                  id="code"
+                  type="text"
+                  placeholder="Código de la unidad"
+                  {...register("code", {
+                    required: "Código es requerido",
+                  })}
+                />
+                {errors.code && (
+                  <p className="msg-error">{errors.code.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col space-y-1 w-full">
+                <Label htmlFor="name">Nombre</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Nombre de la unidad"
+                  {...register("name", {
+                    required: "Nombre es requerido",
+                  })}
+                />
+                {errors.name && (
+                  <p className="msg-error">{errors.name.message}</p>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center m-auto gap-5 mt-5">
+                <Button
+                  onClick={handleCancel}
+                  type="button"
+                  variant="outline"
+                  disabled={isSubmitting}
+                >
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <div className="inline-flex gap-2">
+                      <Loader2 className="animate-spin" />
+                      Guardando...
+                    </div>
+                  ) : (
+                    "Guardar"
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showModalStatus && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-lg w-[400px]">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-bold">Cambio de estado</h2>
+              <button
+                type="button"
+                className="cursor-pointer"
+                onClick={handleCancelStatus}
+              >
+                <X />
+              </button>
+            </div>
+
+            <hr className="mt-1 mb-4" />
+
+            <p className="text-gray-600 font-medium">
+              ¿Estás seguro de que deseas{" "}
+              {unidadesSelect?.status ? "activar" : "desactivar"} la unidad:{" "}
+              {unidadesSelect?.name}?
+            </p>
+
+            <div className="flex justify-between items-center m-auto gap-5 mt-5">
+              <Button
+                onClick={handleCancelStatus}
+                type="button"
+                variant="outline"
+                disabled={loadingStatus}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                onClick={changeStatusFn}
+                disabled={loadingStatus}
+              >
+                {loadingStatus ? (
+                  <div className="inline-flex gap-2">
+                    <Loader2 className="animate-spin" />
+                    Cambiando estado...
+                  </div>
+                ) : (
+                  "Aceptar"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
