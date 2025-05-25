@@ -1,4 +1,4 @@
-import { LayoutGrid, ShoppingBag, type LucideIcon } from "lucide-react";
+import { LayoutGrid, Settings, ShoppingBag, type LucideIcon } from "lucide-react";
 
 type Submenu = {
   href: string;
@@ -42,6 +42,21 @@ export function getMenuList(): Group[] {
               href: "/categorias",
               label: "Categorias",
             },
+            {
+              href: "/marcas",
+              label: "Marcas",
+            },
+          ],
+        },
+        {
+          href: "",
+          label: "Configuración",
+          icon: Settings,
+          submenus: [
+            {
+              href: "/roles",
+              label: "Roles",
+            }
           ],
         },
       ],

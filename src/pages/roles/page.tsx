@@ -1,47 +1,47 @@
 import { Loader2, Plus, X } from 'lucide-react';
-import { useCategorias } from '@/hooks/use-categorias';
+import { useRoles } from '@/hooks/use-roles';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { activeOrInactiveCategorias, createCategorias, updateCategorias } from '@/services/categorias.service';
+import { activeOrInactiveRoles, createRoles, updateRoles } from '@/services/roles.service';
 import { toast } from 'sonner';
-import type { Categorias, CategoriasDto } from '@/interfaces/categorias.interface';
-import CategoriasTable from './ui/categorias-table';
+import type { Roles, RolesDto } from '@/interfaces/roles.interface';
+import RolesTable from './ui/roles-table';
 
 interface FormInputs {
   name: string;
 }
 
-export default function CategoriasPage() {
+export default function RolesPage() {
   const {
-    categorias,
+    roles,
     loading,
     error,
     hasMore,
-    fetchMoreCategorias,
-    selectedCategorias,
-    toggleCategoriaSelection,
-    selectAllCategorias,
-    refreshCategorias,
-  } = useCategorias();
+    fetchMoreRoles,
+    selectedRoles,
+    toggleRolSelection,
+    selectAllRoles,
+    refreshRoles,
+  } = useRoles();
 
-  const [categoriaSelect, setCategoriaSelect] = useState<Categorias | null>(null);
+  const [rolSelect, setRolSelect] = useState<Roles | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
 
-  const handleChangeStatus = async (categoria: Categorias) => {
+  const handleChangeStatus = async (rol: Roles) => {
     setShowModalStatus(true);
-    setCategoriaSelect(categoria);
+    setRolSelect(rol);
   };
 
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrInactiveCategorias(categoriaSelect?.id || '', {
-      status: !categoriaSelect?.status,
+    const response = await activeOrInactiveRoles(rolSelect?.id || '', {
+      status: !rolSelect?.status,
     });
 
     setLoadingStatus(false);
@@ -52,7 +52,7 @@ export default function CategoriasPage() {
     }
 
     toast.success(response?.message, { position: 'top-center' });
-    refreshCategorias();
+    refreshRoles();
     handleCancelStatus();
   };
 
@@ -67,22 +67,22 @@ export default function CategoriasPage() {
     },
   });
 
-  const handleEdit = async (categoria: Categorias) => {
+  const handleEdit = async (rol: Roles) => {
     setShowModal(true);
     reset({
-      name: categoria.name,
+      name: rol.name,
     });
-    setCategoriaSelect(categoria);
+    setRolSelect(rol);
   };
 
   const onSubmit = async (values: FormInputs) => {
-    const payload: CategoriasDto = {
+    const payload: RolesDto = {
       name: values.name,
     };
 
-    const response = categoriaSelect?.id
-      ? await updateCategorias(categoriaSelect?.id, payload)
-      : await createCategorias(payload);
+    const response = rolSelect?.id
+      ? await updateRoles(rolSelect?.id, payload)
+      : await createRoles(payload);
 
     if (!response?.success) {
       toast.warning(response?.message, { position: 'top-center' });
@@ -91,12 +91,12 @@ export default function CategoriasPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     handleCancel();
-    refreshCategorias();
+    refreshRoles();
   };
 
   const handleCancel = () => {
     setShowModal(false);
-    setCategoriaSelect(null);
+    setRolSelect(null);
     reset({
       name: '',
     });
@@ -104,29 +104,29 @@ export default function CategoriasPage() {
 
   const handleCancelStatus = () => {
     setShowModalStatus(false);
-    setCategoriaSelect(null);
+    setRolSelect(null);
   };
 
   return (
     <>
       <div className="flex flex-row items-center justify-between">
-        <h1 className="text-4xl text-blue-600 font-bold">Categorías</h1>
+        <h1 className="text-4xl text-blue-600 font-bold">Roles</h1>
         <button
           type="button"
           className="bg-blue-600 flex flex-row items-center gap-2 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
           onClick={() => setShowModal(true)}
         >
           <Plus size={20} />
-          Nueva Categoría
+          Nuevo Rol
         </button>
       </div>
 
-      {selectedCategorias.length > 0 && (
+      {selectedRoles.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
           <p className="text-blue-800">
-            {selectedCategorias.length} categoría
-            {selectedCategorias.length !== 1 ? 's' : ''} seleccionada
-            {selectedCategorias.length !== 1 ? 's' : ''}
+            {selectedRoles.length} rol
+            {selectedRoles.length !== 1 ? 'es' : ''} seleccionado
+            {selectedRoles.length !== 1 ? 's' : ''}
           </p>
         </div>
       )}
@@ -137,14 +137,14 @@ export default function CategoriasPage() {
         </div>
       )}
 
-      <CategoriasTable
-        categorias={categorias}
+      <RolesTable
+        roles={roles}
         loading={loading}
         hasMore={hasMore}
-        fetchMoreCategorias={fetchMoreCategorias}
-        selectedCategorias={selectedCategorias}
-        toggleCategoriaSelection={toggleCategoriaSelection}
-        selectAllCategorias={selectAllCategorias}
+        fetchMoreRoles={fetchMoreRoles}
+        selectedRoles={selectedRoles}
+        toggleRolSelection={toggleRolSelection}
+        selectAllRoles={selectAllRoles}
         changeStatusFn={handleChangeStatus}
         editFn={handleEdit}
       />
@@ -154,7 +154,7 @@ export default function CategoriasPage() {
           <div className="bg-white p-6 rounded-md shadow-lg w-[400px]">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold">
-                {categoriaSelect ? 'Editar Categoría' : 'Nueva Categoría'}
+                {rolSelect ? 'Editar Rol' : 'Nuevo Rol'}
               </h2>
               <button
                 type="button"
@@ -173,7 +173,7 @@ export default function CategoriasPage() {
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Nombre de la categoría"
+                  placeholder="Nombre del rol"
                   {...register('name', {
                     required: 'Nombre es requerido',
                   })}
@@ -226,8 +226,8 @@ export default function CategoriasPage() {
 
             <p className="text-gray-600 font-medium">
               ¿Estás seguro de que deseas{' '}
-              {categoriaSelect?.status ? 'desactivar' : 'activar'} la categoría:{' '}
-              {categoriaSelect?.name}?
+              {rolSelect?.status ? 'desactivar' : 'activar'} el rol:{' '}
+              {rolSelect?.name}?
             </p>
 
             <div className="flex justify-between items-center m-auto gap-5 mt-5">

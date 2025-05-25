@@ -1,47 +1,48 @@
 import { Loader2, Plus, X } from 'lucide-react';
-import { useCategorias } from '@/hooks/use-categorias';
+import { useMarcas } from '@/hooks/use-marcas';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { activeOrInactiveCategorias, createCategorias, updateCategorias } from '@/services/categorias.service';
+import { activeOrInactiveMarcas, createMarcas, updateMarcas } from '@/services/marcas.service';
 import { toast } from 'sonner';
-import type { Categorias, CategoriasDto } from '@/interfaces/categorias.interface';
-import CategoriasTable from './ui/categorias-table';
+import type { Marcas, MarcasDto } from '@/interfaces/marcas.interface';
+import MarcasTable from './ui/marcas-table';
 
 interface FormInputs {
+  code: string;
   name: string;
 }
 
-export default function CategoriasPage() {
+export default function MarcasPage() {
   const {
-    categorias,
+    marcas,
     loading,
     error,
     hasMore,
-    fetchMoreCategorias,
-    selectedCategorias,
-    toggleCategoriaSelection,
-    selectAllCategorias,
-    refreshCategorias,
-  } = useCategorias();
+    fetchMoreMarcas,
+    selectedMarcas,
+    toggleMarcaSelection,
+    selectAllMarcas,
+    refreshMarcas,
+  } = useMarcas();
 
-  const [categoriaSelect, setCategoriaSelect] = useState<Categorias | null>(null);
+  const [marcaSelect, setMarcaSelect] = useState<Marcas | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
 
-  const handleChangeStatus = async (categoria: Categorias) => {
+  const handleChangeStatus = async (marca: Marcas) => {
     setShowModalStatus(true);
-    setCategoriaSelect(categoria);
+    setMarcaSelect(marca);
   };
 
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrInactiveCategorias(categoriaSelect?.id || '', {
-      status: !categoriaSelect?.status,
+    const response = await activeOrInactiveMarcas(marcaSelect?.id || '', {
+      status: !marcaSelect?.status,
     });
 
     setLoadingStatus(false);
@@ -52,7 +53,7 @@ export default function CategoriasPage() {
     }
 
     toast.success(response?.message, { position: 'top-center' });
-    refreshCategorias();
+    refreshMarcas();
     handleCancelStatus();
   };
 
@@ -63,26 +64,29 @@ export default function CategoriasPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>({
     defaultValues: {
+      code: '',
       name: '',
     },
   });
 
-  const handleEdit = async (categoria: Categorias) => {
+  const handleEdit = async (marca: Marcas) => {
     setShowModal(true);
     reset({
-      name: categoria.name,
+      code: marca.code,
+      name: marca.name,
     });
-    setCategoriaSelect(categoria);
+    setMarcaSelect(marca);
   };
 
   const onSubmit = async (values: FormInputs) => {
-    const payload: CategoriasDto = {
+    const payload: MarcasDto = {
+      code: values.code,
       name: values.name,
     };
 
-    const response = categoriaSelect?.id
-      ? await updateCategorias(categoriaSelect?.id, payload)
-      : await createCategorias(payload);
+    const response = marcaSelect?.id
+      ? await updateMarcas(marcaSelect?.id, payload)
+      : await createMarcas(payload);
 
     if (!response?.success) {
       toast.warning(response?.message, { position: 'top-center' });
@@ -91,42 +95,43 @@ export default function CategoriasPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     handleCancel();
-    refreshCategorias();
+    refreshMarcas();
   };
 
   const handleCancel = () => {
     setShowModal(false);
-    setCategoriaSelect(null);
+    setMarcaSelect(null);
     reset({
+      code: '',
       name: '',
     });
   };
 
   const handleCancelStatus = () => {
     setShowModalStatus(false);
-    setCategoriaSelect(null);
+    setMarcaSelect(null);
   };
 
   return (
     <>
       <div className="flex flex-row items-center justify-between">
-        <h1 className="text-4xl text-blue-600 font-bold">Categorías</h1>
+        <h1 className="text-4xl text-blue-600 font-bold">Marcas</h1>
         <button
           type="button"
           className="bg-blue-600 flex flex-row items-center gap-2 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
           onClick={() => setShowModal(true)}
         >
           <Plus size={20} />
-          Nueva Categoría
+          Nueva Marca
         </button>
       </div>
 
-      {selectedCategorias.length > 0 && (
+      {selectedMarcas.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
           <p className="text-blue-800">
-            {selectedCategorias.length} categoría
-            {selectedCategorias.length !== 1 ? 's' : ''} seleccionada
-            {selectedCategorias.length !== 1 ? 's' : ''}
+            {selectedMarcas.length} marca
+            {selectedMarcas.length !== 1 ? 's' : ''} seleccionada
+            {selectedMarcas.length !== 1 ? 's' : ''}
           </p>
         </div>
       )}
@@ -137,14 +142,14 @@ export default function CategoriasPage() {
         </div>
       )}
 
-      <CategoriasTable
-        categorias={categorias}
+      <MarcasTable
+        marcas={marcas}
         loading={loading}
         hasMore={hasMore}
-        fetchMoreCategorias={fetchMoreCategorias}
-        selectedCategorias={selectedCategorias}
-        toggleCategoriaSelection={toggleCategoriaSelection}
-        selectAllCategorias={selectAllCategorias}
+        fetchMoreMarcas={fetchMoreMarcas}
+        selectedMarcas={selectedMarcas}
+        toggleMarcaSelection={toggleMarcaSelection}
+        selectAllMarcas={selectAllMarcas}
         changeStatusFn={handleChangeStatus}
         editFn={handleEdit}
       />
@@ -154,7 +159,7 @@ export default function CategoriasPage() {
           <div className="bg-white p-6 rounded-md shadow-lg w-[400px]">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold">
-                {categoriaSelect ? 'Editar Categoría' : 'Nueva Categoría'}
+                {marcaSelect ? 'Editar Marca' : 'Nueva Marca'}
               </h2>
               <button
                 type="button"
@@ -169,11 +174,25 @@ export default function CategoriasPage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="flex flex-col space-y-1 w-full">
+                <Label htmlFor="code">Código</Label>
+                <Input
+                  id="code"
+                  type="text"
+                  placeholder="Código de la marca"
+                  {...register('code', {
+                    required: 'Código es requerido',
+                  })}
+                />
+                {errors.code && (
+                  <p className="msg-error">{errors.code.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col space-y-1 w-full">
                 <Label htmlFor="name">Nombre</Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Nombre de la categoría"
+                  placeholder="Nombre de la marca"
                   {...register('name', {
                     required: 'Nombre es requerido',
                   })}
@@ -226,8 +245,8 @@ export default function CategoriasPage() {
 
             <p className="text-gray-600 font-medium">
               ¿Estás seguro de que deseas{' '}
-              {categoriaSelect?.status ? 'desactivar' : 'activar'} la categoría:{' '}
-              {categoriaSelect?.name}?
+              {marcaSelect?.status ? 'desactivar' : 'activar'} la marca:{' '}
+              {marcaSelect?.name}?
             </p>
 
             <div className="flex justify-between items-center m-auto gap-5 mt-5">
