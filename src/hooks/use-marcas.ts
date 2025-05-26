@@ -1,6 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
-import { fetchMarcas } from '@/services/marcas.service';
-import type { FilterOptionsMarcas, Marcas } from '@/interfaces/marcas.interface';
+import { useCallback, useEffect, useState } from "react";
+import { fetchMarcas } from "@/services/marcas.service";
+import type {
+  FilterOptionsMarcas,
+  Marcas,
+} from "@/interfaces/marcas.interface";
 
 export const useMarcas = () => {
   const [marcas, setMarcas] = useState<Marcas[]>([]);
@@ -43,7 +46,7 @@ export const useMarcas = () => {
           setPage((prevPage) => prevPage + 1);
         }
       } catch (err) {
-        setError('Error al cargar las marcas');
+        setError("Error al cargar las marcas");
         console.error(err);
       } finally {
         setLoading(false);

@@ -1,14 +1,19 @@
-import { Loader2, Plus, X } from 'lucide-react';
-import { useMarcas } from '@/hooks/use-marcas';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { activeOrInactiveMarcas, createMarcas, updateMarcas } from '@/services/marcas.service';
-import { toast } from 'sonner';
-import type { Marcas, MarcasDto } from '@/interfaces/marcas.interface';
-import MarcasTable from './ui/marcas-table';
+import { Loader2, Plus, X } from "lucide-react";
+import { useMarcas } from "@/hooks/use-marcas";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  activeOrInactiveMarcas,
+  createMarcas,
+  updateMarcas,
+} from "@/services/marcas.service";
+import { toast } from "sonner";
+import type { Marcas, MarcasDto } from "@/interfaces/marcas.interface";
+import MarcasTable from "./ui/marcas-table";
+import FilterMarcas from "./ui/filter-marcas";
 
 interface FormInputs {
   code: string;
@@ -26,6 +31,9 @@ export default function MarcasPage() {
     toggleMarcaSelection,
     selectAllMarcas,
     refreshMarcas,
+    applyFilters,
+    clearFilters,
+    filters,
   } = useMarcas();
 
   const [marcaSelect, setMarcaSelect] = useState<Marcas | null>(null);
@@ -41,18 +49,18 @@ export default function MarcasPage() {
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrInactiveMarcas(marcaSelect?.id || '', {
+    const response = await activeOrInactiveMarcas(marcaSelect?.id || "", {
       status: !marcaSelect?.status,
     });
 
     setLoadingStatus(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
+    toast.success(response?.message, { position: "top-center" });
     refreshMarcas();
     handleCancelStatus();
   };
@@ -64,8 +72,8 @@ export default function MarcasPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>({
     defaultValues: {
-      code: '',
-      name: '',
+      code: "",
+      name: "",
     },
   });
 
@@ -89,11 +97,11 @@ export default function MarcasPage() {
       : await createMarcas(payload);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
+    toast.success(response?.message, { position: "top-center" });
     handleCancel();
     refreshMarcas();
   };
@@ -102,8 +110,8 @@ export default function MarcasPage() {
     setShowModal(false);
     setMarcaSelect(null);
     reset({
-      code: '',
-      name: '',
+      code: "",
+      name: "",
     });
   };
 
@@ -126,12 +134,19 @@ export default function MarcasPage() {
         </button>
       </div>
 
+      <FilterMarcas
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        initialFilters={filters}
+        loading={loading}
+      />
+
       {selectedMarcas.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
           <p className="text-blue-800">
             {selectedMarcas.length} marca
-            {selectedMarcas.length !== 1 ? 's' : ''} seleccionada
-            {selectedMarcas.length !== 1 ? 's' : ''}
+            {selectedMarcas.length !== 1 ? "s" : ""} seleccionada
+            {selectedMarcas.length !== 1 ? "s" : ""}
           </p>
         </div>
       )}
@@ -159,7 +174,7 @@ export default function MarcasPage() {
           <div className="bg-white p-6 rounded-md shadow-lg w-[400px]">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold">
-                {marcaSelect ? 'Editar Marca' : 'Nueva Marca'}
+                {marcaSelect ? "Editar Marca" : "Nueva Marca"}
               </h2>
               <button
                 type="button"
@@ -179,8 +194,8 @@ export default function MarcasPage() {
                   id="code"
                   type="text"
                   placeholder="Código de la marca"
-                  {...register('code', {
-                    required: 'Código es requerido',
+                  {...register("code", {
+                    required: "Código es requerido",
                   })}
                 />
                 {errors.code && (
@@ -193,8 +208,8 @@ export default function MarcasPage() {
                   id="name"
                   type="text"
                   placeholder="Nombre de la marca"
-                  {...register('name', {
-                    required: 'Nombre es requerido',
+                  {...register("name", {
+                    required: "Nombre es requerido",
                   })}
                 />
                 {errors.name && (
@@ -218,7 +233,7 @@ export default function MarcasPage() {
                       Guardando...
                     </div>
                   ) : (
-                    'Guardar'
+                    "Guardar"
                   )}
                 </Button>
               </div>
@@ -244,8 +259,8 @@ export default function MarcasPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas{' '}
-              {marcaSelect?.status ? 'desactivar' : 'activar'} la marca:{' '}
+              ¿Estás seguro de que deseas{" "}
+              {marcaSelect?.status ? "desactivar" : "activar"} la marca:{" "}
               {marcaSelect?.name}?
             </p>
 
@@ -269,7 +284,7 @@ export default function MarcasPage() {
                     Cambiando estado...
                   </div>
                 ) : (
-                  'Aceptar'
+                  "Aceptar"
                 )}
               </Button>
             </div>
