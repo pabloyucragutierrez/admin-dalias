@@ -134,3 +134,17 @@
 .msg-error {
   @apply text-sm text-red-500 ml-2;
 }
+
+.ql-editor p {
+  @apply m-0 leading-relaxed;
+}
+
+.ql-container {
+  height: auto !important;
+  min-height: 100px; /* O la altura mínima que necesites */
+}
+
+.ql-editor {
+  padding: 8px; /* Agrega un relleno si está muy comprimido */
+  box-sizing: border-box;
+}
