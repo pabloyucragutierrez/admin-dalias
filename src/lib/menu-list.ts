@@ -46,6 +46,18 @@ export function getMenuList(): Group[] {
               href: "/marcas",
               label: "Marcas",
             },
+            {
+              href: "/sucursales",
+              label: "Sucursales",
+            },
+            {
+              href: "/empresas",
+              label: "Empresas",
+            },
+            {
+              href: "/users",
+              label: "Usuarios",
+            }
           ],
         },
         {
