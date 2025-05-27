@@ -1,4 +1,3 @@
-// File: src/services/empresas.service.ts
 import type {
   ApiResponse,
   PaginatedResponse,
