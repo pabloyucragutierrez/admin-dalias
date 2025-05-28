@@ -101,7 +101,7 @@ export default function ManagementSucursal() {
       const loadSucursal = async () => {
         setLoading(true);
         try {
-          const sucursal = await fetchSucursalById(id); 
+          const sucursal = await fetchSucursalById(id);
           if (sucursal) {
             let regionId = '';
             let provinceId = '';
@@ -213,8 +213,8 @@ export default function ManagementSucursal() {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-4xl text-blue-600 font-bold mb-6">
+    <div className="p-6 w-full mx-auto">
+      <h1 className="text-3xl text-blue-600 font-bold mb-8">
         {id && id !== 'new' ? 'Editar Sucursal' : 'Nueva Sucursal'}
       </h1>
 
@@ -224,110 +224,137 @@ export default function ManagementSucursal() {
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="code">Código</Label>
-            <Input
-              id="code"
-              type="text"
-              placeholder="Código de la sucursal"
-              {...register('code', {
-                required: 'Código es requerido',
-              })}
-            />
-            {errors.code && (
-              <p className="text-red-600 text-sm">{errors.code.message}</p>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="code">Código</Label>
+              <Input
+                id="code"
+                type="text"
+                placeholder="Código de la sucursal"
+                {...register('code', {
+                  required: 'Código es requerido',
+                })}
+              />
+              {errors.code && (
+                <p className="text-red-600 text-sm">{errors.code.message}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="name">Nombre</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Nombre de la sucursal"
+                {...register('name', {
+                  required: 'Nombre es requerido',
+                })}
+              />
+              {errors.name && (
+                <p className="text-red-600 text-sm">{errors.name.message}</p>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="name">Nombre</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Nombre de la sucursal"
-              {...register('name', {
-                required: 'Nombre es requerido',
-              })}
-            />
-            {errors.name && (
-              <p className="text-red-600 text-sm">{errors.name.message}</p>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="regionId">Región</Label>
+              <select
+                id="regionId"
+                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                {...register('regionId', { required: 'Región es requerida' })}
+                onChange={handleRegionChange}
+              >
+                <option value="">Selecciona una región</option>
+                {geolocation.regions.map((region) => (
+                  <option key={region.id} value={region.id.toString()}>
+                    {region.name}
+                  </option>
+                ))}
+              </select>
+              {errors.regionId && (
+                <p className="text-red-600 text-sm">{errors.regionId.message}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="provinceId">Provincia</Label>
+              <select
+                id="provinceId"
+                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                {...register('provinceId', { required: 'Provincia es requerida' })}
+                onChange={handleProvinceChange}
+                disabled={!selectedRegion}
+              >
+                <option value="">Selecciona una provincia</option>
+                {availableProvinces.map((province) => (
+                  <option key={province.id} value={province.id.toString()}>
+                    {province.name}
+                  </option>
+                ))}
+              </select>
+              {errors.provinceId && (
+                <p className="text-red-600 text-sm">{errors.provinceId.message}</p>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="regionId">Región</Label>
-            <select
-              id="regionId"
-              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              {...register('regionId', { required: 'Región es requerida' })}
-              onChange={handleRegionChange}
-            >
-              <option value="">Selecciona una región</option>
-              {geolocation.regions.map((region) => (
-                <option key={region.id} value={region.id.toString()}>
-                  {region.name}
-                </option>
-              ))}
-            </select>
-            {errors.regionId && (
-              <p className="text-red-600 text-sm">{errors.regionId.message}</p>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="districtId">Distrito</Label>
+              <select
+                id="districtId"
+                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                {...register('districtId', { required: 'Distrito es requerido' })}
+                disabled={!selectedProvince}
+              >
+                <option value="">Selecciona un distrito</option>
+                {availableDistricts.map((district) => (
+                  <option key={district.identifier} value={district.identifier}>
+                    {district.name}
+                  </option>
+                ))}
+              </select>
+              {errors.districtId && (
+                <p className="text-red-600 text-sm">{errors.districtId.message}</p>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="provinceId">Provincia</Label>
-            <select
-              id="provinceId"
-              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-              {...register('provinceId', { required: 'Provincia es requerida' })}
-              onChange={handleProvinceChange}
-              disabled={!selectedRegion}
-            >
-              <option value="">Selecciona una provincia</option>
-              {availableProvinces.map((province) => (
-                <option key={province.id} value={province.id.toString()}>
-                  {province.name}
-                </option>
-              ))}
-            </select>
-            {errors.provinceId && (
-              <p className="text-red-600 text-sm">{errors.provinceId.message}</p>
-            )}
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="phone">Teléfono</Label>
+              <Input
+                id="phone"
+                type="text"
+                placeholder="Teléfono"
+                {...register('phone', {
+                  required: 'Teléfono es requerido',
+                  pattern: {
+                    value: /^\+?\d{7,15}$/,
+                    message: 'Teléfono inválido',
+                  },
+                })}
+              />
+              {errors.phone && (
+                <p className="text-red-600 text-sm">{errors.phone.message}</p>
+              )}
+            </div>
 
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="districtId">Distrito</Label>
-            <select
-              id="districtId"
-              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-              {...register('districtId', { required: 'Distrito es requerido' })}
-              disabled={!selectedProvince}
-            >
-              <option value="">Selecciona un distrito</option>
-              {availableDistricts.map((district) => (
-                <option key={district.identifier} value={district.identifier}>
-                  {district.name}
-                </option>
-              ))}
-            </select>
-            {errors.districtId && (
-              <p className="text-red-600 text-sm">{errors.districtId.message}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="address">Dirección</Label>
-            <Input
-              id="address"
-              type="text"
-              placeholder="Dirección"
-              {...register('address', {
-                required: 'Dirección es requerida',
-              })}
-            />
-            {errors.address && (
-              <p className="text-red-600 text-sm">{errors.address.message}</p>
-            )}
+            <div className="flex flex-col space-y-1">
+              <Label htmlFor="address">Dirección</Label>
+              <Input
+                id="address"
+                type="text"
+                placeholder="Dirección"
+                {...register('address', {
+                  required: 'Dirección es requerida',
+                })}
+              />
+              {errors.address && (
+                <p className="text-red-600 text-sm">{errors.address.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col space-y-1">
@@ -338,25 +365,6 @@ export default function ManagementSucursal() {
               placeholder="Referencia"
               {...register('reference')}
             />
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="phone">Teléfono</Label>
-            <Input
-              id="phone"
-              type="text"
-              placeholder="Teléfono"
-              {...register('phone', {
-                required: 'Teléfono es requerido',
-                pattern: {
-                  value: /^\+?\d{7,15}$/,
-                  message: 'Teléfono inválido',
-                },
-              })}
-            />
-            {errors.phone && (
-              <p className="text-red-600 text-sm">{errors.phone.message}</p>
-            )}
           </div>
 
           <div className="flex justify-end gap-4 mt-6">
@@ -370,8 +378,8 @@ export default function ManagementSucursal() {
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
-                <div className="inline-flex gap-2">
-                  <Loader2 className="animate-spin" />
+                <div className="inline-flex items-center gap-2">
+                  <Loader2 className="animate-spin h-5 w-5" />
                   Guardando...
                 </div>
               ) : (

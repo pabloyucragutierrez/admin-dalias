@@ -13,7 +13,7 @@ export const fetchSucursales = async (
   limit = 10,
   filterOptions?: FilterOptionsSucursales
 ): Promise<PaginatedResponse<Sucursales>> => {
-  const response = await api.get<PaginatedResponse<Sucursales>>(`/sucursales/${BUSINESS_ID}`, {
+  const response = await api.get<PaginatedResponse<Sucursales>>(`/sucursales/byBusiness/${BUSINESS_ID}`, {
     params: { page, limit, ...filterOptions },
   });
   return response.data;
