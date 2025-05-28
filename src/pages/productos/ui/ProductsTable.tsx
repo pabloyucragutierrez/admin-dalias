@@ -36,6 +36,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   const observer = useRef<IntersectionObserver | null>(null);
 
   const availableColumns = [
+    { id: 'image', label: 'Imagen' },
     { id: 'sku', label: 'SKU' },
     { id: 'name', label: 'Nombre' },
     { id: 'codeBarras', label: 'Código de Barras' },
@@ -155,6 +156,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                     className="rounded border-gray-300"
                   />
                 </th>
+                {columnVisibility.image && (
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Imagen
+                  </th>
+                )}
                 {columnVisibility.sku && (
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     SKU
@@ -208,6 +214,15 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                       className="rounded border-gray-300"
                     />
                   </td>
+                  {columnVisibility.image && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <img
+                        src={product.ProductImages.find((img) => img.typeImage === 'THUMBNAIL')?.url || ''}
+                        alt={product.name}
+                        className="h-12 w-12 object-contain rounded"
+                      />
+                    </td>
+                  )}
                   {columnVisibility.sku && (
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
