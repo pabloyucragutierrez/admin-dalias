@@ -81,7 +81,10 @@ export interface Role {
 
 export interface FilterOptions {
   name?: string;
+  lastName?: string;
   email?: string;
+  gender?: string;
   documentType?: string;
-  status?: boolean;
+  documentNumber?: string;
+  state?: string;
 }

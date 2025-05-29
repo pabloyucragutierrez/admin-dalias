@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Select from 'react-select';
+import Quill from 'quill';
+import Editor from '@/components/editor';
 
 interface OptionSelect {
   label: string;
@@ -54,6 +56,10 @@ export default function ManagementProduct() {
   const [gallery, setGallery] = useState<(string | File)[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputGaleryRef = useRef<HTMLInputElement | null>(null);
+  const quillRef = useRef<Quill | null>(null);
+  const quillRef2 = useRef<Quill | null>(null);
+  const [valueDescrip, setValueDescrip] = useState<string>("");
+  const [valueShortDescrip, setValueShortDescrip] = useState<string>("");
 
   const {
     handleSubmit,
@@ -157,6 +163,8 @@ export default function ManagementProduct() {
               categoriesId: product.ProductCategories.map((cat) => cat.categoryId),
               sucursalesId: product.ProductSucursales.map((suc) => suc.sucursalId),
             });
+            setValueDescrip(product.description);
+            setValueShortDescrip(product.shortDescription);
             const mainImage = product.ProductImages.find((img) => img.typeImage === 'THUMBNAIL')?.url;
             const galleryImages = product.ProductImages.filter((img) => img.typeImage === 'GALLERY').map((img) => img.url);
             if (mainImage) {
@@ -238,6 +246,14 @@ export default function ManagementProduct() {
       toast.warning('Debe seleccionar una unidad', { position: 'top-center' });
       return;
     }
+    if (!valueDescrip) {
+      toast.warning('Es necesario agregar una descripción del producto', { position: 'top-center' });
+      return;
+    }
+    if (!valueShortDescrip) {
+      toast.warning('Es necesario agregar una descripción corta del producto', { position: 'top-center' });
+      return;
+    }
     if (!id || id === 'new') {
       if (!values.file) {
         toast.warning('Es necesario subir una imagen principal del producto', { position: 'top-center' });
@@ -249,8 +265,8 @@ export default function ManagementProduct() {
       sku: values.sku,
       name: values.name,
       codeBarras: values.codeBarras,
-      description: values.description,
-      shortDescription: values.shortDescription,
+      description: valueDescrip,
+      shortDescription: valueShortDescrip,
       marcaId: values.marcaId,
       unidadId: values.unidadId,
       price: values.price,
@@ -302,7 +318,7 @@ export default function ManagementProduct() {
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Basic Information Section */}
-          <div className="border rounded-md p-4 bg-gray-50">
+          <div className="border rounded-md p-4 bg-white shadow-md">
             <h2 className="text-lg font-semibold text-gray-700 mb-4">Información Básica</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col space-y-1">
@@ -385,30 +401,30 @@ export default function ManagementProduct() {
             </div>
             <div className="flex flex-col space-y-1 mt-4">
               <Label htmlFor="description">Descripción</Label>
-              <Input
-                id="description"
-                type="text"
-                placeholder="Descripción"
-                className="w-full max-w-md"
-                {...register('description', { required: 'Descripción es requerida' })}
+              <Editor
+                className="bg-white"
+                ref={quillRef}
+                readOnly={false}
+                value={valueDescrip}
+                onTextChange={setValueDescrip}
               />
               {errors.description && <p className="text-red-600 text-sm">{errors.description.message}</p>}
             </div>
             <div className="flex flex-col space-y-1 mt-4">
               <Label htmlFor="shortDescription">Descripción Corta</Label>
-              <Input
-                id="shortDescription"
-                type="text"
-                placeholder="Descripción Corta"
-                className="w-full max-w-md"
-                {...register('shortDescription', { required: 'Descripción corta es requerida' })}
+              <Editor
+                className="bg-white"
+                ref={quillRef2}
+                readOnly={false}
+                value={valueShortDescrip}
+                onTextChange={setValueShortDescrip}
               />
               {errors.shortDescription && <p className="text-red-600 text-sm">{errors.shortDescription.message}</p>}
             </div>
           </div>
 
           {/* Pricing and Offer Section */}
-          <div className="border rounded-md p-4 bg-gray-50">
+          <div className="border rounded-md p-4 bg-white shadow-md">
             <h2 className="text-lg font-semibold text-gray-700 mb-4">Precios y Oferta</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col space-y-1">
@@ -528,7 +544,7 @@ export default function ManagementProduct() {
           </div>
 
           {/* Images Section */}
-          <div className="border rounded-md p-4 bg-gray-50">
+          <div className="border rounded-md p-4 bg-white shadow-md">
             <h2 className="text-lg font-semibold text-gray-700 mb-4">Imágenes</h2>
             <div className="flex flex-col space-y-1">
               <Label>Imagen Principal</Label>
@@ -606,7 +622,7 @@ export default function ManagementProduct() {
           </div>
 
           {/* Categories and Branches Section */}
-          <div className="border rounded-md p-4 bg-gray-50">
+          <div className="border rounded-md p-4 bg-white shadow-md">
             <h2 className="text-lg font-semibold text-gray-700 mb-4">Categorías y Sucursales</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col space-y-1">

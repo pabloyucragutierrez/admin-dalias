@@ -9,7 +9,7 @@ import { activeOrInactiveCategorias, createCategorias, updateCategorias } from '
 import { toast } from 'sonner';
 import type { Categorias, CategoriasDto } from '@/interfaces/categorias.interface';
 import CategoriasTable from './ui/categorias-table';
-
+import FilterCategorias from './ui/FilterCategorias';
 interface FormInputs {
   name: string;
 }
@@ -25,6 +25,9 @@ export default function CategoriasPage() {
     toggleCategoriaSelection,
     selectAllCategorias,
     refreshCategorias,
+    applyFilters,
+    clearFilters,
+    filters,
   } = useCategorias();
 
   const [categoriaSelect, setCategoriaSelect] = useState<Categorias | null>(null);
@@ -120,6 +123,13 @@ export default function CategoriasPage() {
           Nueva Categoría
         </button>
       </div>
+
+      <FilterCategorias
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        initialFilters={filters}
+        loading={loading}
+      />
 
       {selectedCategorias.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">

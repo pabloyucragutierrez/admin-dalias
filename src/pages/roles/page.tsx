@@ -9,6 +9,7 @@ import { activeOrInactiveRoles, createRoles, updateRoles } from '@/services/role
 import { toast } from 'sonner';
 import type { Roles, RolesDto } from '@/interfaces/roles.interface';
 import RolesTable from './ui/roles-table';
+import FilterRoles from './ui/FilterRoles';
 
 interface FormInputs {
   name: string;
@@ -25,6 +26,9 @@ export default function RolesPage() {
     toggleRolSelection,
     selectAllRoles,
     refreshRoles,
+    applyFilters,
+    clearFilters,
+    filters,
   } = useRoles();
 
   const [rolSelect, setRolSelect] = useState<Roles | null>(null);
@@ -120,6 +124,13 @@ export default function RolesPage() {
           Nuevo Rol
         </button>
       </div>
+
+      <FilterRoles
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        initialFilters={filters}
+        loading={loading}
+      />
 
       {selectedRoles.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">

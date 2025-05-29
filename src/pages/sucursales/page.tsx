@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import type { Sucursales } from '@/interfaces/sucursales.interface';
 import SucursalesTable from './ui/sucursales-table';
+import FilterSucursales from './ui/FilterSucursales';
 
 export default function SucursalesPage() {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ export default function SucursalesPage() {
     toggleSucursalSelection,
     selectAllSucursales,
     refreshSucursales,
+    applyFilters,
+    clearFilters,
+    filters,
   } = useSucursales();
 
   const [sucursalSelect, setSucursalSelect] = useState<Sucursales | null>(null);
@@ -96,6 +100,13 @@ export default function SucursalesPage() {
           Nueva Sucursal
         </Button>
       </div>
+
+      <FilterSucursales
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        initialFilters={filters}
+        loading={loading}
+      />
 
       {selectedSucursales.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">

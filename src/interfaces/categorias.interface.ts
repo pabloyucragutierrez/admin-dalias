@@ -11,5 +11,5 @@ export interface CategoriasDto {
 
 export interface FilterOptionsCategorias {
   name?: string;
-  status?: string;
+  state?: string;
 }

@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import type { User } from '@/interfaces/users.interface';
 import UsersTable from './ui/UsersTable';
+import FilterUsers from './ui/FilterUsers';
 
 export default function UsersPage() {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ export default function UsersPage() {
     toggleUserSelection,
     selectAllUsers,
     refreshUsers,
+    applyFilters,
+    clearFilters,
+    filters,
   } = useUsers();
 
   const [userSelect, setUserSelect] = useState<User | null>(null);
@@ -96,6 +100,13 @@ export default function UsersPage() {
           Nuevo Usuario
         </Button>
       </div>
+
+      <FilterUsers
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        initialFilters={filters}
+        loading={loading}
+      />
 
       {selectedUsers.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">

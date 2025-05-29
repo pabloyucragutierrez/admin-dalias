@@ -1,4 +1,3 @@
-// File: src/interfaces/sucursales.ts
 export interface Sucursales {
   id: string;
   businessId: string;
@@ -27,5 +26,5 @@ export interface FilterOptionsSucursales {
   code?: string;
   name?: string;
   district?: string;
-  status?: string;
+  state?: string;
 }

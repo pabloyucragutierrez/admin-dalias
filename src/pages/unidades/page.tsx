@@ -13,6 +13,7 @@ import {
   updateUnidades,
 } from "@/services/unidades.service";
 import { toast } from "sonner";
+import FilterUnidades from "./ui/FilterUnidades";
 
 interface FormInputs {
   name: string;
@@ -30,6 +31,9 @@ export default function UnidadesPage() {
     toggleUnidadSelection,
     selectAllUnidades,
     refreshUnidades,
+    applyFilters,
+    clearFilters,
+    filters,
   } = useUnidades();
 
   const [unidadesSelect, setUnidadesSelect] = useState<Unidades | null>(null);
@@ -64,7 +68,6 @@ export default function UnidadesPage() {
   const {
     handleSubmit,
     register,
-
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>({
@@ -130,6 +133,13 @@ export default function UnidadesPage() {
           Nueva Unidad
         </button>
       </div>
+
+      <FilterUnidades
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        initialFilters={filters}
+        loading={loading}
+      />
 
       {selectedUnidades.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">

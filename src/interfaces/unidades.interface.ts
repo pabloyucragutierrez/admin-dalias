@@ -13,5 +13,5 @@ export interface UnidadesDto {
 
 export interface FilterOptionsUnidades {
   name?: string;
-  status?: string;
+  state?: string; // Cambiado de "status" a "state"
 }

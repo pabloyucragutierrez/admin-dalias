@@ -11,5 +11,5 @@ export interface RolesDto {
 
 export interface FilterOptionsRoles {
   name?: string;
-  status?: string;
+  state?: string;
 }

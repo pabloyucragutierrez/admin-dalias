@@ -406,16 +406,16 @@ export default function EmpresasPage() {
               />
               {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
             </div>
+          </div>
 
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="description">Descripción (Opcional)</Label>
-              <Input
-                id="description"
-                type="text"
-                placeholder="Descripción"
-                {...register('description')}
-              />
-            </div>
+          <div className="flex flex-col space-y-1">
+            <Label htmlFor="description">Descripción (Opcional)</Label>
+            <textarea
+              id="description"
+              placeholder="Descripción"
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+              {...register('description')}
+            />
           </div>
 
           <div className="flex justify-end gap-4 mt-6">

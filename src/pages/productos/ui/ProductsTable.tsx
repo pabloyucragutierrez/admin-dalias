@@ -4,6 +4,8 @@ import { formatDateTime } from '@/utils';
 import { ChevronDown, Edit, FolderX, BadgeCheck, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { fetchActiveBrands } from '@/services/products.service'; // Nuevo import
+import type { Brand } from '@/interfaces/products.interface';
 
 interface ProductsTableProps {
   products: Product[];
@@ -34,12 +36,14 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
 }) => {
   const navigate = useNavigate();
   const observer = useRef<IntersectionObserver | null>(null);
+  const [brands, setBrands] = useState<Brand[]>([]);
 
   const availableColumns = [
     { id: 'image', label: 'Imagen' },
     { id: 'sku', label: 'SKU' },
     { id: 'name', label: 'Nombre' },
     { id: 'codeBarras', label: 'Código de Barras' },
+    { id: 'brand', label: 'Marca' }, // Nueva columna
     { id: 'price', label: 'Precio' },
     { id: 'stock', label: 'Stock' },
     { id: 'createAt', label: 'Fecha de Creación' },
@@ -67,6 +71,18 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, []);
+
+  useEffect(() => {
+    const loadBrands = async () => {
+      try {
+        const activeBrands = await fetchActiveBrands();
+        setBrands(activeBrands || []);
+      } catch (err) {
+        console.error("Error al cargar marcas:", err);
+      }
+    };
+    loadBrands();
   }, []);
 
   const toggleColumnVisibility = (columnId: string) => {
@@ -176,6 +192,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                     Código de Barras
                   </th>
                 )}
+                {columnVisibility.brand && (
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Marca
+                  </th>
+                )}
                 {columnVisibility.price && (
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Precio
@@ -242,6 +263,13 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                   {columnVisibility.codeBarras && (
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">{product.codeBarras}</div>
+                    </td>
+                  )}
+                  {columnVisibility.brand && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">
+                        {brands.find((brand) => brand.id === product.marcaId)?.name || 'Sin marca'}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.price && (

@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import type { Product } from '@/interfaces/products.interface';
 import ProductsTable from './ui/ProductsTable';
+import FilterProducts from './ui/FilterProducts'; // Nuevo import
 
 export default function ProductsPage() {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ export default function ProductsPage() {
     toggleProductSelection,
     selectAllProducts,
     refreshProducts,
+    applyFilters,
+    clearFilters,
+    filters,
   } = useProducts();
 
   const [productSelect, setProductSelect] = useState<Product | null>(null);
@@ -96,6 +100,13 @@ export default function ProductsPage() {
           Nuevo Producto
         </Button>
       </div>
+
+      <FilterProducts
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        initialFilters={filters}
+        loading={loading}
+      />
 
       {selectedProducts.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">

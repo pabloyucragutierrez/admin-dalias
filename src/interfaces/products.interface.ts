@@ -112,7 +112,8 @@ export interface Unit {
 export interface FilterOptionsProducts {
   name?: string;
   sku?: string;
-  status?: boolean;
+  marca?: string;
+  status?: string; // Cambiado de boolean a string ("ACTIVO"/"INACTIVO")
 }
 
 export interface ApiResponse<T> {
