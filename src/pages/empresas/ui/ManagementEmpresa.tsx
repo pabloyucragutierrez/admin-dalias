@@ -380,7 +380,7 @@ export default function ManagementEmpresa() {
           </div>
 
           <div className="flex flex-col space-y-1">
-            <Label htmlFor="description">Descripciónnn (Opcional)</Label>
+            <Label htmlFor="description">Descripción (Opcional)</Label>
             <textarea
               id="description"
               placeholder="Descripción"
