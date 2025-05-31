@@ -300,8 +300,8 @@ export default function ManagementUser() {
   };
 
   return (
-    <div className="p-6 w-full mx-auto">
-      <h1 className="text-3xl text-blue-600 font-bold mb-8">
+    <div className="w-full mx-auto">
+      <h1 className="text-3xl text-blue-600 font-bold mb-6">
         {id && id !== 'new' ? 'Editar Usuario' : 'Nuevo Usuario'}
       </h1>
 
@@ -310,282 +310,287 @@ export default function ManagementUser() {
           <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="name">Nombre</Label>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {/* Personal Information Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Información Personal</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="name">Nombre</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Nombre"
+                  className="w-full text-base py-2"
+                  {...register('name', { required: 'Nombre es requerido' })}
+                />
+                {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="lastName">Apellido</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Apellido"
+                  className="w-full text-base py-2"
+                  {...register('lastName', { required: 'Apellido es requerido' })}
+                />
+                {errors.lastName && <p className="text-red-600 text-sm">{errors.lastName.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  className="w-full text-base py-2"
+                  {...register('email', {
+                    required: 'Email es requerido',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: 'Email inválido',
+                    },
+                  })}
+                />
+                {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="gender">Género</Label>
+                <select
+                  id="gender"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('gender', { required: 'Género es requerido' })}
+                >
+                  <option value="">Selecciona un género</option>
+                  {genderTypes.map((gender) => (
+                    <option key={gender.value} value={gender.value}>{gender.label}</option>
+                  ))}
+                </select>
+                {errors.gender && <p className="text-red-600 text-sm">{errors.gender.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="maritalStatus">Estado Civil</Label>
+                <select
+                  id="maritalStatus"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('maritalStatus', { required: 'Estado civil es requerido' })}
+                >
+                  <option value="">Selecciona un estado</option>
+                  {maritalStatuses.map((status) => (
+                    <option key={status.value} value={status.value}>{status.label}</option>
+                  ))}
+                </select>
+                {errors.maritalStatus && <p className="text-red-600 text-sm">{errors.maritalStatus.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="birthday">Fecha de Nacimiento</Label>
+                <Input
+                  id="birthday"
+                  type="date"
+                  className="w-full text-base py-2"
+                  {...register('birthday', { required: 'Fecha de nacimiento es requerida' })}
+                />
+                {errors.birthday && <p className="text-red-600 text-sm">{errors.birthday.message}</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* Document Information Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Documento de Identidad</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="documentType">Tipo de Documento</Label>
+                <select
+                  id="documentType"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('documentType', { required: 'Tipo de documento es requerido' })}
+                >
+                  <option value="">Selecciona un tipo</option>
+                  {documentTypes.map((type) => (
+                    <option key={type.value} value={type.value}>{type.label}</option>
+                  ))}
+                </select>
+                {errors.documentType && <p className="text-red-600 text-sm">{errors.documentType.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="documentNumber">Número de Documento</Label>
+                <Input
+                  id="documentNumber"
+                  type="text"
+                  placeholder="Número de Documento"
+                  className="w-full text-base py-2"
+                  {...register('documentNumber', {
+                    required: 'Número de documento es requerido',
+                    validate: (value) => validateDocumentNumber(value, documentType),
+                  })}
+                />
+                {errors.documentNumber && <p className="text-red-600 text-sm">{errors.documentNumber.message}</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Information Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Información de Contacto</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="phone">Teléfono</Label>
+                <Input
+                  id="phone"
+                  type="text"
+                  placeholder="Teléfono"
+                  className="w-full text-base py-2"
+                  {...register('phone', {
+                    required: 'Teléfono es requerido',
+                    pattern: {
+                      value: /^\+?\d{7,15}$/,
+                      message: 'Teléfono inválido',
+                    },
+                  })}
+                />
+                {errors.phone && <p className="text-red-600 text-sm">{errors.phone.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="username">Nombre de Usuario</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Nombre de Usuario"
+                  className="w-full text-base py-2"
+                  {...register('username', { required: 'Nombre de usuario es requerido' })}
+                />
+                {errors.username && <p className="text-red-600 text-sm">{errors.username.message}</p>}
+              </div>
+              {(!id || id === 'new') && (
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="password">Contraseña</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Contraseña"
+                    className="w-full text-base py-2"
+                    {...register('password', {
+                      required: id && id !== 'new' ? false : 'Contraseña es requerida',
+                    })}
+                  />
+                  {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
+                </div>
+              )}
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="roleId">Rol</Label>
+                <select
+                  id="roleId"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('roleId', { required: 'Rol es requerido' })}
+                >
+                  <option value="">Selecciona un rol</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.id}>{role.name}</option>
+                  ))}
+                </select>
+                {errors.roleId && <p className="text-red-600 text-sm">{errors.roleId.message}</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* Address Information Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Dirección</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="street">Calle</Label>
+                <Input
+                  id="street"
+                  type="text"
+                  placeholder="Calle"
+                  className="w-full text-base py-2"
+                  {...register('street')}
+                />
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="number">Número</Label>
+                <Input
+                  id="number"
+                  type="text"
+                  placeholder="Número"
+                  className="w-full text-base py-2"
+                  {...register('number')}
+                />
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="apartment">Apartamento</Label>
+                <Input
+                  id="apartment"
+                  type="text"
+                  placeholder="Apartamento"
+                  className="w-full text-base py-2"
+                  {...register('apartment')}
+                />
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="zipCode">Código Postal</Label>
+                <Input
+                  id="zipCode"
+                  type="text"
+                  placeholder="Código Postal"
+                  className="w-full text-base py-2"
+                  {...register('zipCode')}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col space-y-2 mt-6">
+              <Label htmlFor="reference">Referencia</Label>
               <Input
-                id="name"
+                id="reference"
                 type="text"
-                placeholder="Nombre"
-                {...register('name', { required: 'Nombre es requerido' })}
-              />
-              {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="lastName">Apellido</Label>
-              <Input
-                id="lastName"
-                type="text"
-                placeholder="Apellido"
-                {...register('lastName', { required: 'Apellido es requerido' })}
-              />
-              {errors.lastName && <p className="text-red-600 text-sm">{errors.lastName.message}</p>}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Email"
-                {...register('email', {
-                  required: 'Email es requerido',
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Email inválido',
-                  },
-                })}
-              />
-              {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="username">Nombre de Usuario</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Nombre de Usuario"
-                {...register('username', { required: 'Nombre de usuario es requerido' })}
-              />
-              {errors.username && <p className="text-red-600 text-sm">{errors.username.message}</p>}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Contraseña"
-                {...register('password', {
-                  required: id && id !== 'new' ? false : 'Contraseña es requerida',
-                })}
-              />
-              {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="roleId">Rol</Label>
-              <select
-                id="roleId"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register('roleId', { required: 'Rol es requerido' })}
-              >
-                <option value="">Selecciona un rol</option>
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>{role.name}</option>
-                ))}
-              </select>
-              {errors.roleId && <p className="text-red-600 text-sm">{errors.roleId.message}</p>}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="documentType">Tipo de Documento</Label>
-              <select
-                id="documentType"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register('documentType', { required: 'Tipo de documento es requerido' })}
-              >
-                <option value="">Selecciona un tipo</option>
-                {documentTypes.map((type) => (
-                  <option key={type.value} value={type.value}>{type.label}</option>
-                ))}
-              </select>
-              {errors.documentType && <p className="text-red-600 text-sm">{errors.documentType.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="documentNumber">Número de Documento</Label>
-              <Input
-                id="documentNumber"
-                type="text"
-                placeholder="Número de Documento"
-                {...register('documentNumber', {
-                  required: 'Número de documento es requerido',
-                  validate: (value) => validateDocumentNumber(value, documentType),
-                })}
-              />
-              {errors.documentNumber && <p className="text-red-600 text-sm">{errors.documentNumber.message}</p>}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="gender">Género</Label>
-              <select
-                id="gender"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register('gender', { required: 'Género es requerido' })}
-              >
-                <option value="">Selecciona un género</option>
-                {genderTypes.map((gender) => (
-                  <option key={gender.value} value={gender.value}>{gender.label}</option>
-                ))}
-              </select>
-              {errors.gender && <p className="text-red-600 text-sm">{errors.gender.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="maritalStatus">Estado Civil</Label>
-              <select
-                id="maritalStatus"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register('maritalStatus', { required: 'Estado civil es requerido' })}
-              >
-                <option value="">Selecciona un estado</option>
-                {maritalStatuses.map((status) => (
-                  <option key={status.value} value={status.value}>{status.label}</option>
-                ))}
-              </select>
-              {errors.maritalStatus && <p className="text-red-600 text-sm">{errors.maritalStatus.message}</p>}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="birthday">Fecha de Nacimiento</Label>
-              <Input
-                id="birthday"
-                type="date"
-                {...register('birthday', { required: 'Fecha de nacimiento es requerida' })}
-              />
-              {errors.birthday && <p className="text-red-600 text-sm">{errors.birthday.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="phone">Teléfono</Label>
-              <Input
-                id="phone"
-                type="text"
-                placeholder="Teléfono"
-                {...register('phone', {
-                  required: 'Teléfono es requerido',
-                  pattern: {
-                    value: /^\+?\d{7,15}$/,
-                    message: 'Teléfono inválido',
-                  },
-                })}
-              />
-              {errors.phone && <p className="text-red-600 text-sm">{errors.phone.message}</p>}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="street">Calle</Label>
-              <Input
-                id="street"
-                type="text"
-                placeholder="Calle"
-                {...register('street')}
+                placeholder="Referencia"
+                className="w-full text-base py-2"
+                {...register('reference')}
               />
             </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="number">Número</Label>
-              <Input
-                id="number"
-                type="text"
-                placeholder="Número"
-                {...register('number')}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="regionId">Región</Label>
+                <select
+                  id="regionId"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('regionId', { required: 'Región es requerida' })}
+                  onChange={handleRegionChange}
+                >
+                  <option value="">Selecciona una región</option>
+                  {geolocation.regions.map((region) => (
+                    <option key={region.id} value={region.id.toString()}>
+                      {region.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.regionId && <p className="text-red-600 text-sm">{errors.regionId.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="provinceId">Provincia</Label>
+                <select
+                  id="provinceId"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  {...register('provinceId', { required: 'Provincia es requerida' })}
+                  onChange={handleProvinceChange}
+                  disabled={!selectedRegion}
+                >
+                  <option value="">Selecciona una provincia</option>
+                  {availableProvinces.map((province) => (
+                    <option key={province.id} value={province.id.toString()}>
+                      {province.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.provinceId && <p className="text-red-600 text-sm">{errors.provinceId.message}</p>}
+              </div>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="apartment">Apartamento</Label>
-              <Input
-                id="apartment"
-                type="text"
-                placeholder="Apartamento"
-                {...register('apartment')}
-              />
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="zipCode">Código Postal</Label>
-              <Input
-                id="zipCode"
-                type="text"
-                placeholder="Código Postal"
-                {...register('zipCode')}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="reference">Referencia</Label>
-            <Input
-              id="reference"
-              type="text"
-              placeholder="Referencia"
-              {...register('reference')}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="regionId">Región</Label>
-              <select
-                id="regionId"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register('regionId', { required: 'Región es requerida' })}
-                onChange={handleRegionChange}
-              >
-                <option value="">Selecciona una región</option>
-                {geolocation.regions.map((region) => (
-                  <option key={region.id} value={region.id.toString()}>
-                    {region.name}
-                  </option>
-                ))}
-              </select>
-              {errors.regionId && <p className="text-red-600 text-sm">{errors.regionId.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="provinceId">Provincia</Label>
-              <select
-                id="provinceId"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                {...register('provinceId', { required: 'Provincia es requerida' })}
-                onChange={handleProvinceChange}
-                disabled={!selectedRegion}
-              >
-                <option value="">Selecciona una provincia</option>
-                {availableProvinces.map((province) => (
-                  <option key={province.id} value={province.id.toString()}>
-                    {province.name}
-                  </option>
-                ))}
-              </select>
-              {errors.provinceId && <p className="text-red-600 text-sm">{errors.provinceId.message}</p>}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
+            <div className="flex flex-col space-y-2 mt-6">
               <Label htmlFor="districtId">Distrito</Label>
               <select
                 id="districtId"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 {...register('districtId', { required: 'Distrito es requerido' })}
                 disabled={!selectedProvince}
               >
@@ -600,16 +605,22 @@ export default function ManagementUser() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 mt-6">
+          {/* Form Actions */}
+          <div className="flex justify-end gap-4 mt-8">
             <Button
               type="button"
               variant="outline"
               onClick={handleCancel}
               disabled={isSubmitting}
+              className="text-base py-2 px-6"
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="text-base py-2 px-6"
+            >
               {isSubmitting ? (
                 <div className="inline-flex items-center gap-2">
                   <Loader2 className="animate-spin h-5 w-5" />

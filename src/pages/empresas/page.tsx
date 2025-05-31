@@ -221,7 +221,7 @@ export default function EmpresasPage() {
       console.error('Error updating empresa:', {
         message: errorMessage,
         status: statusCode,
-        id: "5271c6b9-9280-4ca3-aef1-8543dce8dbe0",
+        id: '5271c6b9-9280-4ca3-aef1-8543dce8dbe0',
         error: err,
       });
       toast.error(`Error al guardar la empresa: ${errorMessage}`, { position: 'top-center' });
@@ -233,7 +233,7 @@ export default function EmpresasPage() {
   };
 
   return (
-    <div className="p-6 w-full mx-auto">
+    <div className="w-full mx-auto">
       <h1 className="text-3xl text-blue-600 font-bold mb-8">Editar Empresa</h1>
 
       {loading ? (
@@ -241,193 +241,206 @@ export default function EmpresasPage() {
           <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
         </div>
       ) : error ? (
-        <div className="mb-4 p-4 bg-red-50 rounded-md">
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
           <p className="text-red-800">{error}</p>
           <Button
             variant="outline"
             onClick={() => navigate('/empresas')}
-            className="mt-4"
+            className="mt-4 text-base py-2 px-4"
           >
             Volver
           </Button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="name">Nombre</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Nombre de la empresa"
-                {...register('name', {
-                  required: 'Nombre es requerido',
-                })}
-              />
-              {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="ruc">RUC</Label>
-              <Input
-                id="ruc"
-                type="text"
-                placeholder="RUC"
-                {...register('ruc', {
-                  required: 'RUC es requerido',
-                  pattern: {
-                    value: /^\d{11}$/,
-                    message: 'RUC debe tener 11 dígitos',
-                  },
-                })}
-              />
-              {errors.ruc && <p className="text-red-600 text-sm">{errors.ruc.message}</p>}
-            </div>
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="razonSocial">Razón Social</Label>
-            <Input
-              id="razonSocial"
-              type="text"
-              placeholder="Razón Social"
-              {...register('razonSocial', {
-                required: 'Razón Social es requerida',
-              })}
-            />
-            {errors.razonSocial && <p className="text-red-600 text-sm">{errors.razonSocial.message}</p>}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="regionId">Región</Label>
-              <select
-                id="regionId"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register('regionId', { required: 'Región es requerida' })}
-                onChange={handleRegionChange}
-              >
-                <option value="">Selecciona una región</option>
-                {geolocation.regions.map((region) => (
-                  <option key={region.id} value={region.id.toString()}>
-                    {region.name}
-                  </option>
-                ))}
-              </select>
-              {errors.regionId && <p className="text-red-600 text-sm">{errors.regionId.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="provinceId">Provincia</Label>
-              <select
-                id="provinceId"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                {...register('provinceId', { required: 'Provincia es requerida' })}
-                onChange={handleProvinceChange}
-                disabled={!selectedRegion}
-              >
-                <option value="">Selecciona una provincia</option>
-                {availableProvinces.map((province) => (
-                  <option key={province.id} value={province.id.toString()}>
-                    {province.name}
-                  </option>
-                ))}
-              </select>
-              {errors.provinceId && <p className="text-red-600 text-sm">{errors.provinceId.message}</p>}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {/* General Information Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Información General</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="name">Nombre</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Nombre de la empresa"
+                  className="w-full text-base py-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('name', {
+                    required: 'Nombre es requerido',
+                  })}
+                />
+                {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="ruc">RUC</Label>
+                <Input
+                  id="ruc"
+                  type="text"
+                  placeholder="RUC"
+                  className="w-full text-base py-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('ruc', {
+                    required: 'RUC es requerido',
+                    pattern: {
+                      value: /^\d{11}$/,
+                      message: 'RUC debe tener 11 dígitos',
+                    },
+                  })}
+                />
+                {errors.ruc && <p className="text-red-600 text-sm">{errors.ruc.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2 md:col-span-2">
+                <Label htmlFor="razonSocial">Razón Social</Label>
+                <Input
+                  id="razonSocial"
+                  type="text"
+                  placeholder="Razón Social"
+                  className="w-full text-base py-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('razonSocial', {
+                    required: 'Razón Social es requerida',
+                  })}
+                />
+                {errors.razonSocial && <p className="text-red-600 text-sm">{errors.razonSocial.message}</p>}
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="districtId">Distrito</Label>
-              <select
-                id="districtId"
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                {...register('districtId', { required: 'Distrito es requerido' })}
-                disabled={!selectedProvince}
-              >
-                <option value="">Selecciona un distrito</option>
-                {availableDistricts.map((district) => (
-                  <option key={district.identifier} value={district.identifier}>
-                    {district.name}
-                  </option>
-                ))}
-              </select>
-              {errors.districtId && <p className="text-red-600 text-sm">{errors.districtId.message}</p>}
+          {/* Location Information Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Ubicación</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="regionId">Región</Label>
+                <select
+                  id="regionId"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('regionId', { required: 'Región es requerida' })}
+                  onChange={handleRegionChange}
+                >
+                  <option value="">Selecciona una región</option>
+                  {geolocation.regions.map((region) => (
+                    <option key={region.id} value={region.id.toString()}>
+                      {region.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.regionId && <p className="text-red-600 text-sm">{errors.regionId.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="provinceId">Provincia</Label>
+                <select
+                  id="provinceId"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('provinceId', { required: 'Provincia es requerida' })}
+                  onChange={handleProvinceChange}
+                  disabled={!selectedRegion}
+                >
+                  <option value="">Selecciona una provincia</option>
+                  {availableProvinces.map((province) => (
+                    <option key={province.id} value={province.id.toString()}>
+                      {province.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.provinceId && <p className="text-red-600 text-sm">{errors.provinceId.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2 md:col-span-2">
+                <Label htmlFor="districtId">Distrito</Label>
+                <select
+                  id="districtId"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('districtId', { required: 'Distrito es requerido' })}
+                  disabled={!selectedProvince}
+                >
+                  <option value="">Selecciona un distrito</option>
+                  {availableDistricts.map((district) => (
+                    <option key={district.identifier} value={district.identifier}>
+                      {district.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.districtId && <p className="text-red-600 text-sm">{errors.districtId.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2 md:col-span-2">
+                <Label htmlFor="address">Dirección</Label>
+                <Input
+                  id="address"
+                  type="text"
+                  placeholder="Dirección"
+                  className="w-full text-base py-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('address', {
+                    required: 'Dirección es requerida',
+                  })}
+                />
+                {errors.address && <p className="text-red-600 text-sm">{errors.address.message}</p>}
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="address">Dirección</Label>
-              <Input
-                id="address"
-                type="text"
-                placeholder="Dirección"
-                {...register('address', {
-                  required: 'Dirección es requerida',
-                })}
-              />
-              {errors.address && <p className="text-red-600 text-sm">{errors.address.message}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="phone">Teléfono</Label>
-              <Input
-                id="phone"
-                type="text"
-                placeholder="Teléfono"
-                {...register('phone', {
-                  required: 'Teléfono es requerido',
-                  pattern: {
-                    value: /^\+?\d{7,15}$/,
-                    message: 'Teléfono inválido',
-                  },
-                })}
-              />
-              {errors.phone && <p className="text-red-600 text-sm">{errors.phone.message}</p>}
+          {/* Contact and Description Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Contacto y Descripción</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="phone">Teléfono</Label>
+                <Input
+                  id="phone"
+                  type="text"
+                  placeholder="Teléfono"
+                  className="w-full text-base py-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('phone', {
+                    required: 'Teléfono es requerido',
+                    pattern: {
+                      value: /^\d{9}$/,
+                      message: 'Teléfono debe tener exactamente 9 dígitos',
+                    },
+                  })}
+                />
+                {errors.phone && <p className="text-red-600 text-sm">{errors.phone.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  className="w-full text-base py-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register('email', {
+                    required: 'Email es requerido',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: 'Email inválido',
+                    },
+                  })}
+                />
+                {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2 md:col-span-2">
+                <Label htmlFor="description">Descripción (Opcional)</Label>
+                <textarea
+                  id="description"
+                  placeholder="Descripción"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 h-[6rem]"
+                  {...register('description')}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Email"
-                {...register('email', {
-                  required: 'Email es requerido',
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Email inválido',
-                  },
-                })}
-              />
-              {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
-            </div>
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <Label htmlFor="description">Descripción (Opcional)</Label>
-            <textarea
-              id="description"
-              placeholder="Descripción"
-              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
-              {...register('description')}
-            />
-          </div>
-
-          <div className="flex justify-end gap-4 mt-6">
+          {/* Form Actions */}
+          <div className="flex justify-end gap-4 mt-8">
             <Button
               type="button"
               variant="outline"
               onClick={handleCancel}
               disabled={isSubmitting}
+              className="text-base py-2 px-4"
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="text-base py-2 px-4"
+            >
               {isSubmitting ? (
                 <div className="inline-flex items-center gap-2">
                   <Loader2 className="animate-spin h-5 w-5" />

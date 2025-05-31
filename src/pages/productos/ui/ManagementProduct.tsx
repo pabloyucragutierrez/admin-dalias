@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Loader2, Trash2, Upload } from 'lucide-react';
+import { Loader2, Trash2, Upload, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { createProduct, fetchProductById, updateProduct, fetchActiveCategories, fetchActiveBranches, fetchActiveBrands, fetchActiveUnits } from '@/services/products.service';
 import { useNavigate, useParams } from 'react-router';
@@ -131,7 +131,7 @@ export default function ManagementProduct() {
           })) || []
         );
       } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
         toast.error('Error al cargar datos: ' + errorMessage, { position: 'top-center' });
       }
     };
@@ -178,7 +178,7 @@ export default function ManagementProduct() {
             navigate('/products');
           }
         } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+          const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
           toast.error('Error al cargar el producto: ' + errorMessage, { position: 'top-center' });
           navigate('/products');
         } finally {
@@ -296,7 +296,7 @@ export default function ManagementProduct() {
       toast.success(response?.message, { position: 'top-center' });
       navigate('/products');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
       toast.error('Error al guardar el producto: ' + errorMessage, { position: 'top-center' });
     }
   };
@@ -306,7 +306,7 @@ export default function ManagementProduct() {
   };
 
   return (
-    <div className="p-6 w-full mx-auto">
+    <div className="w-full mx-auto">
       <h1 className="text-3xl text-blue-600 font-bold mb-6">
         {id && id !== 'new' ? 'Editar Producto' : 'Nuevo Producto'}
       </h1>
@@ -316,52 +316,101 @@ export default function ManagementProduct() {
           <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {/* Main Section: Name, Short Description, and Image */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Información Principal</h2>
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Name and Short Description */}
+              <div className="flex flex-col space-y-4 w-full md:w-2/3">
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="name">Nombre del Producto</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Introduce el nombre del producto"
+                    className="w-full text-base py-2"
+                    {...register('name', { required: 'El nombre es obligatorio' })}
+                  />
+                  {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="shortDescription">Descripción Corta</Label>
+                  <Editor
+                    className="bg-white border rounded-lg"
+                    ref={quillRef2}
+                    readOnly={false}
+                    value={valueShortDescrip}
+                    onTextChange={setValueShortDescrip}
+                  />
+                  {errors.shortDescription && <p className="text-red-600 text-sm">{errors.shortDescription.message}</p>}
+                </div>
+              </div>
+              {/* Main Image */}
+              <div className="flex flex-col space-y-2 w-full md:w-1/3">
+                <Label>Imagen Principal</Label>
+                <div
+                  onClick={handleClicPrincipalImage}
+                  className="relative border-2 border-dashed rounded-lg cursor-pointer overflow-hidden group flex items-center justify-center w-full h-48 bg-gray-50"
+                >
+                  {preview ? (
+                    <img
+                      src={preview}
+                      alt="Imagen principal"
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="flex flex-col justify-center gap-3 items-center px-6 text-center">
+                      <span className="text-gray-600 text-base">
+                        Selecciona una imagen principal
+                      </span>
+                      <Upload className="w-8 h-8 text-gray-600" />
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Basic Information Section */}
-          <div className="border rounded-md p-4 bg-white shadow-md">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Información Básica</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col space-y-1">
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Información Básica</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
                 <Label htmlFor="sku">SKU</Label>
                 <Input
                   id="sku"
                   type="text"
-                  placeholder="SKU"
-                  className="w-full max-w-md"
-                  {...register('sku', { required: 'SKU es requerido' })}
+                  placeholder="Introduce el SKU"
+                  className="w-full text-base py-2"
+                  {...register('sku', { required: 'El SKU es obligatorio' })}
                 />
                 {errors.sku && <p className="text-red-600 text-sm">{errors.sku.message}</p>}
               </div>
-              <div className="flex flex-col space-y-1">
-                <Label htmlFor="name">Nombre</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Nombre"
-                  className="w-full max-w-md"
-                  {...register('name', { required: 'Nombre es requerido' })}
-                />
-                {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 <Label htmlFor="codeBarras">Código de Barras</Label>
                 <Input
                   id="codeBarras"
                   type="text"
-                  placeholder="Código de Barras"
-                  className="w-full max-w-md"
-                  {...register('codeBarras', { required: 'Código de barras es requerido' })}
+                  placeholder="Introduce el código de barras"
+                  className="w-full text-base py-2"
+                  {...register('codeBarras', { required: 'El código de barras es obligatorio' })}
                 />
                 {errors.codeBarras && <p className="text-red-600 text-sm">{errors.codeBarras.message}</p>}
               </div>
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 <Label htmlFor="marcaId">Marca</Label>
                 <Controller
                   name="marcaId"
                   control={control}
-                  rules={{ required: 'Debe seleccionar una marca' }}
+                  rules={{ required: 'Debes seleccionar una marca' }}
                   render={({ field }) => (
                     <Select
                       options={brandOptions}
@@ -371,19 +420,18 @@ export default function ManagementProduct() {
                       isClearable
                       isSearchable
                       classNamePrefix="select"
+                      className="text-base"
                     />
                   )}
                 />
                 {errors.marcaId && <p className="text-red-600 text-sm">{errors.marcaId.message}</p>}
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 <Label htmlFor="unidadId">Unidad</Label>
                 <Controller
                   name="unidadId"
                   control={control}
-                  rules={{ required: 'Debe seleccionar una unidad' }}
+                  rules={{ required: 'Debes seleccionar una unidad' }}
                   render={({ field }) => (
                     <Select
                       options={unitOptions}
@@ -393,16 +441,17 @@ export default function ManagementProduct() {
                       isClearable
                       isSearchable
                       classNamePrefix="select"
+                      className="text-base"
                     />
                   )}
                 />
                 {errors.unidadId && <p className="text-red-600 text-sm">{errors.unidadId.message}</p>}
               </div>
             </div>
-            <div className="flex flex-col space-y-1 mt-4">
-              <Label htmlFor="description">Descripción</Label>
+            <div className="flex flex-col space-y-2 mt-6">
+              <Label htmlFor="description">Descripción Completa</Label>
               <Editor
-                className="bg-white"
+                className="bg-white border rounded-lg"
                 ref={quillRef}
                 readOnly={false}
                 value={valueDescrip}
@@ -410,81 +459,68 @@ export default function ManagementProduct() {
               />
               {errors.description && <p className="text-red-600 text-sm">{errors.description.message}</p>}
             </div>
-            <div className="flex flex-col space-y-1 mt-4">
-              <Label htmlFor="shortDescription">Descripción Corta</Label>
-              <Editor
-                className="bg-white"
-                ref={quillRef2}
-                readOnly={false}
-                value={valueShortDescrip}
-                onTextChange={setValueShortDescrip}
-              />
-              {errors.shortDescription && <p className="text-red-600 text-sm">{errors.shortDescription.message}</p>}
-            </div>
           </div>
 
           {/* Pricing and Offer Section */}
-          <div className="border rounded-md p-4 bg-white shadow-md">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Precios y Oferta</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col space-y-1">
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Precios y Oferta</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
                 <Label htmlFor="price">Precio</Label>
                 <Input
                   id="price"
                   type="number"
                   step="0.01"
-                  placeholder="Precio"
-                  className="w-full max-w-md"
+                  placeholder="Introduce el precio"
+                  className="w-full text-base py-2"
                   {...register('price', {
-                    required: 'Precio es requerido',
+                    required: 'El precio es obligatorio',
                     min: { value: 0, message: 'El precio no puede ser negativo' },
                     valueAsNumber: true,
                   })}
                 />
                 {errors.price && <p className="text-red-600 text-sm">{errors.price.message}</p>}
               </div>
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 <Label htmlFor="purchasePrice">Precio de Compra</Label>
                 <Input
                   id="purchasePrice"
                   type="number"
                   step="0.01"
-                  placeholder="Precio de Compra"
-                  className="w-full max-w-md"
+                  placeholder="Introduce el precio de compra"
+                  className="w-full text-base py-2"
                   {...register('purchasePrice', {
-                    required: 'Precio de compra es requerido',
+                    required: 'El precio de compra es obligatorio',
                     min: { value: 0, message: 'El precio de compra no puede ser negativo' },
                     valueAsNumber: true,
                   })}
                 />
                 {errors.purchasePrice && <p className="text-red-600 text-sm">{errors.purchasePrice.message}</p>}
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 <Label htmlFor="stock">Stock</Label>
                 <Input
                   id="stock"
                   type="number"
-                  placeholder="Stock"
-                  className="w-full max-w-md"
+                  placeholder="Introduce el stock"
+                  className="w-full text-base py-2"
                   {...register('stock', {
-                    required: 'Stock es requerido',
+                    required: 'El stock es obligatorio',
                     min: { value: 0, message: 'El stock no puede ser negativo' },
                     valueAsNumber: true,
                   })}
                 />
                 {errors.stock && <p className="text-red-600 text-sm">{errors.stock.message}</p>}
               </div>
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 <Label htmlFor="stockMin">Stock Mínimo</Label>
                 <Input
                   id="stockMin"
                   type="number"
-                  placeholder="Stock Mínimo"
-                  className="w-full max-w-md"
+                  placeholder="Introduce el stock mínimo"
+                  className="w-full text-base py-2"
                   {...register('stockMin', {
-                    required: 'Stock mínimo es requerido',
+                    required: 'El stock mínimo es obligatorio',
                     min: { value: 0, message: 'El stock mínimo no puede ser negativo' },
                     valueAsNumber: true,
                   })}
@@ -492,50 +528,50 @@ export default function ManagementProduct() {
                 {errors.stockMin && <p className="text-red-600 text-sm">{errors.stockMin.message}</p>}
               </div>
             </div>
-            <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-3 mt-6">
               <input
                 type="checkbox"
                 id="offer"
                 {...register('offer')}
-                className="rounded border-gray-300"
+                className="rounded border-gray-300 h-5 w-5"
               />
-              <Label htmlFor="offer" className="text-sm font-medium">Oferta</Label>
+              <Label htmlFor="offer" className="text-base font-medium">Oferta</Label>
             </div>
             {watch('offer') && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div className="flex flex-col space-y-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="flex flex-col space-y-2">
                   <Label htmlFor="discountedPrice">Precio con Descuento</Label>
                   <Input
                     id="discountedPrice"
                     type="number"
                     step="0.01"
-                    placeholder="Precio con Descuento"
-                    className="w-full max-w-md"
+                    placeholder="Introduce el precio con descuento"
+                    className="w-full text-base py-2"
                     {...register('discountedPrice', {
-                      required: 'Precio con descuento es requerido si está en oferta',
+                      required: 'El precio con descuento es obligatorio si está en oferta',
                       min: { value: 0, message: 'El precio con descuento no puede ser negativo' },
                       valueAsNumber: true,
                     })}
                   />
                   {errors.discountedPrice && <p className="text-red-600 text-sm">{errors.discountedPrice.message}</p>}
                 </div>
-                <div className="flex flex-col space-y-1">
+                <div className="flex flex-col space-y-2">
                   <Label htmlFor="priceDateFrom">Fecha Inicio Oferta</Label>
                   <Input
                     id="priceDateFrom"
                     type="datetime-local"
-                    className="w-full max-w-md"
-                    {...register('priceDateFrom', { required: 'Fecha de inicio es requerida si está en oferta' })}
+                    className="w-full text-base py-2"
+                    {...register('priceDateFrom', { required: 'La fecha de inicio es obligatoria si está en oferta' })}
                   />
                   {errors.priceDateFrom && <p className="text-red-600 text-sm">{errors.priceDateFrom.message}</p>}
                 </div>
-                <div className="flex flex-col space-y-1">
+                <div className="flex flex-col space-y-2">
                   <Label htmlFor="priceDateTo">Fecha Fin Oferta</Label>
                   <Input
                     id="priceDateTo"
                     type="datetime-local"
-                    className="w-full max-w-md"
-                    {...register('priceDateTo', { required: 'Fecha de fin es requerida si está en oferta' })}
+                    className="w-full text-base py-2"
+                    {...register('priceDateTo', { required: 'La fecha de fin es obligatoria si está en oferta' })}
                   />
                   {errors.priceDateTo && <p className="text-red-600 text-sm">{errors.priceDateTo.message}</p>}
                 </div>
@@ -543,41 +579,11 @@ export default function ManagementProduct() {
             )}
           </div>
 
-          {/* Images Section */}
-          <div className="border rounded-md p-4 bg-white shadow-md">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Imágenes</h2>
-            <div className="flex flex-col space-y-1">
-              <Label>Imagen Principal</Label>
-              <div
-                onClick={handleClicPrincipalImage}
-                className="relative border border-dashed rounded cursor-pointer overflow-hidden group flex items-center justify-center w-64 h-64 bg-white"
-              >
-                {preview ? (
-                  <img
-                    src={preview}
-                    alt="Imagen principal"
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <div className="flex flex-col justify-center gap-2 items-center px-4 text-center">
-                    <span className="text-gray-600 text-pretty">
-                      Seleccionar imagen principal
-                    </span>
-                    <Upload className="w-8 h-8 text-gray-600" />
-                  </div>
-                )}
-              </div>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                accept="image/*"
-                className="hidden"
-              />
-            </div>
-            <div className="flex flex-col space-y-1 mt-4">
-              <Label>Galería de Imágenes</Label>
-              <div className="flex flex-wrap gap-2">
+          {/* Gallery Images Section */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Galería de Imágenes</h2>
+            <div className="flex flex-col space-y-2">
+              <div className="flex flex-wrap items-center gap-4">
                 {gallery.map((_, index) => (
                   <div key={index} className="relative group">
                     <img
@@ -587,50 +593,58 @@ export default function ManagementProduct() {
                           : URL.createObjectURL(gallery[index] as File)
                       }
                       alt={`Imagen ${index + 1}`}
-                      className="w-full h-32 object-cover rounded shadow"
+                      className="w-40 h-40 object-cover rounded-lg shadow-md"
                     />
                     <button
                       type="button"
                       onClick={() => removeGaleryImage(index)}
-                      className="absolute top-1 right-1 text-white rounded-full p-1 text-xs hover:bg-red-700"
+                      className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition"
                     >
-                      <Trash2 className="w-5 h-5 text-red-600 hover:text-white" />
+                      <Trash2 className="w-5 h-5" />
                     </button>
                   </div>
                 ))}
-              </div>
-              <div
-                onClick={handleClicGaleryImage}
-                className="relative border border-dashed rounded cursor-pointer overflow-hidden group flex items-center justify-center w-60 h-60 bg-white mt-4"
-              >
-                <div className="flex flex-col justify-center gap-2 items-center px-4 text-center">
-                  <span className="text-gray-600 text-pretty">
-                    Seleccionar imagen para galería
-                  </span>
-                  <Upload className="w-8 h-8 text-gray-600" />
+                <div
+                  onClick={handleClicGaleryImage}
+                  className={`flex items-center justify-center ${
+                    gallery.length > 0
+                      ? 'w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 transition'
+                      : 'w-40 h-40 border-2 border-dashed rounded-lg bg-gray-50'
+                  } cursor-pointer overflow-hidden group`}
+                >
+                  {gallery.length > 0 ? (
+                    <Plus className="w-6 h-6 text-white" />
+                  ) : (
+                    <div className="flex flex-col justify-center gap-3 items-center px-6 text-center">
+                      <span className="text-gray-600 text-base">
+                        Añadir imagen a galería
+                      </span>
+                      <Upload className="w-8 h-8 text-gray-600" />
+                    </div>
+                  )}
                 </div>
+                <input
+                  type="file"
+                  multiple
+                  ref={fileInputGaleryRef}
+                  onChange={handleGaleryImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
               </div>
-              <input
-                type="file"
-                multiple
-                ref={fileInputGaleryRef}
-                onChange={handleGaleryImageChange}
-                accept="image/*"
-                className="hidden"
-              />
             </div>
           </div>
 
           {/* Categories and Branches Section */}
-          <div className="border rounded-md p-4 bg-white shadow-md">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Categorías y Sucursales</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col space-y-1">
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Categorías y Sucursales</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
                 <Label>Categorías</Label>
                 <Controller
                   name="categoriesId"
                   control={control}
-                  rules={{ required: 'Debe seleccionar al menos una categoría' }}
+                  rules={{ required: 'Debes seleccionar al menos una categoría' }}
                   render={({ field }) => (
                     <Select
                       isMulti
@@ -644,17 +658,18 @@ export default function ManagementProduct() {
                       isClearable
                       isSearchable
                       classNamePrefix="select"
+                      className="text-base"
                     />
                   )}
                 />
                 {errors.categoriesId && <p className="text-red-600 text-sm">{errors.categoriesId.message}</p>}
               </div>
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 <Label>Sucursales</Label>
                 <Controller
                   name="sucursalesId"
                   control={control}
-                  rules={{ required: 'Debe seleccionar al menos una sucursal' }}
+                  rules={{ required: 'Debes seleccionar al menos una sucursal' }}
                   render={({ field }) => (
                     <Select
                       isMulti
@@ -668,6 +683,7 @@ export default function ManagementProduct() {
                       isClearable
                       isSearchable
                       classNamePrefix="select"
+                      className="text-base"
                     />
                   )}
                 />
@@ -677,16 +693,21 @@ export default function ManagementProduct() {
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end gap-4 mt-6">
+          <div className="flex justify-end gap-4 mt-8">
             <Button
               type="button"
               variant="outline"
               onClick={handleCancel}
               disabled={isSubmitting}
+              className="text-base py-2 px-6"
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="text-base py-2 px-6"
+            >
               {isSubmitting ? (
                 <div className="inline-flex items-center gap-2">
                   <Loader2 className="animate-spin h-5 w-5" />
