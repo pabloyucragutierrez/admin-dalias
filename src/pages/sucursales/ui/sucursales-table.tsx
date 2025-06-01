@@ -1,9 +1,9 @@
-import { Badge } from '@/components/ui/badge';
-import type { Sucursales } from '@/interfaces/sucursales.interface';
-import { formatDateTime } from '@/utils';
-import { BadgeCheck, ChevronDown, Edit, FolderX, Trash2 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Badge } from "@/components/ui/badge";
+import type { Sucursales } from "@/interfaces/sucursales.interface";
+import { formatDateTime } from "@/utils";
+import { BadgeCheck, ChevronDown, Edit, FolderX, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 
 interface SucursalesTableProps {
   sucursales: Sucursales[];
@@ -27,8 +27,6 @@ const SucursalesTable: React.FC<SucursalesTableProps> = ({
   hasMore,
   fetchMoreSucursales,
   selectedSucursales,
-  toggleSucursalSelection,
-  selectAllSucursales,
   changeStatusFn,
   deleteFn,
 }) => {
@@ -36,35 +34,40 @@ const SucursalesTable: React.FC<SucursalesTableProps> = ({
   const observer = useRef<IntersectionObserver | null>(null);
 
   const availableColumns = [
-    { id: 'code', label: 'Código' },
-    { id: 'name', label: 'Nombre' },
-    { id: 'district', label: 'Distrito' },
-    { id: 'address', label: 'Dirección' },
-    { id: 'phone', label: 'Teléfono' },
-    { id: 'createAt', label: 'Fecha de creación' },
+    { id: "code", label: "Código" },
+    { id: "name", label: "Nombre" },
+    { id: "district", label: "Distrito" },
+    { id: "address", label: "Dirección" },
+    { id: "phone", label: "Teléfono" },
+    { id: "createAt", label: "Fecha de creación" },
   ];
 
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(() => {
-    const initialVisibility: ColumnVisibility = {};
-    availableColumns.forEach((column) => {
-      initialVisibility[column.id] = true;
-    });
-    return initialVisibility;
-  });
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
+    () => {
+      const initialVisibility: ColumnVisibility = {};
+      availableColumns.forEach((column) => {
+        initialVisibility[column.id] = true;
+      });
+      return initialVisibility;
+    }
+  );
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -116,7 +119,9 @@ const SucursalesTable: React.FC<SucursalesTableProps> = ({
             <span>Columnas</span>
             <ChevronDown
               size={16}
-              className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+              className={`transition-transform duration-200 ${
+                dropdownOpen ? "rotate-180" : ""
+              }`}
             />
           </div>
 
@@ -124,7 +129,10 @@ const SucursalesTable: React.FC<SucursalesTableProps> = ({
             <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-md z-10 border border-gray-200">
               <div className="p-3 min-w-[240px]">
                 {availableColumns.map((column) => (
-                  <div key={column.id} className="flex items-center gap-2 py-1 cursor-pointer">
+                  <div
+                    key={column.id}
+                    className="flex items-center gap-2 py-1 cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       id={`column-${column.id}`}
@@ -132,7 +140,10 @@ const SucursalesTable: React.FC<SucursalesTableProps> = ({
                       onChange={() => toggleColumnVisibility(column.id)}
                       className="rounded border-gray-300"
                     />
-                    <label htmlFor={`column-${column.id}`} className="text-sm text-gray-700">
+                    <label
+                      htmlFor={`column-${column.id}`}
+                      className="text-sm text-gray-700"
+                    >
                       {column.label}
                     </label>
                   </div>
@@ -214,12 +225,20 @@ const SucursalesTable: React.FC<SucursalesTableProps> = ({
               {uniqueSucursales.map((sucursal, index) => (
                 <tr
                   key={`${sucursal.id}-${index}`}
-                  ref={index === uniqueSucursales.length - 1 ? lastSucursalRef : null}
-                  className={selectedSucursales.includes(sucursal.id) ? 'bg-blue-50' : ''}
+                  ref={
+                    index === uniqueSucursales.length - 1
+                      ? lastSucursalRef
+                      : null
+                  }
+                  className={
+                    selectedSucursales.includes(sucursal.id) ? "bg-blue-50" : ""
+                  }
                 >
                   {columnVisibility.code && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{sucursal.code}</div>
+                      <div className="text-sm text-gray-500">
+                        {sucursal.code}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.name && (
@@ -235,27 +254,37 @@ const SucursalesTable: React.FC<SucursalesTableProps> = ({
                   )}
                   {columnVisibility.district && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{sucursal.district}</div>
+                      <div className="text-sm text-gray-500">
+                        {sucursal.district}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.address && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{sucursal.address}</div>
+                      <div className="text-sm text-gray-500">
+                        {sucursal.address}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.phone && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{sucursal.phone}</div>
+                      <div className="text-sm text-gray-500">
+                        {sucursal.phone}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.createAt && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{formatDateTime(sucursal.createAt)}</div>
+                      <div className="text-sm text-gray-500">
+                        {formatDateTime(sucursal.createAt)}
+                      </div>
                     </td>
                   )}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={sucursal.status ? 'success' : 'destructive'}>
-                      {sucursal.status ? 'Activa' : 'Inactiva'}
+                    <Badge
+                      variant={sucursal.status ? "success" : "destructive"}
+                    >
+                      {sucursal.status ? "Activa" : "Inactiva"}
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

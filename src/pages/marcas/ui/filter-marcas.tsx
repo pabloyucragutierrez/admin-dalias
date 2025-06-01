@@ -16,7 +16,7 @@ const FilterMarcas: React.FC<FilterUnidadesProps> = ({
 }) => {
   const [filters, setFilters] = useState<FilterOptionsUnidades>({
     name: initialFilters.name || "",
-    status: initialFilters.status || "",
+    state: initialFilters.state || "",
   });
 
   const handleChange = (
@@ -46,7 +46,7 @@ const FilterMarcas: React.FC<FilterUnidadesProps> = ({
   const handleClear = () => {
     setFilters({
       name: "",
-      status: "",
+      state: "",
     });
     onClearFilters();
   };
@@ -86,8 +86,8 @@ const FilterMarcas: React.FC<FilterUnidadesProps> = ({
             </label>
             <select
               id="state"
-              name="status"
-              value={filters.status}
+              name="state"
+              value={filters.state}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             >
@@ -125,7 +125,7 @@ const FilterMarcas: React.FC<FilterUnidadesProps> = ({
               className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800"
             >
               {key === "name" && <span className="mr-1">Nombre: </span>}
-              {key === "status" && <span className="mr-1">Estado: </span>}
+              {key === "state" && <span className="mr-1">Estado: </span>}
               {value}
             </div>
           ) : null

@@ -1,10 +1,10 @@
 // File: src/components/empresas/ui/empresas-table.tsx
-import { Badge } from '@/components/ui/badge';
-import type { Empresa } from '@/interfaces/empresas.interface';
-import { formatDateTime } from '@/utils';
-import { BadgeCheck, ChevronDown, Edit, FolderX, Trash2 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Badge } from "@/components/ui/badge";
+import type { Empresa } from "@/interfaces/empresas.interface";
+import { formatDateTime } from "@/utils";
+import { BadgeCheck, ChevronDown, Edit, FolderX, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 
 interface EmpresasTableProps {
   empresas: Empresa[];
@@ -28,8 +28,6 @@ const EmpresasTable: React.FC<EmpresasTableProps> = ({
   hasMore,
   fetchMoreEmpresas,
   selectedEmpresas,
-  toggleEmpresaSelection,
-  selectAllEmpresas,
   changeStatusFn,
   deleteFn,
 }) => {
@@ -37,36 +35,41 @@ const EmpresasTable: React.FC<EmpresasTableProps> = ({
   const observer = useRef<IntersectionObserver | null>(null);
 
   const availableColumns = [
-    { id: 'name', label: 'Nombre' },
-    { id: 'ruc', label: 'RUC' },
-    { id: 'razonSocial', label: 'Razón Social' },
-    { id: 'district', label: 'Distrito' },
-    { id: 'phone', label: 'Teléfono' },
-    { id: 'email', label: 'Email' },
-    { id: 'createAt', label: 'Fecha de creación' },
+    { id: "name", label: "Nombre" },
+    { id: "ruc", label: "RUC" },
+    { id: "razonSocial", label: "Razón Social" },
+    { id: "district", label: "Distrito" },
+    { id: "phone", label: "Teléfono" },
+    { id: "email", label: "Email" },
+    { id: "createAt", label: "Fecha de creación" },
   ];
 
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(() => {
-    const initialVisibility: ColumnVisibility = {};
-    availableColumns.forEach((column) => {
-      initialVisibility[column.id] = true;
-    });
-    return initialVisibility;
-  });
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
+    () => {
+      const initialVisibility: ColumnVisibility = {};
+      availableColumns.forEach((column) => {
+        initialVisibility[column.id] = true;
+      });
+      return initialVisibility;
+    }
+  );
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -118,7 +121,9 @@ const EmpresasTable: React.FC<EmpresasTableProps> = ({
             <span>Columnas</span>
             <ChevronDown
               size={16}
-              className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+              className={`transition-transform duration-200 ${
+                dropdownOpen ? "rotate-180" : ""
+              }`}
             />
           </div>
 
@@ -126,7 +131,10 @@ const EmpresasTable: React.FC<EmpresasTableProps> = ({
             <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-md z-10 border border-gray-200">
               <div className="p-3 min-w-[240px]">
                 {availableColumns.map((column) => (
-                  <div key={column.id} className="flex items-center gap-2 py-1 cursor-pointer">
+                  <div
+                    key={column.id}
+                    className="flex items-center gap-2 py-1 cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       id={`column-${column.id}`}
@@ -134,7 +142,10 @@ const EmpresasTable: React.FC<EmpresasTableProps> = ({
                       onChange={() => toggleColumnVisibility(column.id)}
                       className="rounded border-gray-300"
                     />
-                    <label htmlFor={`column-${column.id}`} className="text-sm text-gray-700">
+                    <label
+                      htmlFor={`column-${column.id}`}
+                      className="text-sm text-gray-700"
+                    >
                       {column.label}
                     </label>
                   </div>
@@ -224,8 +235,12 @@ const EmpresasTable: React.FC<EmpresasTableProps> = ({
               {uniqueEmpresas.map((empresa, index) => (
                 <tr
                   key={`${empresa.id}-${index}`}
-                  ref={index === uniqueEmpresas.length - 1 ? lastEmpresaRef : null}
-                  className={selectedEmpresas.includes(empresa.id) ? 'bg-blue-50' : ''}
+                  ref={
+                    index === uniqueEmpresas.length - 1 ? lastEmpresaRef : null
+                  }
+                  className={
+                    selectedEmpresas.includes(empresa.id) ? "bg-blue-50" : ""
+                  }
                 >
                   {columnVisibility.name && (
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -245,32 +260,42 @@ const EmpresasTable: React.FC<EmpresasTableProps> = ({
                   )}
                   {columnVisibility.razonSocial && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{empresa.razonSocial}</div>
+                      <div className="text-sm text-gray-500">
+                        {empresa.razonSocial}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.district && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{empresa.district}</div>
+                      <div className="text-sm text-gray-500">
+                        {empresa.district}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.phone && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{empresa.phone}</div>
+                      <div className="text-sm text-gray-500">
+                        {empresa.phone}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.email && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{empresa.email}</div>
+                      <div className="text-sm text-gray-500">
+                        {empresa.email}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.createAt && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{formatDateTime(empresa.createAt)}</div>
+                      <div className="text-sm text-gray-500">
+                        {formatDateTime(empresa.createAt)}
+                      </div>
                     </td>
                   )}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={empresa.status ? 'success' : 'destructive'}>
-                      {empresa.status ? 'Activa' : 'Inactiva'}
+                    <Badge variant={empresa.status ? "success" : "destructive"}>
+                      {empresa.status ? "Activa" : "Inactiva"}
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

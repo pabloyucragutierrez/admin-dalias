@@ -1,16 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Loader2, Trash2, Upload, Plus } from 'lucide-react';
-import { toast } from 'sonner';
-import { createProduct, fetchProductById, updateProduct, fetchActiveCategories, fetchActiveBranches, fetchActiveBrands, fetchActiveUnits } from '@/services/products.service';
-import { useNavigate, useParams } from 'react-router';
-import type { ProductDto, Category, Branch, Brand, Unit } from '@/interfaces/products.interface';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import Select from 'react-select';
-import Quill from 'quill';
-import Editor from '@/components/editor';
+import { useEffect, useRef, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Loader2, Trash2, Upload, Plus } from "lucide-react";
+import { toast } from "sonner";
+import {
+  createProduct,
+  fetchProductById,
+  updateProduct,
+  fetchActiveCategories,
+  fetchActiveBranches,
+  fetchActiveBrands,
+  fetchActiveUnits,
+} from "@/services/products.service";
+import { useNavigate, useParams } from "react-router";
+import type { ProductDto } from "@/interfaces/products.interface";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Select from "react-select";
+import Quill from "quill";
+import Editor from "@/components/editor";
 
 interface OptionSelect {
   label: string;
@@ -43,15 +51,12 @@ export default function ManagementProduct() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [branches, setBranches] = useState<Branch[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [units, setUnits] = useState<Unit[]>([]);
+
   const [categoryOptions, setCategoryOptions] = useState<OptionSelect[]>([]);
   const [branchOptions, setBranchOptions] = useState<OptionSelect[]>([]);
   const [brandOptions, setBrandOptions] = useState<OptionSelect[]>([]);
   const [unitOptions, setUnitOptions] = useState<OptionSelect[]>([]);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
   const [preview, setPreview] = useState<string | null>(null);
   const [gallery, setGallery] = useState<(string | File)[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -71,19 +76,19 @@ export default function ManagementProduct() {
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>({
     defaultValues: {
-      sku: '',
-      name: '',
-      codeBarras: '',
-      description: '',
-      shortDescription: '',
-      marcaId: '',
-      unidadId: '',
+      sku: "",
+      name: "",
+      codeBarras: "",
+      description: "",
+      shortDescription: "",
+      marcaId: "",
+      unidadId: "",
       price: 0,
       purchasePrice: 0,
       offer: false,
       discountedPrice: 0,
-      priceDateFrom: '',
-      priceDateTo: '',
+      priceDateFrom: "",
+      priceDateTo: "",
       stock: 0,
       stockMin: 0,
       categoriesId: [],
@@ -96,16 +101,13 @@ export default function ManagementProduct() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [activeCategories, activeBranches, activeBrands, activeUnits] = await Promise.all([
-          fetchActiveCategories(),
-          fetchActiveBranches(),
-          fetchActiveBrands(),
-          fetchActiveUnits(),
-        ]);
-        setCategories(activeCategories || []);
-        setBranches(activeBranches || []);
-        setBrands(activeBrands || []);
-        setUnits(activeUnits || []);
+        const [activeCategories, activeBranches, activeBrands, activeUnits] =
+          await Promise.all([
+            fetchActiveCategories(),
+            fetchActiveBranches(),
+            fetchActiveBrands(),
+            fetchActiveUnits(),
+          ]);
         setCategoryOptions(
           activeCategories?.map((cat) => ({
             label: cat.name,
@@ -131,14 +133,17 @@ export default function ManagementProduct() {
           })) || []
         );
       } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-        toast.error('Error al cargar datos: ' + errorMessage, { position: 'top-center' });
+        const errorMessage =
+          err instanceof Error ? err.message : "Error desconocido";
+        toast.error("Error al cargar datos: " + errorMessage, {
+          position: "top-center",
+        });
       }
     };
 
     loadData();
 
-    if (id && id !== 'new') {
+    if (id && id !== "new") {
       const loadProduct = async () => {
         setLoading(true);
         try {
@@ -156,17 +161,29 @@ export default function ManagementProduct() {
               purchasePrice: product.purchasePrice,
               offer: product.offer,
               discountedPrice: product.discountedPrice,
-              priceDateFrom: product.priceDateFrom ? new Date(product.priceDateFrom).toISOString().slice(0, 16) : '',
-              priceDateTo: product.priceDateTo ? new Date(product.priceDateTo).toISOString().slice(0, 16) : '',
+              priceDateFrom: product.priceDateFrom
+                ? new Date(product.priceDateFrom).toISOString().slice(0, 16)
+                : "",
+              priceDateTo: product.priceDateTo
+                ? new Date(product.priceDateTo).toISOString().slice(0, 16)
+                : "",
               stock: product.stock,
               stockMin: product.stockMin,
-              categoriesId: product.ProductCategories.map((cat) => cat.categoryId),
-              sucursalesId: product.ProductSucursales.map((suc) => suc.sucursalId),
+              categoriesId: product.ProductCategories.map(
+                (cat) => cat.categoryId
+              ),
+              sucursalesId: product.ProductSucursales.map(
+                (suc) => suc.sucursalId
+              ),
             });
             setValueDescrip(product.description);
             setValueShortDescrip(product.shortDescription);
-            const mainImage = product.ProductImages.find((img) => img.typeImage === 'THUMBNAIL')?.url;
-            const galleryImages = product.ProductImages.filter((img) => img.typeImage === 'GALLERY').map((img) => img.url);
+            const mainImage = product.ProductImages.find(
+              (img) => img.typeImage === "THUMBNAIL"
+            )?.url;
+            const galleryImages = product.ProductImages.filter(
+              (img) => img.typeImage === "GALLERY"
+            ).map((img) => img.url);
             if (mainImage) {
               setPreview(mainImage);
             }
@@ -174,13 +191,18 @@ export default function ManagementProduct() {
               setGallery(galleryImages);
             }
           } else {
-            toast.error('Error al cargar el producto', { position: 'top-center' });
-            navigate('/products');
+            toast.error("Error al cargar el producto", {
+              position: "top-center",
+            });
+            navigate("/products");
           }
         } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-          toast.error('Error al cargar el producto: ' + errorMessage, { position: 'top-center' });
-          navigate('/products');
+          const errorMessage =
+            err instanceof Error ? err.message : "Error desconocido";
+          toast.error("Error al cargar el producto: " + errorMessage, {
+            position: "top-center",
+          });
+          navigate("/products");
         } finally {
           setLoading(false);
         }
@@ -200,11 +222,10 @@ export default function ManagementProduct() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      setSelectedImage(file);
-      setValue('file', file);
+      setValue("file", file);
       setPreview(URL.createObjectURL(file));
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = "";
       }
     }
   };
@@ -213,50 +234,65 @@ export default function ManagementProduct() {
     if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
       if (gallery.length + filesArray.length > 5) {
-        toast.warning('Máximo se pueden subir 5 imágenes para la galería.', { position: 'top-center' });
+        toast.warning("Máximo se pueden subir 5 imágenes para la galería.", {
+          position: "top-center",
+        });
         return;
       }
       setGallery((prev) => [...prev, ...filesArray]);
-      setValue('imageGalery', filesArray);
+      setValue("imageGalery", filesArray);
       if (fileInputGaleryRef.current) {
-        fileInputGaleryRef.current.value = '';
+        fileInputGaleryRef.current.value = "";
       }
     }
   };
 
   const removeGaleryImage = (index: number) => {
     setGallery((prev) => prev.filter((_, imgIndex) => imgIndex !== index));
-    setValue('imageGalery', gallery.filter((_, imgIndex) => imgIndex !== index) as File[]);
+    setValue(
+      "imageGalery",
+      gallery.filter((_, imgIndex) => imgIndex !== index) as File[]
+    );
   };
 
   const onSubmit = async (values: FormInputs) => {
     if (values.categoriesId.length === 0) {
-      toast.warning('Debe seleccionar al menos una categoría', { position: 'top-center' });
+      toast.warning("Debe seleccionar al menos una categoría", {
+        position: "top-center",
+      });
       return;
     }
     if (values.sucursalesId.length === 0) {
-      toast.warning('Debe seleccionar al menos una sucursal', { position: 'top-center' });
+      toast.warning("Debe seleccionar al menos una sucursal", {
+        position: "top-center",
+      });
       return;
     }
     if (!values.marcaId) {
-      toast.warning('Debe seleccionar una marca', { position: 'top-center' });
+      toast.warning("Debe seleccionar una marca", { position: "top-center" });
       return;
     }
     if (!values.unidadId) {
-      toast.warning('Debe seleccionar una unidad', { position: 'top-center' });
+      toast.warning("Debe seleccionar una unidad", { position: "top-center" });
       return;
     }
     if (!valueDescrip) {
-      toast.warning('Es necesario agregar una descripción del producto', { position: 'top-center' });
+      toast.warning("Es necesario agregar una descripción del producto", {
+        position: "top-center",
+      });
       return;
     }
     if (!valueShortDescrip) {
-      toast.warning('Es necesario agregar una descripción corta del producto', { position: 'top-center' });
+      toast.warning("Es necesario agregar una descripción corta del producto", {
+        position: "top-center",
+      });
       return;
     }
-    if (!id || id === 'new') {
+    if (!id || id === "new") {
       if (!values.file) {
-        toast.warning('Es necesario subir una imagen principal del producto', { position: 'top-center' });
+        toast.warning("Es necesario subir una imagen principal del producto", {
+          position: "top-center",
+        });
         return;
       }
     }
@@ -273,8 +309,8 @@ export default function ManagementProduct() {
       purchasePrice: values.purchasePrice,
       offer: values.offer,
       discountedPrice: values.offer ? values.discountedPrice : 0,
-      priceDateFrom: values.priceDateFrom || '',
-      priceDateTo: values.priceDateTo || '',
+      priceDateFrom: values.priceDateFrom || "",
+      priceDateTo: values.priceDateTo || "",
       stock: values.stock,
       stockMin: values.stockMin,
       categoriesId: values.categoriesId,
@@ -284,31 +320,35 @@ export default function ManagementProduct() {
     };
 
     try {
-      const response = id && id !== 'new'
-        ? await updateProduct(id, payload)
-        : await createProduct(payload);
+      const response =
+        id && id !== "new"
+          ? await updateProduct(id, payload)
+          : await createProduct(payload);
 
       if (!response?.success) {
-        toast.warning(response?.message, { position: 'top-center' });
+        toast.warning(response?.message, { position: "top-center" });
         return;
       }
 
-      toast.success(response?.message, { position: 'top-center' });
-      navigate('/products');
+      toast.success(response?.message, { position: "top-center" });
+      navigate("/products");
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      toast.error('Error al guardar el producto: ' + errorMessage, { position: 'top-center' });
+      const errorMessage =
+        err instanceof Error ? err.message : "Error desconocido";
+      toast.error("Error al guardar el producto: " + errorMessage, {
+        position: "top-center",
+      });
     }
   };
 
   const handleCancel = () => {
-    navigate('/products');
+    navigate("/products");
   };
 
   return (
     <div className="w-full mx-auto">
       <h1 className="text-3xl text-blue-600 font-bold mb-6">
-        {id && id !== 'new' ? 'Editar Producto' : 'Nuevo Producto'}
+        {id && id !== "new" ? "Editar Producto" : "Nuevo Producto"}
       </h1>
 
       {loading ? (
@@ -319,7 +359,9 @@ export default function ManagementProduct() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Main Section: Name, Short Description, and Image */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">Información Principal</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Información Principal
+            </h2>
             <div className="flex flex-col md:flex-row gap-6">
               {/* Name and Short Description */}
               <div className="flex flex-col space-y-4 w-full md:w-2/3">
@@ -330,9 +372,15 @@ export default function ManagementProduct() {
                     type="text"
                     placeholder="Introduce el nombre del producto"
                     className="w-full text-base py-2"
-                    {...register('name', { required: 'El nombre es obligatorio' })}
+                    {...register("name", {
+                      required: "El nombre es obligatorio",
+                    })}
                   />
-                  {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
+                  {errors.name && (
+                    <p className="text-red-600 text-sm">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col space-y-2">
                   <Label htmlFor="shortDescription">Descripción Corta</Label>
@@ -343,7 +391,11 @@ export default function ManagementProduct() {
                     value={valueShortDescrip}
                     onTextChange={setValueShortDescrip}
                   />
-                  {errors.shortDescription && <p className="text-red-600 text-sm">{errors.shortDescription.message}</p>}
+                  {errors.shortDescription && (
+                    <p className="text-red-600 text-sm">
+                      {errors.shortDescription.message}
+                    </p>
+                  )}
                 </div>
               </div>
               {/* Main Image */}
@@ -381,7 +433,9 @@ export default function ManagementProduct() {
 
           {/* Basic Information Section */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">Información Básica</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Información Básica
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="sku">SKU</Label>
@@ -390,9 +444,11 @@ export default function ManagementProduct() {
                   type="text"
                   placeholder="Introduce el SKU"
                   className="w-full text-base py-2"
-                  {...register('sku', { required: 'El SKU es obligatorio' })}
+                  {...register("sku", { required: "El SKU es obligatorio" })}
                 />
-                {errors.sku && <p className="text-red-600 text-sm">{errors.sku.message}</p>}
+                {errors.sku && (
+                  <p className="text-red-600 text-sm">{errors.sku.message}</p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="codeBarras">Código de Barras</Label>
@@ -401,21 +457,33 @@ export default function ManagementProduct() {
                   type="text"
                   placeholder="Introduce el código de barras"
                   className="w-full text-base py-2"
-                  {...register('codeBarras', { required: 'El código de barras es obligatorio' })}
+                  {...register("codeBarras", {
+                    required: "El código de barras es obligatorio",
+                  })}
                 />
-                {errors.codeBarras && <p className="text-red-600 text-sm">{errors.codeBarras.message}</p>}
+                {errors.codeBarras && (
+                  <p className="text-red-600 text-sm">
+                    {errors.codeBarras.message}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="marcaId">Marca</Label>
                 <Controller
                   name="marcaId"
                   control={control}
-                  rules={{ required: 'Debes seleccionar una marca' }}
+                  rules={{ required: "Debes seleccionar una marca" }}
                   render={({ field }) => (
                     <Select
                       options={brandOptions}
-                      value={brandOptions.find((option) => option.value === field.value) || null}
-                      onChange={(selected) => field.onChange(selected ? selected.value : '')}
+                      value={
+                        brandOptions.find(
+                          (option) => option.value === field.value
+                        ) || null
+                      }
+                      onChange={(selected) =>
+                        field.onChange(selected ? selected.value : "")
+                      }
                       placeholder="Selecciona una marca"
                       isClearable
                       isSearchable
@@ -424,19 +492,29 @@ export default function ManagementProduct() {
                     />
                   )}
                 />
-                {errors.marcaId && <p className="text-red-600 text-sm">{errors.marcaId.message}</p>}
+                {errors.marcaId && (
+                  <p className="text-red-600 text-sm">
+                    {errors.marcaId.message}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="unidadId">Unidad</Label>
                 <Controller
                   name="unidadId"
                   control={control}
-                  rules={{ required: 'Debes seleccionar una unidad' }}
+                  rules={{ required: "Debes seleccionar una unidad" }}
                   render={({ field }) => (
                     <Select
                       options={unitOptions}
-                      value={unitOptions.find((option) => option.value === field.value) || null}
-                      onChange={(selected) => field.onChange(selected ? selected.value : '')}
+                      value={
+                        unitOptions.find(
+                          (option) => option.value === field.value
+                        ) || null
+                      }
+                      onChange={(selected) =>
+                        field.onChange(selected ? selected.value : "")
+                      }
                       placeholder="Selecciona una unidad"
                       isClearable
                       isSearchable
@@ -445,7 +523,11 @@ export default function ManagementProduct() {
                     />
                   )}
                 />
-                {errors.unidadId && <p className="text-red-600 text-sm">{errors.unidadId.message}</p>}
+                {errors.unidadId && (
+                  <p className="text-red-600 text-sm">
+                    {errors.unidadId.message}
+                  </p>
+                )}
               </div>
             </div>
             <div className="flex flex-col space-y-2 mt-6">
@@ -457,13 +539,19 @@ export default function ManagementProduct() {
                 value={valueDescrip}
                 onTextChange={setValueDescrip}
               />
-              {errors.description && <p className="text-red-600 text-sm">{errors.description.message}</p>}
+              {errors.description && (
+                <p className="text-red-600 text-sm">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Pricing and Offer Section */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">Precios y Oferta</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Precios y Oferta
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="price">Precio</Label>
@@ -473,13 +561,18 @@ export default function ManagementProduct() {
                   step="0.01"
                   placeholder="Introduce el precio"
                   className="w-full text-base py-2"
-                  {...register('price', {
-                    required: 'El precio es obligatorio',
-                    min: { value: 0, message: 'El precio no puede ser negativo' },
+                  {...register("price", {
+                    required: "El precio es obligatorio",
+                    min: {
+                      value: 0,
+                      message: "El precio no puede ser negativo",
+                    },
                     valueAsNumber: true,
                   })}
                 />
-                {errors.price && <p className="text-red-600 text-sm">{errors.price.message}</p>}
+                {errors.price && (
+                  <p className="text-red-600 text-sm">{errors.price.message}</p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="purchasePrice">Precio de Compra</Label>
@@ -489,13 +582,20 @@ export default function ManagementProduct() {
                   step="0.01"
                   placeholder="Introduce el precio de compra"
                   className="w-full text-base py-2"
-                  {...register('purchasePrice', {
-                    required: 'El precio de compra es obligatorio',
-                    min: { value: 0, message: 'El precio de compra no puede ser negativo' },
+                  {...register("purchasePrice", {
+                    required: "El precio de compra es obligatorio",
+                    min: {
+                      value: 0,
+                      message: "El precio de compra no puede ser negativo",
+                    },
                     valueAsNumber: true,
                   })}
                 />
-                {errors.purchasePrice && <p className="text-red-600 text-sm">{errors.purchasePrice.message}</p>}
+                {errors.purchasePrice && (
+                  <p className="text-red-600 text-sm">
+                    {errors.purchasePrice.message}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="stock">Stock</Label>
@@ -504,13 +604,18 @@ export default function ManagementProduct() {
                   type="number"
                   placeholder="Introduce el stock"
                   className="w-full text-base py-2"
-                  {...register('stock', {
-                    required: 'El stock es obligatorio',
-                    min: { value: 0, message: 'El stock no puede ser negativo' },
+                  {...register("stock", {
+                    required: "El stock es obligatorio",
+                    min: {
+                      value: 0,
+                      message: "El stock no puede ser negativo",
+                    },
                     valueAsNumber: true,
                   })}
                 />
-                {errors.stock && <p className="text-red-600 text-sm">{errors.stock.message}</p>}
+                {errors.stock && (
+                  <p className="text-red-600 text-sm">{errors.stock.message}</p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="stockMin">Stock Mínimo</Label>
@@ -519,25 +624,34 @@ export default function ManagementProduct() {
                   type="number"
                   placeholder="Introduce el stock mínimo"
                   className="w-full text-base py-2"
-                  {...register('stockMin', {
-                    required: 'El stock mínimo es obligatorio',
-                    min: { value: 0, message: 'El stock mínimo no puede ser negativo' },
+                  {...register("stockMin", {
+                    required: "El stock mínimo es obligatorio",
+                    min: {
+                      value: 0,
+                      message: "El stock mínimo no puede ser negativo",
+                    },
                     valueAsNumber: true,
                   })}
                 />
-                {errors.stockMin && <p className="text-red-600 text-sm">{errors.stockMin.message}</p>}
+                {errors.stockMin && (
+                  <p className="text-red-600 text-sm">
+                    {errors.stockMin.message}
+                  </p>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-3 mt-6">
               <input
                 type="checkbox"
                 id="offer"
-                {...register('offer')}
+                {...register("offer")}
                 className="rounded border-gray-300 h-5 w-5"
               />
-              <Label htmlFor="offer" className="text-base font-medium">Oferta</Label>
+              <Label htmlFor="offer" className="text-base font-medium">
+                Oferta
+              </Label>
             </div>
-            {watch('offer') && (
+            {watch("offer") && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div className="flex flex-col space-y-2">
                   <Label htmlFor="discountedPrice">Precio con Descuento</Label>
@@ -547,13 +661,22 @@ export default function ManagementProduct() {
                     step="0.01"
                     placeholder="Introduce el precio con descuento"
                     className="w-full text-base py-2"
-                    {...register('discountedPrice', {
-                      required: 'El precio con descuento es obligatorio si está en oferta',
-                      min: { value: 0, message: 'El precio con descuento no puede ser negativo' },
+                    {...register("discountedPrice", {
+                      required:
+                        "El precio con descuento es obligatorio si está en oferta",
+                      min: {
+                        value: 0,
+                        message:
+                          "El precio con descuento no puede ser negativo",
+                      },
                       valueAsNumber: true,
                     })}
                   />
-                  {errors.discountedPrice && <p className="text-red-600 text-sm">{errors.discountedPrice.message}</p>}
+                  {errors.discountedPrice && (
+                    <p className="text-red-600 text-sm">
+                      {errors.discountedPrice.message}
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col space-y-2">
                   <Label htmlFor="priceDateFrom">Fecha Inicio Oferta</Label>
@@ -561,9 +684,16 @@ export default function ManagementProduct() {
                     id="priceDateFrom"
                     type="datetime-local"
                     className="w-full text-base py-2"
-                    {...register('priceDateFrom', { required: 'La fecha de inicio es obligatoria si está en oferta' })}
+                    {...register("priceDateFrom", {
+                      required:
+                        "La fecha de inicio es obligatoria si está en oferta",
+                    })}
                   />
-                  {errors.priceDateFrom && <p className="text-red-600 text-sm">{errors.priceDateFrom.message}</p>}
+                  {errors.priceDateFrom && (
+                    <p className="text-red-600 text-sm">
+                      {errors.priceDateFrom.message}
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col space-y-2">
                   <Label htmlFor="priceDateTo">Fecha Fin Oferta</Label>
@@ -571,9 +701,16 @@ export default function ManagementProduct() {
                     id="priceDateTo"
                     type="datetime-local"
                     className="w-full text-base py-2"
-                    {...register('priceDateTo', { required: 'La fecha de fin es obligatoria si está en oferta' })}
+                    {...register("priceDateTo", {
+                      required:
+                        "La fecha de fin es obligatoria si está en oferta",
+                    })}
                   />
-                  {errors.priceDateTo && <p className="text-red-600 text-sm">{errors.priceDateTo.message}</p>}
+                  {errors.priceDateTo && (
+                    <p className="text-red-600 text-sm">
+                      {errors.priceDateTo.message}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -581,15 +718,17 @@ export default function ManagementProduct() {
 
           {/* Gallery Images Section */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">Galería de Imágenes</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Galería de Imágenes
+            </h2>
             <div className="flex flex-col space-y-2">
               <div className="flex flex-wrap items-center gap-4">
                 {gallery.map((_, index) => (
                   <div key={index} className="relative group">
                     <img
                       src={
-                        typeof gallery[index] === 'string'
-                          ? gallery[index] as string
+                        typeof gallery[index] === "string"
+                          ? (gallery[index] as string)
                           : URL.createObjectURL(gallery[index] as File)
                       }
                       alt={`Imagen ${index + 1}`}
@@ -608,8 +747,8 @@ export default function ManagementProduct() {
                   onClick={handleClicGaleryImage}
                   className={`flex items-center justify-center ${
                     gallery.length > 0
-                      ? 'w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 transition'
-                      : 'w-40 h-40 border-2 border-dashed rounded-lg bg-gray-50'
+                      ? "w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 transition"
+                      : "w-40 h-40 border-2 border-dashed rounded-lg bg-gray-50"
                   } cursor-pointer overflow-hidden group`}
                 >
                   {gallery.length > 0 ? (
@@ -637,21 +776,29 @@ export default function ManagementProduct() {
 
           {/* Categories and Branches Section */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">Categorías y Sucursales</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Categorías y Sucursales
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label>Categorías</Label>
                 <Controller
                   name="categoriesId"
                   control={control}
-                  rules={{ required: 'Debes seleccionar al menos una categoría' }}
+                  rules={{
+                    required: "Debes seleccionar al menos una categoría",
+                  }}
                   render={({ field }) => (
                     <Select
                       isMulti
                       options={categoryOptions}
-                      value={categoryOptions.filter((option) => field.value.includes(option.value))}
+                      value={categoryOptions.filter((option) =>
+                        field.value.includes(option.value)
+                      )}
                       onChange={(selected) => {
-                        const selectedIds = selected ? selected.map((option) => option.value) : [];
+                        const selectedIds = selected
+                          ? selected.map((option) => option.value)
+                          : [];
                         field.onChange(selectedIds);
                       }}
                       placeholder="Selecciona categorías"
@@ -662,21 +809,31 @@ export default function ManagementProduct() {
                     />
                   )}
                 />
-                {errors.categoriesId && <p className="text-red-600 text-sm">{errors.categoriesId.message}</p>}
+                {errors.categoriesId && (
+                  <p className="text-red-600 text-sm">
+                    {errors.categoriesId.message}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label>Sucursales</Label>
                 <Controller
                   name="sucursalesId"
                   control={control}
-                  rules={{ required: 'Debes seleccionar al menos una sucursal' }}
+                  rules={{
+                    required: "Debes seleccionar al menos una sucursal",
+                  }}
                   render={({ field }) => (
                     <Select
                       isMulti
                       options={branchOptions}
-                      value={branchOptions.filter((option) => field.value.includes(option.value))}
+                      value={branchOptions.filter((option) =>
+                        field.value.includes(option.value)
+                      )}
                       onChange={(selected) => {
-                        const selectedIds = selected ? selected.map((option) => option.value) : [];
+                        const selectedIds = selected
+                          ? selected.map((option) => option.value)
+                          : [];
                         field.onChange(selectedIds);
                       }}
                       placeholder="Selecciona sucursales"
@@ -687,7 +844,11 @@ export default function ManagementProduct() {
                     />
                   )}
                 />
-                {errors.sucursalesId && <p className="text-red-600 text-sm">{errors.sucursalesId.message}</p>}
+                {errors.sucursalesId && (
+                  <p className="text-red-600 text-sm">
+                    {errors.sucursalesId.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -714,7 +875,7 @@ export default function ManagementProduct() {
                   Guardando...
                 </div>
               ) : (
-                'Guardar'
+                "Guardar"
               )}
             </Button>
           </div>

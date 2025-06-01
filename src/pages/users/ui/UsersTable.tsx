@@ -1,9 +1,9 @@
-import { Badge } from '@/components/ui/badge';
-import type { User } from '@/interfaces/users.interface';
-import { formatDateTime } from '@/utils';
-import { BadgeCheck, ChevronDown, Edit, FolderX, Trash2 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Badge } from "@/components/ui/badge";
+import type { User } from "@/interfaces/users.interface";
+import { formatDateTime } from "@/utils";
+import { BadgeCheck, ChevronDown, Edit, FolderX, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 
 interface UsersTableProps {
   users: User[];
@@ -27,8 +27,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
   hasMore,
   fetchMoreUsers,
   selectedUsers,
-  toggleUserSelection,
-  selectAllUsers,
   changeStatusFn,
   deleteFn,
 }) => {
@@ -36,36 +34,41 @@ const UsersTable: React.FC<UsersTableProps> = ({
   const observer = useRef<IntersectionObserver | null>(null);
 
   const availableColumns = [
-    { id: 'name', label: 'Nombre' },
-    { id: 'lastName', label: 'Apellido' },
-    { id: 'email', label: 'Email' },
-    { id: 'documentType', label: 'Tipo de Documento' },
-    { id: 'documentNumber', label: 'Nº Documento' },
-    { id: 'phone', label: 'Teléfono' },
-    { id: 'createAt', label: 'Fecha de Creación' },
+    { id: "name", label: "Nombre" },
+    { id: "lastName", label: "Apellido" },
+    { id: "email", label: "Email" },
+    { id: "documentType", label: "Tipo de Documento" },
+    { id: "documentNumber", label: "Nº Documento" },
+    { id: "phone", label: "Teléfono" },
+    { id: "createAt", label: "Fecha de Creación" },
   ];
 
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(() => {
-    const initialVisibility: ColumnVisibility = {};
-    availableColumns.forEach((column) => {
-      initialVisibility[column.id] = true;
-    });
-    return initialVisibility;
-  });
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
+    () => {
+      const initialVisibility: ColumnVisibility = {};
+      availableColumns.forEach((column) => {
+        initialVisibility[column.id] = true;
+      });
+      return initialVisibility;
+    }
+  );
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -117,7 +120,9 @@ const UsersTable: React.FC<UsersTableProps> = ({
             <span>Columnas</span>
             <ChevronDown
               size={16}
-              className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+              className={`transition-transform duration-200 ${
+                dropdownOpen ? "rotate-180" : ""
+              }`}
             />
           </div>
 
@@ -125,7 +130,10 @@ const UsersTable: React.FC<UsersTableProps> = ({
             <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-md z-10 border border-gray-200">
               <div className="p-3 min-w-[240px]">
                 {availableColumns.map((column) => (
-                  <div key={column.id} className="flex items-center gap-2 py-1 cursor-pointer">
+                  <div
+                    key={column.id}
+                    className="flex items-center gap-2 py-1 cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       id={`column-${column.id}`}
@@ -133,7 +141,10 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       onChange={() => toggleColumnVisibility(column.id)}
                       className="rounded border-gray-300"
                     />
-                    <label htmlFor={`column-${column.id}`} className="text-sm text-gray-700">
+                    <label
+                      htmlFor={`column-${column.id}`}
+                      className="text-sm text-gray-700"
+                    >
                       {column.label}
                     </label>
                   </div>
@@ -224,7 +235,9 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 <tr
                   key={`${user.id}-${index}`}
                   ref={index === uniqueUsers.length - 1 ? lastUserRef : null}
-                  className={selectedUsers.includes(user.id) ? 'bg-blue-50' : ''}
+                  className={
+                    selectedUsers.includes(user.id) ? "bg-blue-50" : ""
+                  }
                 >
                   {columnVisibility.name && (
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -239,37 +252,49 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   )}
                   {columnVisibility.lastName && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{user.person.lastName}</div>
+                      <div className="text-sm text-gray-500">
+                        {user.person.lastName}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.email && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{user.person.email}</div>
+                      <div className="text-sm text-gray-500">
+                        {user.person.email}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.documentType && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{user.person.documentType}</div>
+                      <div className="text-sm text-gray-500">
+                        {user.person.documentType}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.documentNumber && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{user.person.documentNumber}</div>
+                      <div className="text-sm text-gray-500">
+                        {user.person.documentNumber}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.phone && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{user.person.PhonesPersons[0]?.phone || ''}</div>
+                      <div className="text-sm text-gray-500">
+                        {user.person.PhonesPersons[0]?.phone || ""}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.createAt && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{formatDateTime(user.createAt)}</div>
+                      <div className="text-sm text-gray-500">
+                        {formatDateTime(user.createAt)}
+                      </div>
                     </td>
                   )}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={user.status ? 'success' : 'destructive'}>
-                      {user.status ? 'Activo' : 'Inactivo'}
+                    <Badge variant={user.status ? "success" : "destructive"}>
+                      {user.status ? "Activo" : "Inactivo"}
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
