@@ -1,6 +1,6 @@
 import { Loader2, Plus, X } from 'lucide-react';
 import { useCategorias } from '@/hooks/use-categorias';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,15 @@ import { toast } from 'sonner';
 import type { Categorias, CategoriasDto } from '@/interfaces/categorias.interface';
 import CategoriasTable from './ui/categorias-table';
 import FilterCategorias from './ui/FilterCategorias';
+import api from '@/lib/api';
+
 interface FormInputs {
+  name: string;
+  fatherId: string;
+}
+
+interface Categoria {
+  id: string;
   name: string;
 }
 
@@ -34,6 +42,24 @@ export default function CategoriasPage() {
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
+  const [categoriasList, setCategoriasList] = useState<Categoria[]>([]);
+  const [loadingCategorias, setLoadingCategorias] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      setLoadingCategorias(true);
+      try {
+        const response = await api.get('/categorias/actives');
+        setCategoriasList(response.data || []);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('Error al cargar las categorías', { position: 'top-center' });
+      } finally {
+        setLoadingCategorias(false);
+      }
+    };
+    fetchCategorias();
+  }, []);
 
   const handleChangeStatus = async (categoria: Categorias) => {
     setShowModalStatus(true);
@@ -67,6 +93,7 @@ export default function CategoriasPage() {
   } = useForm<FormInputs>({
     defaultValues: {
       name: '',
+      fatherId: '',
     },
   });
 
@@ -74,6 +101,7 @@ export default function CategoriasPage() {
     setShowModal(true);
     reset({
       name: categoria.name,
+      fatherId: categoria.fatherId || '',
     });
     setCategoriaSelect(categoria);
   };
@@ -81,6 +109,7 @@ export default function CategoriasPage() {
   const onSubmit = async (values: FormInputs) => {
     const payload: CategoriasDto = {
       name: values.name,
+      fatherId: values.fatherId || null,
     };
 
     const response = categoriaSelect?.id
@@ -102,6 +131,7 @@ export default function CategoriasPage() {
     setCategoriaSelect(null);
     reset({
       name: '',
+      fatherId: '',
     });
   };
 
@@ -191,6 +221,22 @@ export default function CategoriasPage() {
                 {errors.name && (
                   <p className="msg-error">{errors.name.message}</p>
                 )}
+              </div>
+              <div className="flex flex-col space-y-1 w-full">
+                <Label htmlFor="fatherId">Categoría Padre</Label>
+                <select
+                  id="fatherId"
+                  {...register('fatherId')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  disabled={loadingCategorias}
+                >
+                  <option value="">Ninguna</option>
+                  {categoriasList.map((categoria) => (
+                    <option key={categoria.id} value={categoria.id}>
+                      {categoria.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="flex justify-between items-center m-auto gap-5 mt-5">

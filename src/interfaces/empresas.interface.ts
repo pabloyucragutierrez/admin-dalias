@@ -28,5 +28,5 @@ export interface FilterOptions {
   name?: string;
   ruc?: string;
   district?: string;
-  status?: string;
+  state?: string; // Added to match the API 'state' parameter
 }

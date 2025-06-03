@@ -1,4 +1,3 @@
-// File: src/components/empresas/ui/empresas-table.tsx
 import { Badge } from "@/components/ui/badge";
 import type { Empresa } from "@/interfaces/empresas.interface";
 import { formatDateTime } from "@/utils";

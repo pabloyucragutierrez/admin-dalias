@@ -3,10 +3,12 @@ export interface Categorias {
   name: string;
   status: boolean;
   createAt: string;
+  fatherId: string | null;
 }
 
 export interface CategoriasDto {
   name: string;
+  fatherId?: string | null;
 }
 
 export interface FilterOptionsCategorias {

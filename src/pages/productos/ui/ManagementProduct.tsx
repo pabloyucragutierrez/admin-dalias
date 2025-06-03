@@ -359,12 +359,13 @@ export default function ManagementProduct() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Main Section: Name, Short Description, and Image */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+            <h2 className="text-xl font-semibold text-gray-700 mb-1">
               Información Principal
             </h2>
-            <div className="flex flex-col md:flex-row gap-6">
+            <hr className="mb-5" />
+            <div className="flex flex-col md:flex-row justify-between gap-6">
               {/* Name and Short Description */}
-              <div className="flex flex-col space-y-4 w-full md:w-2/3">
+              <div className="flex flex-col space-y-4 w-full sm:w-[77%]">
                 <div className="flex flex-col space-y-2">
                   <Label htmlFor="name">Nombre del Producto</Label>
                   <Input
@@ -399,7 +400,7 @@ export default function ManagementProduct() {
                 </div>
               </div>
               {/* Main Image */}
-              <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <div className="flex flex-col space-y-2 w-full sm:w-[20%]">
                 <Label>Imagen Principal</Label>
                 <div
                   onClick={handleClicPrincipalImage}
@@ -433,9 +434,11 @@ export default function ManagementProduct() {
 
           {/* Basic Information Section */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+            <h2 className="text-xl font-semibold text-gray-700 mb-1">
               Información Básica
             </h2>
+            <hr className="mb-5" />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="sku">SKU</Label>
@@ -547,11 +550,94 @@ export default function ManagementProduct() {
             </div>
           </div>
 
+          {/* Categories and Branches Section */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-1">
+              Categorías y Sucursales
+            </h2>
+            <hr className="mb-5" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label>Categorías</Label>
+                <Controller
+                  name="categoriesId"
+                  control={control}
+                  rules={{
+                    required: "Debes seleccionar al menos una categoría",
+                  }}
+                  render={({ field }) => (
+                    <Select
+                      isMulti
+                      options={categoryOptions}
+                      value={categoryOptions.filter((option) =>
+                        field.value.includes(option.value)
+                      )}
+                      onChange={(selected) => {
+                        const selectedIds = selected
+                          ? selected.map((option) => option.value)
+                          : [];
+                        field.onChange(selectedIds);
+                      }}
+                      placeholder="Selecciona categorías"
+                      isClearable
+                      isSearchable
+                      classNamePrefix="select"
+                      className="text-base"
+                    />
+                  )}
+                />
+                {errors.categoriesId && (
+                  <p className="text-red-600 text-sm">
+                    {errors.categoriesId.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Sucursales</Label>
+                <Controller
+                  name="sucursalesId"
+                  control={control}
+                  rules={{
+                    required: "Debes seleccionar al menos una sucursal",
+                  }}
+                  render={({ field }) => (
+                    <Select
+                      isMulti
+                      options={branchOptions}
+                      value={branchOptions.filter((option) =>
+                        field.value.includes(option.value)
+                      )}
+                      onChange={(selected) => {
+                        const selectedIds = selected
+                          ? selected.map((option) => option.value)
+                          : [];
+                        field.onChange(selectedIds);
+                      }}
+                      placeholder="Selecciona sucursales"
+                      isClearable
+                      isSearchable
+                      classNamePrefix="select"
+                      className="text-base"
+                    />
+                  )}
+                />
+                {errors.sucursalesId && (
+                  <p className="text-red-600 text-sm">
+                    {errors.sucursalesId.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Pricing and Offer Section */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+            <h2 className="text-xl font-semibold text-gray-700 mb-1">
               Precios y Oferta
             </h2>
+            <hr className="mb-5" />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="price">Precio</Label>
@@ -718,9 +804,11 @@ export default function ManagementProduct() {
 
           {/* Gallery Images Section */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+            <h2 className="text-xl font-semibold text-gray-700 mb-1">
               Galería de Imágenes
             </h2>
+            <hr className="mb-5" />
+
             <div className="flex flex-col space-y-2">
               <div className="flex flex-wrap items-center gap-4">
                 {gallery.map((_, index) => (
@@ -774,100 +862,21 @@ export default function ManagementProduct() {
             </div>
           </div>
 
-          {/* Categories and Branches Section */}
-          <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">
-              Categorías y Sucursales
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col space-y-2">
-                <Label>Categorías</Label>
-                <Controller
-                  name="categoriesId"
-                  control={control}
-                  rules={{
-                    required: "Debes seleccionar al menos una categoría",
-                  }}
-                  render={({ field }) => (
-                    <Select
-                      isMulti
-                      options={categoryOptions}
-                      value={categoryOptions.filter((option) =>
-                        field.value.includes(option.value)
-                      )}
-                      onChange={(selected) => {
-                        const selectedIds = selected
-                          ? selected.map((option) => option.value)
-                          : [];
-                        field.onChange(selectedIds);
-                      }}
-                      placeholder="Selecciona categorías"
-                      isClearable
-                      isSearchable
-                      classNamePrefix="select"
-                      className="text-base"
-                    />
-                  )}
-                />
-                {errors.categoriesId && (
-                  <p className="text-red-600 text-sm">
-                    {errors.categoriesId.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label>Sucursales</Label>
-                <Controller
-                  name="sucursalesId"
-                  control={control}
-                  rules={{
-                    required: "Debes seleccionar al menos una sucursal",
-                  }}
-                  render={({ field }) => (
-                    <Select
-                      isMulti
-                      options={branchOptions}
-                      value={branchOptions.filter((option) =>
-                        field.value.includes(option.value)
-                      )}
-                      onChange={(selected) => {
-                        const selectedIds = selected
-                          ? selected.map((option) => option.value)
-                          : [];
-                        field.onChange(selectedIds);
-                      }}
-                      placeholder="Selecciona sucursales"
-                      isClearable
-                      isSearchable
-                      classNamePrefix="select"
-                      className="text-base"
-                    />
-                  )}
-                />
-                {errors.sucursalesId && (
-                  <p className="text-red-600 text-sm">
-                    {errors.sucursalesId.message}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
           {/* Form Actions */}
-          <div className="flex justify-end gap-4 mt-8">
+          <div className="flex justify-between gap-4 mt-8">
             <Button
               type="button"
               variant="outline"
               onClick={handleCancel}
               disabled={isSubmitting}
-              className="text-base py-2 px-6"
+              className="text-base py-2 px-6 w-[48%]"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="text-base py-2 px-6"
+              className="text-base py-2 px-6 w-[48%]"
             >
               {isSubmitting ? (
                 <div className="inline-flex items-center gap-2">
