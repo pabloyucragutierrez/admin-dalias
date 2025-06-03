@@ -13,6 +13,7 @@ import UsersPage from "./pages/users/page";
 import ManagementUser from "./pages/users/ui/ManagementUser";
 import ProductsPage from "./pages/productos/page";
 import ManagementProduct from "./pages/productos/ui/ManagementProduct";
+import Login from "./pages/login/page";
 
 export const router = createBrowserRouter([
   {
@@ -72,5 +73,9 @@ export const router = createBrowserRouter([
         element: <ManagementProduct />,
       },
     ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);

@@ -39,6 +39,7 @@ export interface User {
   id: string;
   personId: string;
   roleId: string;
+  role: Role;
   username: string;
   password: string;
   verificationCode: string | null;
@@ -47,7 +48,6 @@ export interface User {
   createAt: string;
   updatedAt: string;
   person: Person;
-  roleName?: string;
 }
 
 export interface UserDto {
@@ -79,7 +79,7 @@ export interface Role {
   updatedAt: string;
 }
 
-export interface FilterOptions {
+export interface FilterOptionsUsers {
   name?: string;
   lastName?: string;
   email?: string;
@@ -87,4 +87,9 @@ export interface FilterOptions {
   documentType?: string;
   documentNumber?: string;
   state?: string;
+}
+
+export interface LoginDto {
+  user: User;
+  token: string;
 }

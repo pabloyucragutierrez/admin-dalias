@@ -18,12 +18,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link, useNavigate } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useAuthStore } from "@/stores/auth.store";
 
 export function UserNav() {
   const navigate = useNavigate();
+  const { logout, user } = useAuthStore((state) => state);
 
   const handleLogout = () => {
-    navigate("/auth");
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -41,14 +44,17 @@ export function UserNav() {
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="#" alt="Avatar" />
                       <AvatarFallback className="bg-transparent">
-                        DP
+                        {user?.person.name.charAt(0).toUpperCase()}
+                        {user?.person.lastName.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </div>
                 </Button>
                 <div className="flex flex-col text-sm">
-                  <h6 className="font-semibold text-pretty">Jose Cerna</h6>
-                  <span className="text-gray-600">60653229</span>
+                  <h6 className="font-semibold text-pretty">
+                    {user?.person.name} {user?.person.lastName}
+                  </h6>
+                  <span className="text-gray-600">{user?.role.name}</span>
                 </div>
               </div>
             </DropdownMenuTrigger>

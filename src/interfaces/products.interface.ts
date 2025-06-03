@@ -10,7 +10,7 @@ export interface ProductImage {
   id: string;
   productId: string;
   url: string;
-  typeImage: 'THUMBNAIL' | 'GALLERY';
+  typeImage: "THUMBNAIL" | "GALLERY";
   status: boolean;
   createAt: string;
   updatedAt: string;
@@ -114,24 +114,4 @@ export interface FilterOptionsProducts {
   sku?: string;
   marca?: string;
   status?: string; // Cambiado de boolean a string ("ACTIVO"/"INACTIVO")
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    hasMore: boolean;
-    total: number;
-    page: number;
-    limit: number;
-  };
-}
-
-export interface StatusDto {
-  status: boolean;
 }

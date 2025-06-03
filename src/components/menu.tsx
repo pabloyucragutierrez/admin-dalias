@@ -11,18 +11,22 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { ScrollArea } from "./ui/scroll-area";
 import { CollapseMenuButton } from "./collapse-menu-button";
 import { getMenuList } from "@/lib/menu-list";
+import { useAuthStore } from "@/stores/auth.store";
 
 interface MenuProps {
   isOpen: boolean | undefined;
 }
 
 export function Menu({ isOpen }: MenuProps) {
+  const { logout } = useAuthStore((state) => state);
+
   const location = useLocation();
   const menuList = getMenuList();
 
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    logout();
     navigate("/login");
   };
 
