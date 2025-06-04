@@ -726,79 +726,85 @@ export default function ManagementProduct() {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-3 mt-6">
-              <input
-                type="checkbox"
-                id="offer"
-                {...register("offer")}
-                className="rounded border-gray-300 h-5 w-5"
-              />
-              <Label htmlFor="offer" className="text-base font-medium">
-                Oferta
-              </Label>
-            </div>
-            {watch("offer") && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div className="flex flex-col space-y-2">
-                  <Label htmlFor="discountedPrice">Precio con Descuento</Label>
-                  <Input
-                    id="discountedPrice"
-                    type="number"
-                    step="0.01"
-                    placeholder="Introduce el precio con descuento"
-                    className="w-full text-base py-2"
-                    {...register("discountedPrice", {
-                      required:
-                        "El precio con descuento es obligatorio si está en oferta",
-                      min: {
-                        value: 0,
-                        message:
-                          "El precio con descuento no puede ser negativo",
-                      },
-                      valueAsNumber: true,
-                    })}
+            {(!id || id === "new") && (
+              <>
+                <div className="flex items-center gap-3 mt-6">
+                  <input
+                    type="checkbox"
+                    id="offer"
+                    {...register("offer")}
+                    className="rounded border-gray-300 h-5 w-5"
                   />
-                  {errors.discountedPrice && (
-                    <p className="text-red-600 text-sm">
-                      {errors.discountedPrice.message}
-                    </p>
-                  )}
+                  <Label htmlFor="offer" className="text-base font-medium">
+                    Oferta
+                  </Label>
                 </div>
-                <div className="flex flex-col space-y-2">
-                  <Label htmlFor="priceDateFrom">Fecha Inicio Oferta</Label>
-                  <Input
-                    id="priceDateFrom"
-                    type="datetime-local"
-                    className="w-full text-base py-2"
-                    {...register("priceDateFrom", {
-                      required:
-                        "La fecha de inicio es obligatoria si está en oferta",
-                    })}
-                  />
-                  {errors.priceDateFrom && (
-                    <p className="text-red-600 text-sm">
-                      {errors.priceDateFrom.message}
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <Label htmlFor="priceDateTo">Fecha Fin Oferta</Label>
-                  <Input
-                    id="priceDateTo"
-                    type="datetime-local"
-                    className="w-full text-base py-2"
-                    {...register("priceDateTo", {
-                      required:
-                        "La fecha de fin es obligatoria si está en oferta",
-                    })}
-                  />
-                  {errors.priceDateTo && (
-                    <p className="text-red-600 text-sm">
-                      {errors.priceDateTo.message}
-                    </p>
-                  )}
-                </div>
-              </div>
+                {watch("offer") && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div className="flex flex-col space-y-2">
+                      <Label htmlFor="discountedPrice">
+                        Precio con Descuento
+                      </Label>
+                      <Input
+                        id="discountedPrice"
+                        type="number"
+                        step="0.01"
+                        placeholder="Introduce el precio con descuento"
+                        className="w-full text-base py-2"
+                        {...register("discountedPrice", {
+                          required:
+                            "El precio con descuento es obligatorio si está en oferta",
+                          min: {
+                            value: 0,
+                            message:
+                              "El precio con descuento no puede ser negativo",
+                          },
+                          valueAsNumber: true,
+                        })}
+                      />
+                      {errors.discountedPrice && (
+                        <p className="text-red-600 text-sm">
+                          {errors.discountedPrice.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <Label htmlFor="priceDateFrom">Fecha Inicio Oferta</Label>
+                      <Input
+                        id="priceDateFrom"
+                        type="datetime-local"
+                        className="w-full text-base py-2"
+                        {...register("priceDateFrom", {
+                          required:
+                            "La fecha de inicio es obligatoria si está en oferta",
+                        })}
+                      />
+                      {errors.priceDateFrom && (
+                        <p className="text-red-600 text-sm">
+                          {errors.priceDateFrom.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <Label htmlFor="priceDateTo">Fecha Fin Oferta</Label>
+                      <Input
+                        id="priceDateTo"
+                        type="datetime-local"
+                        className="w-full text-base py-2"
+                        {...register("priceDateTo", {
+                          required:
+                            "La fecha de fin es obligatoria si está en oferta",
+                        })}
+                      />
+                      {errors.priceDateTo && (
+                        <p className="text-red-600 text-sm">
+                          {errors.priceDateTo.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 

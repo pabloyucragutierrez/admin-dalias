@@ -290,7 +290,7 @@ export default function ManagementEmpresa() {
                 <Label htmlFor="regionId">Región</Label>
                 <select
                   id="regionId"
-                  className="w-full text-base py-2 border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   {...register('regionId', { required: 'Región es requerida' })}
                   onChange={handleRegionChange}
                 >
@@ -307,7 +307,7 @@ export default function ManagementEmpresa() {
                 <Label htmlFor="provinceId">Provincia</Label>
                 <select
                   id="provinceId"
-                  className="w-full text-base py-2 border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:opacity-50"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   {...register('provinceId', { required: 'Provincia es requerida' })}
                   onChange={handleProvinceChange}
                   disabled={!selectedRegion}
@@ -325,7 +325,7 @@ export default function ManagementEmpresa() {
                 <Label htmlFor="districtId">Distrito</Label>
                 <select
                   id="districtId"
-                  className="w-full text-base py-2 border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:opacity-50"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   {...register('districtId', { required: 'Distrito es requerido' })}
                   disabled={!selectedProvince}
                 >
@@ -397,7 +397,7 @@ export default function ManagementEmpresa() {
                 <textarea
                   id="description"
                   placeholder="Descripción"
-                  className="w-full text-base py-2 border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 min-h-[100px]"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 h-[6rem]"
                   {...register('description')}
                 />
               </div>

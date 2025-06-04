@@ -13,6 +13,10 @@ import UsersPage from "./pages/users/page";
 import ManagementUser from "./pages/users/ui/ManagementUser";
 import ProductsPage from "./pages/productos/page";
 import ManagementProduct from "./pages/productos/ui/ManagementProduct";
+import CarruselPage from "./pages/carrusel/page";
+import NewCarrusel from "./pages/carrusel/ui/NewCarrusel";
+import BannersPage from "./pages/banners/page";
+import NewBanner from "./pages/banners/ui/NewBanner";
 
 export const router = createBrowserRouter([
   {
@@ -71,6 +75,22 @@ export const router = createBrowserRouter([
         path: "products/:id",
         element: <ManagementProduct />,
       },
+      {
+        path: "carrusel",
+        element: <CarruselPage />,
+      },
+      {
+        path: "carrusel/new",
+        element: <NewCarrusel />,
+      },
+      {
+        path: "banners",
+        element: <BannersPage />,
+      },
+      {
+        path: "banners/new",
+        element: <NewBanner />,
+      }
     ],
   },
 ]);
