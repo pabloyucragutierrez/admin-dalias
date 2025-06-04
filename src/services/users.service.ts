@@ -1,13 +1,18 @@
-import type { ApiResponse, PaginatedResponse, StatusDto } from '@/interfaces';
-import type { FilterOptions, User, UserDto, Role } from '@/interfaces/users.interface';
-import api from '@/lib/api';
+import type { ApiResponse, PaginatedResponse, StatusDto } from "@/interfaces";
+import type {
+  FilterOptionsUsers,
+  User,
+  UserDto,
+  Role,
+} from "@/interfaces/users.interface";
+import api from "@/lib/api";
 
 export const fetchUsers = async (
   page: number = 1,
   limit: number = 10,
-  filterOptions?: FilterOptions
+  filterOptions?: FilterOptionsUsers
 ): Promise<PaginatedResponse<User>> => {
-  const response = await api.get<PaginatedResponse<User>>('/users', {
+  const response = await api.get<PaginatedResponse<User>>("/users", {
     params: { page, limit, ...filterOptions },
   });
   return response.data;
@@ -20,7 +25,7 @@ export const fetchUserById = async (id: string): Promise<User> => {
 
 export const createUsers = async (payload: UserDto) => {
   try {
-    const response = await api.post('/users', payload);
+    const response = await api.post("/users", payload);
     return response.data as ApiResponse<User>;
   } catch (e) {
     console.log(e);
@@ -56,9 +61,9 @@ export async function activeOrInactiveUsers(id: string, payload: StatusDto) {
     console.log(e);
     throw e;
   }
-};
+}
 
 export const fetchActiveRoles = async (): Promise<Role[]> => {
-  const response = await api.get<Role[]>('/roles/actives');
+  const response = await api.get<Role[]>("/roles/actives");
   return response.data;
 };

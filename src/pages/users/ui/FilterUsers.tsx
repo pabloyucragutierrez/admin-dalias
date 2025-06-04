@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import type { FilterOptions } from "@/interfaces/users.interface";
+import type { FilterOptionsUsers } from "@/interfaces/users.interface";
 
 interface FilterUsersProps {
-  onApplyFilters: (filters: FilterOptions) => void;
+  onApplyFilters: (filters: FilterOptionsUsers) => void;
   onClearFilters: () => void;
-  initialFilters?: FilterOptions;
+  initialFilters?: FilterOptionsUsers;
   loading: boolean;
 }
 
@@ -14,7 +14,7 @@ const FilterUsers: React.FC<FilterUsersProps> = ({
   initialFilters = {},
   loading,
 }) => {
-  const [filters, setFilters] = useState<FilterOptions>({
+  const [filters, setFilters] = useState<FilterOptionsUsers>({
     name: initialFilters.name || "",
     lastName: initialFilters.lastName || "",
     email: initialFilters.email || "",
@@ -28,7 +28,7 @@ const FilterUsers: React.FC<FilterUsersProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({
+    setFilters((prev: FilterOptionsUsers) => ({
       ...prev,
       [name]: value,
     }));
@@ -37,10 +37,10 @@ const FilterUsers: React.FC<FilterUsersProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const nonEmptyFilters: FilterOptions = {};
+    const nonEmptyFilters: FilterOptionsUsers = {};
     Object.entries(filters).forEach(([key, value]) => {
       if (value && value.trim() !== "") {
-        nonEmptyFilters[key as keyof FilterOptions] = value.trim();
+        nonEmptyFilters[key as keyof FilterOptionsUsers] = value.trim();
       }
     });
 
@@ -160,7 +160,9 @@ const FilterUsers: React.FC<FilterUsersProps> = ({
               <option value="">Todos</option>
               <option value="DNI">DNI</option>
               <option value="RUC">RUC</option>
-              <option value="Carnet de Extranjería">Carnet de Extranjería</option>
+              <option value="Carnet de Extranjería">
+                Carnet de Extranjería
+              </option>
               <option value="Pasaporte">Pasaporte</option>
               <option value="Cédula de Identidad">Cédula de Identidad</option>
               <option value="Otros">Otros</option>
@@ -236,8 +238,12 @@ const FilterUsers: React.FC<FilterUsersProps> = ({
               {key === "lastName" && <span className="mr-1">Apellido: </span>}
               {key === "email" && <span className="mr-1">Email: </span>}
               {key === "gender" && <span className="mr-1">Género: </span>}
-              {key === "documentType" && <span className="mr-1">Tipo de Documento: </span>}
-              {key === "documentNumber" && <span className="mr-1">Nº Documento: </span>}
+              {key === "documentType" && (
+                <span className="mr-1">Tipo de Documento: </span>
+              )}
+              {key === "documentNumber" && (
+                <span className="mr-1">Nº Documento: </span>
+              )}
               {key === "state" && <span className="mr-1">Estado: </span>}
               {value}
             </div>

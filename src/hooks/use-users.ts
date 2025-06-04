@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { FilterOptions, User } from '@/interfaces/users.interface';
-import { fetchUsers } from '@/services/users.service';
+import { useCallback, useEffect, useState } from "react";
+import type { FilterOptionsUsers, User } from "@/interfaces/users.interface";
+import { fetchUsers } from "@/services/users.service";
 
 export const useUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -9,10 +9,10 @@ export const useUsers = () => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [filters, setFilters] = useState<FilterOptions>({});
+  const [filters, setFilters] = useState<FilterOptionsUsers>({});
 
   const handleFetchUsers = useCallback(
-    async (refresh = false, newFilters?: FilterOptions) => {
+    async (refresh = false, newFilters?: FilterOptionsUsers) => {
       if (loading && !refresh) return;
 
       try {
@@ -34,7 +34,8 @@ export const useUsers = () => {
         } else if (hasMore) {
           const response = await fetchUsers(page, 10, currentFilters);
           const newUsers = response.data.filter(
-            (newUser: User) => !users.some((existingUser) => existingUser.id === newUser.id)
+            (newUser: User) =>
+              !users.some((existingUser) => existingUser.id === newUser.id)
           );
 
           setUsers((prev) => [...prev, ...newUsers]);
@@ -42,8 +43,9 @@ export const useUsers = () => {
           setPage((prevPage) => prevPage + 1);
         }
       } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-        setError('Error al cargar los usuarios: ' + errorMessage);
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        setError("Error al cargar los usuarios: " + errorMessage);
         console.error(err);
       } finally {
         setLoading(false);
@@ -83,7 +85,7 @@ export const useUsers = () => {
     await handleFetchUsers(true);
   };
 
-  const applyFilters = async (newFilters: FilterOptions) => {
+  const applyFilters = async (newFilters: FilterOptionsUsers) => {
     clearSelections();
     await handleFetchUsers(true, newFilters);
   };
