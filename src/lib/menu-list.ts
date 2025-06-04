@@ -1,4 +1,5 @@
 import {
+  BadgePercent,
   LayoutGrid,
   Settings,
   ShoppingBag,
@@ -77,6 +78,21 @@ export function getMenuList(): Group[] {
             {
               href: "/users",
               label: "Usuarios",
+            },
+          ],
+        },
+        {
+          href: "",
+          label: "Publicidad",
+          icon:  BadgePercent,
+          submenus: [
+            {
+              href: "/carrusel",
+              label: "Carrusel",
+            },
+            {
+              href: "/banner",
+              label: "Banners",
             },
           ],
         },

@@ -45,19 +45,20 @@ export default function CategoriasPage() {
   const [categoriasList, setCategoriasList] = useState<Categoria[]>([]);
   const [loadingCategorias, setLoadingCategorias] = useState<boolean>(false);
 
+  const fetchCategorias = async () => {
+    setLoadingCategorias(true);
+    try {
+      const response = await api.get('/categorias/actives');
+      setCategoriasList(response.data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      toast.error('Error al cargar las categorías', { position: 'top-center' });
+    } finally {
+      setLoadingCategorias(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchCategorias = async () => {
-      setLoadingCategorias(true);
-      try {
-        const response = await api.get('/categorias/actives');
-        setCategoriasList(response.data || []);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-        toast.error('Error al cargar las categorías', { position: 'top-center' });
-      } finally {
-        setLoadingCategorias(false);
-      }
-    };
     fetchCategorias();
   }, []);
 
@@ -82,6 +83,7 @@ export default function CategoriasPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     refreshCategorias();
+    await fetchCategorias(); // Refresh category list after status change
     handleCancelStatus();
   };
 
@@ -107,6 +109,11 @@ export default function CategoriasPage() {
   };
 
   const onSubmit = async (values: FormInputs) => {
+    if (values.fatherId === '') {
+      toast.warning('Por favor seleccione una categoría padre válida', { position: 'top-center' });
+      return;
+    }
+
     const payload: CategoriasDto = {
       name: values.name,
       fatherId: values.fatherId || null,
@@ -124,6 +131,7 @@ export default function CategoriasPage() {
     toast.success(response?.message, { position: 'top-center' });
     handleCancel();
     refreshCategorias();
+    await fetchCategorias(); // Refresh category list after save
   };
 
   const handleCancel = () => {
@@ -226,17 +234,24 @@ export default function CategoriasPage() {
                 <Label htmlFor="fatherId">Categoría Padre</Label>
                 <select
                   id="fatherId"
-                  {...register('fatherId')}
+                  {...register('fatherId', {
+                    validate: value => value !== '' || 'Por favor seleccione una categoría padre',
+                  })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   disabled={loadingCategorias}
                 >
-                  <option value="">Ninguna</option>
+                  <option value="" disabled>
+                    Seleccione una categoría
+                  </option>
                   {categoriasList.map((categoria) => (
                     <option key={categoria.id} value={categoria.id}>
                       {categoria.name}
                     </option>
                   ))}
                 </select>
+                {errors.fatherId && (
+                  <p className="msg-error">{errors.fatherId.message}</p>
+                )}
               </div>
 
               <div className="flex justify-between items-center m-auto gap-5 mt-5">

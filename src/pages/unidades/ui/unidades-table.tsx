@@ -152,7 +152,7 @@ const UnidadesTable: React.FC<UnidadesTableProps> = ({
       <div className="overflow-hidden shadow-md sm:rounded-lg">
         <div className="max-h-[600px] overflow-y-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50 sticky top-0">
+            <thead className="bg-[#f0f0f0] sticky top-0">
               <tr>
                 {columnVisibility.code && (
                   <th
