@@ -84,14 +84,14 @@ export function getMenuList(): Group[] {
         {
           href: "",
           label: "Publicidad",
-          icon:  BadgePercent,
+          icon: BadgePercent,
           submenus: [
             {
               href: "/carrusel",
               label: "Carrusel",
             },
             {
-              href: "/banner",
+              href: "/banners",
               label: "Banners",
             },
           ],

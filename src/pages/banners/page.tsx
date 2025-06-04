@@ -96,11 +96,12 @@ const BannersPage: React.FC = () => {
       new URL(url);
       return true;
     } catch (error) {
+      console.error("Error al validar la URL:", error);
       return false;
     }
   };
 
-  const handleSave = async (bannerId: string) => {
+  const handleSave = async (bannerId: string, order: number) => {
     const url = urls[bannerId];
     if (!url || url === "") {
       toast.error("Por favor, completa todos los campos", {
@@ -116,6 +117,7 @@ const BannersPage: React.FC = () => {
 
     const formData = new FormData();
     formData.append("url", url);
+    formData.append("order", order.toString());
     const selected = selectedImages[bannerId] || { file: null, movil: null };
     if (selected.file) {
       formData.append("file", selected.file);
@@ -159,7 +161,7 @@ const BannersPage: React.FC = () => {
         {banners.map((banner, index) => (
           <div
             key={banner.id}
-            className="bg-white rounded-lg rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300"
+            className="bg-white rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300"
           >
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Banner {index + 1}
@@ -253,7 +255,7 @@ const BannersPage: React.FC = () => {
               </div>
               <button
                 className="w-full bg-blue-600 text-white rounded-md py-2 px-4 hover:bg-blue-700 transition-colors"
-                onClick={() => handleSave(banner.id)}
+                onClick={() => handleSave(banner.id, banner.order)}
               >
                 Guardar
               </button>
