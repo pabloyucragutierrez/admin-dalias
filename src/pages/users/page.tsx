@@ -89,8 +89,8 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex flex-row items-center justify-between">
+    <>
+      <div className="flex sm:flex-row flex-col sm:gap-0 gap-2 sm:items-center justify-between">
         <h1 className="text-4xl text-blue-600 font-bold">Usuarios</h1>
         <Button
           className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
@@ -235,6 +235,6 @@ export default function UsersPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

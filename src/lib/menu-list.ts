@@ -60,6 +60,21 @@ export function getMenuList(): Group[] {
         },
         {
           href: "",
+          label: "Publicidad",
+          icon: BadgePercent,
+          submenus: [
+            {
+              href: "/carrusel",
+              label: "Carrusel",
+            },
+            {
+              href: "/banners",
+              label: "Banners",
+            },
+          ],
+        },
+        {
+          href: "",
           label: "Configuración",
           icon: Settings,
           submenus: [
@@ -78,21 +93,6 @@ export function getMenuList(): Group[] {
             {
               href: "/users",
               label: "Usuarios",
-            },
-          ],
-        },
-        {
-          href: "",
-          label: "Publicidad",
-          icon: BadgePercent,
-          submenus: [
-            {
-              href: "/carrusel",
-              label: "Carrusel",
-            },
-            {
-              href: "/banners",
-              label: "Banners",
             },
           ],
         },

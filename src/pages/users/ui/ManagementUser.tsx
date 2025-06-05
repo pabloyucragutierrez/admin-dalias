@@ -300,8 +300,8 @@ export default function ManagementUser() {
   };
 
   return (
-    <div className="w-full mx-auto">
-      <h1 className="text-3xl text-blue-600 font-bold mb-6">
+    <div className="w-full mx-auto max-w-4xl">
+      <h1 className="text-3xl text-blue-600 font-bold mb-8">
         {id && id !== 'new' ? 'Editar Usuario' : 'Nuevo Usuario'}
       </h1>
 
@@ -499,58 +499,6 @@ export default function ManagementUser() {
             <h2 className="text-xl font-semibold text-gray-700 mb-6">Dirección</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
-                <Label htmlFor="street">Calle</Label>
-                <Input
-                  id="street"
-                  type="text"
-                  placeholder="Calle"
-                  className="w-full text-base py-2"
-                  {...register('street')}
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="number">Número</Label>
-                <Input
-                  id="number"
-                  type="text"
-                  placeholder="Número"
-                  className="w-full text-base py-2"
-                  {...register('number')}
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="apartment">Apartamento</Label>
-                <Input
-                  id="apartment"
-                  type="text"
-                  placeholder="Apartamento"
-                  className="w-full text-base py-2"
-                  {...register('apartment')}
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="zipCode">Código Postal</Label>
-                <Input
-                  id="zipCode"
-                  type="text"
-                  placeholder="Código Postal"
-                  className="w-full text-base py-2"
-                  {...register('zipCode')}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col space-y-2 mt-6">
-              <Label htmlFor="reference">Referencia</Label>
-              <Input
-                id="reference"
-                type="text"
-                placeholder="Referencia"
-                className="w-full text-base py-2"
-                {...register('reference')}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              <div className="flex flex-col space-y-2">
                 <Label htmlFor="regionId">Región</Label>
                 <select
                   id="regionId"
@@ -585,23 +533,78 @@ export default function ManagementUser() {
                 </select>
                 {errors.provinceId && <p className="text-red-600 text-sm">{errors.provinceId.message}</p>}
               </div>
-            </div>
-            <div className="flex flex-col space-y-2 mt-6">
-              <Label htmlFor="districtId">Distrito</Label>
-              <select
-                id="districtId"
-                className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                {...register('districtId', { required: 'Distrito es requerido' })}
-                disabled={!selectedProvince}
-              >
-                <option value="">Selecciona un distrito</option>
-                {availableDistricts.map((district) => (
-                  <option key={district.identifier} value={district.identifier}>
-                    {district.name}
-                  </option>
-                ))}
-              </select>
-              {errors.districtId && <p className="text-red-600 text-sm">{errors.districtId.message}</p>}
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="districtId">Distrito</Label>
+                <select
+                  id="districtId"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  {...register('districtId', { required: 'Distrito es requerido' })}
+                  disabled={!selectedProvince}
+                >
+                  <option value="">Selecciona un distrito</option>
+                  {availableDistricts.map((district) => (
+                    <option key={district.identifier} value={district.identifier}>
+                      {district.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.districtId && <p className="text-red-600 text-sm">{errors.districtId.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="street">Calle</Label>
+                <Input
+                  id="street"
+                  type="text"
+                  placeholder="Calle"
+                  className="w-full text-base py-2"
+                  {...register('street', { required: 'Calle es requerida' })}
+                />
+                {errors.street && <p className="text-red-600 text-sm">{errors.street.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="number">Número</Label>
+                <Input
+                  id="number"
+                  type="text"
+                  placeholder="Número"
+                  className="w-full text-base py-2"
+                  {...register('number')}
+                />
+                {errors.number && <p className="text-red-600 text-sm">{errors.number.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="apartment">Apartamento</Label>
+                <Input
+                  id="apartment"
+                  type="text"
+                  placeholder="Apartamento"
+                  className="w-full text-base py-2"
+                  {...register('apartment')}
+                />
+                {errors.apartment && <p className="text-red-600 text-sm">{errors.apartment.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="zipCode">Código Postal</Label>
+                <Input
+                  id="zipCode"
+                  type="text"
+                  placeholder="Código Postal"
+                  className="w-full text-base py-2"
+                  {...register('zipCode')}
+                />
+                {errors.zipCode && <p className="text-red-600 text-sm">{errors.zipCode.message}</p>}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="reference">Referencia</Label>
+                <Input
+                  id="reference"
+                  type="text"
+                  placeholder="Referencia"
+                  className="w-full text-base py-2"
+                  {...register('reference')}
+                />
+                {errors.reference && <p className="text-red-600 text-sm">{errors.reference.message}</p>}
+              </div>
             </div>
           </div>
 

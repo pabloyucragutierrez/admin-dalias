@@ -15,9 +15,7 @@ const BannersPage: React.FC = () => {
   >({});
   const [urls, setUrls] = useState<Record<string, string>>({});
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  const fileInputMovilRefs = useRef<Record<string, HTMLInputElement | null>>(
-    {}
-  );
+  const fileInputMovilRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const fetchBanners = async () => {
     setLoading(true);
@@ -157,7 +155,7 @@ const BannersPage: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold text-blue-600 mb-6">Banners</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {banners.map((banner, index) => (
           <div
             key={banner.id}
@@ -187,7 +185,7 @@ const BannersPage: React.FC = () => {
                   }
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
                   <span className="font-medium text-gray-700">Imagen Web</span>
                   <div
@@ -209,6 +207,7 @@ const BannersPage: React.FC = () => {
                       </div>
                     )}
                   </div>
+                  <p className="text-sm text-gray-500">Dimensiones: 1920x600px</p>
                   <input
                     type="file"
                     ref={(el) => {
@@ -242,6 +241,7 @@ const BannersPage: React.FC = () => {
                       </div>
                     )}
                   </div>
+                  <p className="text-sm text-gray-500">Dimensiones: 600x800px</p>
                   <input
                     type="file"
                     ref={(el) => {

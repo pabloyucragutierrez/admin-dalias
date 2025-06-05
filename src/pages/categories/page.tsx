@@ -150,7 +150,7 @@ export default function CategoriasPage() {
 
   return (
     <>
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex sm:flex-row flex-col sm:gap-0 gap-2 sm:items-center justify-between">
         <h1 className="text-4xl text-blue-600 font-bold">Categorías</h1>
         <button
           type="button"
