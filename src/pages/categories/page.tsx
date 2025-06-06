@@ -83,7 +83,7 @@ export default function CategoriasPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     refreshCategorias();
-    await fetchCategorias(); // Refresh category list after status change
+    await fetchCategorias();
     handleCancelStatus();
   };
 
@@ -109,11 +109,6 @@ export default function CategoriasPage() {
   };
 
   const onSubmit = async (values: FormInputs) => {
-    if (values.fatherId === '') {
-      toast.warning('Por favor seleccione una categoría padre válida', { position: 'top-center' });
-      return;
-    }
-
     const payload: CategoriasDto = {
       name: values.name,
       fatherId: values.fatherId || null,
@@ -131,7 +126,7 @@ export default function CategoriasPage() {
     toast.success(response?.message, { position: 'top-center' });
     handleCancel();
     refreshCategorias();
-    await fetchCategorias(); // Refresh category list after save
+    await fetchCategorias();
   };
 
   const handleCancel = () => {
@@ -231,27 +226,20 @@ export default function CategoriasPage() {
                 )}
               </div>
               <div className="flex flex-col space-y-1 w-full">
-                <Label htmlFor="fatherId">Categoría Padre</Label>
+                <Label htmlFor="fatherId">Categoría Padre (Opcional)</Label>
                 <select
                   id="fatherId"
-                  {...register('fatherId', {
-                    validate: value => value !== '' || 'Por favor seleccione una categoría padre',
-                  })}
+                  {...register('fatherId')}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   disabled={loadingCategorias}
                 >
-                  <option value="" disabled>
-                    Seleccione una categoría
-                  </option>
+                  <option value="">Ninguna</option>
                   {categoriasList.map((categoria) => (
                     <option key={categoria.id} value={categoria.id}>
                       {categoria.name}
                     </option>
                   ))}
                 </select>
-                {errors.fatherId && (
-                  <p className="msg-error">{errors.fatherId.message}</p>
-                )}
               </div>
 
               <div className="flex justify-between items-center m-auto gap-5 mt-5">
