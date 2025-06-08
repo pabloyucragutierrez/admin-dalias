@@ -30,15 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { activeOrInactiveCategorias } from "@/services/categorias.service";
-import CategoryForm from "./category-form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { useNavigate } from "react-router";
 
 interface Props {
   category: Categorias;
@@ -46,8 +38,8 @@ interface Props {
 }
 
 export default function ActionsCategory({ category, onRefresh }: Props) {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChangeStatus = async (id: string, status: boolean) => {
@@ -87,26 +79,14 @@ export default function ActionsCategory({ category, onRefresh }: Props) {
             <span className="text-sm ml-2">Copiar ID de categoria</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-            <Dialog open={openModal} onOpenChange={setOpenModal}>
-              <DialogTrigger asChild>
-                <button className="w-full flex flex-row items-center gap-2 py-1 cursor-pointer">
-                  <Edit size={18} />
-                  Editar
-                </button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Editar categoria</DialogTitle>
-                  <DialogDescription>Editar categoria</DialogDescription>
-                </DialogHeader>
-                <CategoryForm
-                  handleCancel={() => setOpenModal(false)}
-                  refreshDataTable={onRefresh}
-                  categoria={category}
-                />
-              </DialogContent>
-            </Dialog>
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault();
+              navigate(`/categorias/${category.id}`);
+            }}
+          >
+            <Edit size={18} />
+            <span className="text-sm ml-2">Editar</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={(event) => {

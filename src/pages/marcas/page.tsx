@@ -1,6 +1,6 @@
 import { Loader2, Plus, X } from "lucide-react";
 import { useMarcas } from "@/hooks/use-marcas";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,8 +12,9 @@ import {
 } from "@/services/marcas.service";
 import { toast } from "sonner";
 import type { Marcas, MarcasDto } from "@/interfaces/marcas.interface";
-import MarcasTable from "./ui/marcas-table";
+import { DataTable } from "@/components/data-table";
 import FilterMarcas from "./ui/filter-marcas";
+import { columnFilter, columnNames, getColumns, stateFilter } from "./ui/columns";
 
 interface FormInputs {
   code: string;
@@ -40,9 +41,19 @@ export default function MarcasPage() {
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
+  const refreshDataTable = useRef<() => void>(null);
 
   const handleChangeStatus = async (marca: Marcas) => {
     setShowModalStatus(true);
+    setMarcaSelect(marca);
+  };
+
+  const handleEdit = async (marca: Marcas) => {
+    setShowModal(true);
+    reset({
+      code: marca.code,
+      name: marca.name,
+    });
     setMarcaSelect(marca);
   };
 
@@ -62,6 +73,7 @@ export default function MarcasPage() {
 
     toast.success(response?.message, { position: "top-center" });
     refreshMarcas();
+    refreshDataTable.current?.();
     handleCancelStatus();
   };
 
@@ -76,15 +88,6 @@ export default function MarcasPage() {
       name: "",
     },
   });
-
-  const handleEdit = async (marca: Marcas) => {
-    setShowModal(true);
-    reset({
-      code: marca.code,
-      name: marca.name,
-    });
-    setMarcaSelect(marca);
-  };
 
   const onSubmit = async (values: FormInputs) => {
     const payload: MarcasDto = {
@@ -104,6 +107,7 @@ export default function MarcasPage() {
     toast.success(response?.message, { position: "top-center" });
     handleCancel();
     refreshMarcas();
+    refreshDataTable.current?.();
   };
 
   const handleCancel = () => {
@@ -124,14 +128,13 @@ export default function MarcasPage() {
     <>
       <div className="flex sm:flex-row flex-col sm:gap-0 gap-2 sm:items-center justify-between">
         <h1 className="text-4xl text-blue-600 font-bold">Marcas</h1>
-        <button
-          type="button"
-          className="bg-blue-600 flex flex-row items-center gap-2 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+        <Button
+          className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
           onClick={() => setShowModal(true)}
         >
           <Plus size={20} />
           Nueva Marca
-        </button>
+        </Button>
       </div>
 
       <FilterMarcas
@@ -157,17 +160,18 @@ export default function MarcasPage() {
         </div>
       )}
 
-      <MarcasTable
-        marcas={marcas}
-        loading={loading}
-        hasMore={hasMore}
-        fetchMoreMarcas={fetchMoreMarcas}
-        selectedMarcas={selectedMarcas}
-        toggleMarcaSelection={toggleMarcaSelection}
-        selectAllMarcas={selectAllMarcas}
-        changeStatusFn={handleChangeStatus}
-        editFn={handleEdit}
-      />
+      <div className="container mx-auto py-5">
+        <DataTable
+          columns={getColumns(handleChangeStatus, handleEdit)}
+          columnNames={columnNames}
+          url="marcas"
+          typeFilter={columnFilter}
+          stateFilter={stateFilter}
+          onRefresh={(callback) => {
+            refreshDataTable.current = callback;
+          }}
+        />
+      </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

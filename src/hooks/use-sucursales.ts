@@ -6,8 +6,6 @@ export const useSucursales = () => {
   const [sucursales, setSucursales] = useState<Sucursales[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
   const [selectedSucursales, setSelectedSucursales] = useState<string[]>([]);
   const [filters, setFilters] = useState<FilterOptionsSucursales>({});
 
@@ -17,31 +15,18 @@ export const useSucursales = () => {
 
       try {
         setLoading(true);
-        const currentFilters = newFilters !== undefined ? newFilters : filters;
+        const currentFilters = newFilters ?? filters;
 
-        if (refresh || newFilters !== undefined) {
-          setPage(1);
+        if (refresh || newFilters) {
           setSucursales([]);
-          setHasMore(true);
-          if (newFilters !== undefined) {
+          if (newFilters) {
             setFilters(newFilters);
           }
-
-          const response = await fetchSucursales(1, 10, currentFilters);
-          setSucursales(response.data);
-          setHasMore(response.meta.hasMore);
-          setPage(2);
-        } else if (hasMore) {
-          const response = await fetchSucursales(page, 10, currentFilters);
-          const newSucursales = response.data.filter(
-            (newSucursal: Sucursales) =>
-              !sucursales.some((existingSucursal) => existingSucursal.id === newSucursal.id)
-          );
-
-          setSucursales((prev) => [...prev, ...newSucursales]);
-          setHasMore(response.meta.hasMore);
-          setPage((prevPage) => prevPage + 1);
         }
+
+        const response = await fetchSucursales(currentFilters);
+        setSucursales(response.data); // Extraemos solo el array 'data'
+        setError(null);
       } catch (err) {
         setError('Error al cargar las sucursales');
         console.error(err);
@@ -49,12 +34,12 @@ export const useSucursales = () => {
         setLoading(false);
       }
     },
-    [loading, hasMore, page, sucursales, filters]
+    [filters] // Eliminamos 'loading' de las dependencias para evitar bucles
   );
 
   useEffect(() => {
-    handleFetchSucursales();
-  }, []);
+    handleFetchSucursales(true); // Carga inicial con refresh
+  }, [handleFetchSucursales]);
 
   const toggleSucursalSelection = (sucursalId: string) => {
     setSelectedSucursales((prev) => {
@@ -97,9 +82,9 @@ export const useSucursales = () => {
     sucursales,
     loading,
     error,
-    hasMore,
+    hasMore: false, // Sin paginación
     filters,
-    fetchMoreSucursales: fetchSucursales,
+    fetchMoreSucursales: () => Promise.resolve(), // No-op, sin paginación
     selectedSucursales,
     toggleSucursalSelection,
     selectAllSucursales,

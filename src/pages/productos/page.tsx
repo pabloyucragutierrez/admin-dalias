@@ -1,13 +1,14 @@
 import { Loader2, Plus, X } from 'lucide-react';
 import { useProducts } from '@/hooks/use-products';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { activeOrInactiveProduct, deleteProduct } from '@/services/products.service';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import type { Product } from '@/interfaces/products.interface';
-import ProductsTable from './ui/ProductsTable';
-import FilterProducts from './ui/FilterProducts'; // Nuevo import
+import { DataTable } from '@/components/data-table';
+import FilterProducts from './ui/FilterProducts';
+import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
 
 export default function ProductsPage() {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export default function ProductsPage() {
   const [showModalDelete, setShowModalDelete] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const refreshDataTable = useRef<() => void>(null);
 
   const handleChangeStatus = async (product: Product) => {
     setShowModalStatus(true);
@@ -58,6 +60,7 @@ export default function ProductsPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     refreshProducts();
+    refreshDataTable.current?.();
     handleCancelStatus();
   };
 
@@ -75,6 +78,7 @@ export default function ProductsPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     refreshProducts();
+    refreshDataTable.current?.();
     handleCancelDelete();
   };
 
@@ -124,17 +128,18 @@ export default function ProductsPage() {
         </div>
       )}
 
-      <ProductsTable
-        products={products}
-        loading={loading}
-        hasMore={hasMore}
-        fetchMoreProducts={fetchMoreProducts}
-        selectedProducts={selectedProducts}
-        toggleProductSelection={toggleProductSelection}
-        selectAllProducts={selectAllProducts}
-        changeStatusFn={handleChangeStatus}
-        deleteFn={handleDelete}
-      />
+      <div className="container mx-auto py-5">
+        <DataTable
+          columns={getColumns(handleChangeStatus, handleDelete)}
+          columnNames={columnNames}
+          url="products"
+          typeFilter={columnFilter}
+          stateFilter={stateFilter}
+          onRefresh={(callback) => {
+            refreshDataTable.current = callback;
+          }}
+        />
+      </div>
 
       {showModalStatus && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

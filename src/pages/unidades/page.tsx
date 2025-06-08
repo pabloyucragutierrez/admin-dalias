@@ -1,7 +1,6 @@
 import { Loader2, Plus, X } from "lucide-react";
 import { useUnidades } from "@/hooks/use-unidades";
-import UnidadesTable from "./ui/unidades-table";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { Unidades, UnidadesDto } from "@/interfaces";
 import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
@@ -13,6 +12,8 @@ import {
   updateUnidades,
 } from "@/services/unidades.service";
 import { toast } from "sonner";
+import { DataTable } from "@/components/data-table";
+import { columnFilter, columnNames, getColumns, stateFilter } from "./ui/columns";
 import FilterUnidades from "./ui/FilterUnidades";
 
 interface FormInputs {
@@ -36,21 +37,22 @@ export default function UnidadesPage() {
     filters,
   } = useUnidades();
 
-  const [unidadesSelect, setUnidadesSelect] = useState<Unidades | null>(null);
+  const [unidadSelect, setUnidadSelect] = useState<Unidades | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
+  const refreshDataTable = useRef<() => void>(null);
 
-  const handleChangeStatus = async (unidades: Unidades) => {
+  const handleChangeStatus = async (unidad: Unidades) => {
     setShowModalStatus(true);
-    setUnidadesSelect(unidades);
+    setUnidadSelect(unidad);
   };
 
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrinactiveUnidades(unidadesSelect?.id || "", {
-      status: !unidadesSelect?.status,
+    const response = await activeOrinactiveUnidades(unidadSelect?.id || "", {
+      status: !unidadSelect?.status,
     });
 
     setLoadingStatus(false);
@@ -62,6 +64,7 @@ export default function UnidadesPage() {
 
     toast.success(response?.message, { position: "top-center" });
     refreshUnidades();
+    refreshDataTable.current?.();
     handleCancelStatus();
   };
 
@@ -77,13 +80,13 @@ export default function UnidadesPage() {
     },
   });
 
-  const handleEdit = async (unidades: Unidades) => {
+  const handleEdit = async (unidad: Unidades) => {
     setShowModal(true);
     reset({
-      name: unidades.name,
-      code: unidades.code,
+      name: unidad.name,
+      code: unidad.code,
     });
-    setUnidadesSelect(unidades);
+    setUnidadSelect(unidad);
   };
 
   const onSubmit = async (values: FormInputs) => {
@@ -92,8 +95,8 @@ export default function UnidadesPage() {
       code: values.code,
     };
 
-    const response = unidadesSelect?.id
-      ? await updateUnidades(unidadesSelect?.id, payload)
+    const response = unidadSelect?.id
+      ? await updateUnidades(unidadSelect?.id, payload)
       : await createUnidades(payload);
 
     if (!response?.success) {
@@ -104,11 +107,12 @@ export default function UnidadesPage() {
     toast.success(response?.message, { position: "top-center" });
     handleCancel();
     refreshUnidades();
+    refreshDataTable.current?.();
   };
 
   const handleCancel = () => {
     setShowModal(false);
-    setUnidadesSelect(null);
+    setUnidadSelect(null);
     reset({
       name: "",
       code: "",
@@ -117,21 +121,20 @@ export default function UnidadesPage() {
 
   const handleCancelStatus = () => {
     setShowModalStatus(false);
-    setUnidadesSelect(null);
+    setUnidadSelect(null);
   };
 
   return (
     <>
       <div className="flex sm:flex-row flex-col sm:gap-0 gap-2 sm:items-center justify-between">
         <h1 className="text-4xl text-blue-600 font-bold">Unidades</h1>
-        <button
-          type="button"
-          className="bg-blue-600 flex flex-row items-center gap-2 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+        <Button
+          className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
           onClick={() => setShowModal(true)}
         >
           <Plus size={20} />
           Nueva Unidad
-        </button>
+        </Button>
       </div>
 
       <FilterUnidades
@@ -145,7 +148,7 @@ export default function UnidadesPage() {
         <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
           <p className="text-blue-800">
             {selectedUnidades.length} unidad
-            {selectedUnidades.length !== 1 ? "s" : ""} seleccionado
+            {selectedUnidades.length !== 1 ? "es" : ""} seleccionada
             {selectedUnidades.length !== 1 ? "s" : ""}
           </p>
         </div>
@@ -157,24 +160,25 @@ export default function UnidadesPage() {
         </div>
       )}
 
-      <UnidadesTable
-        unidades={unidades}
-        loading={loading}
-        hasMore={hasMore}
-        fetchMoreUnidades={fetchMoreUnidades}
-        selectedUnidades={selectedUnidades}
-        toggleUnidadSelection={toggleUnidadSelection}
-        selectAllUnidades={selectAllUnidades}
-        changeStatusFn={handleChangeStatus}
-        editFn={handleEdit}
-      />
+      <div className="container mx-auto py-5">
+        <DataTable
+          columns={getColumns(handleChangeStatus, handleEdit)}
+          columnNames={columnNames}
+          url="unidades"
+          typeFilter={columnFilter}
+          stateFilter={stateFilter}
+          onRefresh={(callback) => {
+            refreshDataTable.current = callback;
+          }}
+        />
+      </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-md shadow-lg w-[400px]">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold">
-                {unidadesSelect ? "Editar Unidad" : "Nueva Unidad"}
+                {unidadSelect ? "Editar Unidad" : "Nueva Unidad"}
               </h2>
               <button
                 type="button"
@@ -260,8 +264,8 @@ export default function UnidadesPage() {
 
             <p className="text-gray-600 font-medium">
               ¿Estás seguro de que deseas{" "}
-              {unidadesSelect?.status ? "activar" : "desactivar"} la unidad:{" "}
-              {unidadesSelect?.name}?
+              {unidadSelect?.status ? "desactivar" : "activar"} la unidad:{" "}
+              {unidadSelect?.name}?
             </p>
 
             <div className="flex justify-between items-center m-auto gap-5 mt-5">

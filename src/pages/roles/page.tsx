@@ -1,6 +1,6 @@
 import { Loader2, Plus, X } from 'lucide-react';
 import { useRoles } from '@/hooks/use-roles';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { activeOrInactiveRoles, createRoles, updateRoles } from '@/services/roles.service';
 import { toast } from 'sonner';
 import type { Roles, RolesDto } from '@/interfaces/roles.interface';
-import RolesTable from './ui/roles-table';
+import { DataTable } from '@/components/data-table';
 import FilterRoles from './ui/FilterRoles';
+import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
 
 interface FormInputs {
   name: string;
@@ -35,9 +36,18 @@ export default function RolesPage() {
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
+  const refreshDataTable = useRef<() => void>(null);
 
   const handleChangeStatus = async (rol: Roles) => {
     setShowModalStatus(true);
+    setRolSelect(rol);
+  };
+
+  const handleEdit = async (rol: Roles) => {
+    setShowModal(true);
+    reset({
+      name: rol.name,
+    });
     setRolSelect(rol);
   };
 
@@ -57,6 +67,7 @@ export default function RolesPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     refreshRoles();
+    refreshDataTable.current?.();
     handleCancelStatus();
   };
 
@@ -70,14 +81,6 @@ export default function RolesPage() {
       name: '',
     },
   });
-
-  const handleEdit = async (rol: Roles) => {
-    setShowModal(true);
-    reset({
-      name: rol.name,
-    });
-    setRolSelect(rol);
-  };
 
   const onSubmit = async (values: FormInputs) => {
     const payload: RolesDto = {
@@ -96,6 +99,7 @@ export default function RolesPage() {
     toast.success(response?.message, { position: 'top-center' });
     handleCancel();
     refreshRoles();
+    refreshDataTable.current?.();
   };
 
   const handleCancel = () => {
@@ -115,14 +119,13 @@ export default function RolesPage() {
     <>
       <div className="flex sm:flex-row flex-col sm:gap-0 gap-2 sm:items-center justify-between">
         <h1 className="text-4xl text-blue-600 font-bold">Roles</h1>
-        <button
-          type="button"
-          className="bg-blue-600 flex flex-row items-center gap-2 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+        <Button
+          className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
           onClick={() => setShowModal(true)}
         >
           <Plus size={20} />
           Nuevo Rol
-        </button>
+        </Button>
       </div>
 
       <FilterRoles
@@ -148,17 +151,18 @@ export default function RolesPage() {
         </div>
       )}
 
-      <RolesTable
-        roles={roles}
-        loading={loading}
-        hasMore={hasMore}
-        fetchMoreRoles={fetchMoreRoles}
-        selectedRoles={selectedRoles}
-        toggleRolSelection={toggleRolSelection}
-        selectAllRoles={selectAllRoles}
-        changeStatusFn={handleChangeStatus}
-        editFn={handleEdit}
-      />
+      <div className="container mx-auto py-5">
+        <DataTable
+          columns={getColumns(handleChangeStatus, handleEdit)}
+          columnNames={columnNames}
+          url="roles"
+          typeFilter={columnFilter}
+          stateFilter={stateFilter}
+          onRefresh={(callback) => {
+            refreshDataTable.current = callback;
+          }}
+        />
+      </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

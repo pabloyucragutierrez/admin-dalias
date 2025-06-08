@@ -1,13 +1,14 @@
 import { Loader2, Plus, X } from 'lucide-react';
 import { useUsers } from '@/hooks/use-users';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { activeOrInactiveUsers, deleteUsers } from '@/services/users.service';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import type { User } from '@/interfaces/users.interface';
-import UsersTable from './ui/UsersTable';
 import FilterUsers from './ui/FilterUsers';
+import { DataTable } from '@/components/data-table';
+import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
 
 export default function UsersPage() {
   const navigate = useNavigate();
@@ -25,12 +26,12 @@ export default function UsersPage() {
     clearFilters,
     filters,
   } = useUsers();
-
   const [userSelect, setUserSelect] = useState<User | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModalDelete, setShowModalDelete] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const refreshDataTable = useRef<() => void>(null);
 
   const handleChangeStatus = async (user: User) => {
     setShowModalStatus(true);
@@ -124,17 +125,24 @@ export default function UsersPage() {
         </div>
       )}
 
-      <UsersTable
-        users={users}
-        loading={loading}
-        hasMore={hasMore}
-        fetchMoreUsers={fetchMoreUsers}
-        selectedUsers={selectedUsers}
-        toggleUserSelection={toggleUserSelection}
-        selectAllUsers={selectAllUsers}
-        changeStatusFn={handleChangeStatus}
-        deleteFn={handleDelete}
-      />
+      <div className="container mx-auto py-5">
+        <DataTable
+          columns={getColumns((user: User) => {
+            handleChangeStatus(user);
+            refreshDataTable.current?.();
+          }, (user: User) => {
+            handleDelete(user);
+            refreshDataTable.current?.();
+          })}
+          columnNames={columnNames}
+          url="users"
+          typeFilter={columnFilter}
+          stateFilter={stateFilter}
+          onRefresh={(callback) => {
+            refreshDataTable.current = callback;
+          }}
+        />
+      </div>
 
       {showModalStatus && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

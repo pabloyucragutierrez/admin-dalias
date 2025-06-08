@@ -1,6 +1,5 @@
 import type {
   ApiResponse,
-  PaginatedResponse,
   StatusDto,
 } from "@/interfaces";
 import type { FilterOptionsSucursales, Sucursales, SucursalesDto } from "@/interfaces/sucursales.interface";
@@ -8,15 +7,27 @@ import api from "@/lib/api";
 
 const BUSINESS_ID = "5271c6b9-9280-4ca3-aef1-8543dce8dbe0";
 
+export interface SucursalesResponse {
+  data: Sucursales[];
+  meta: {
+    total: number;
+    pageIndex: number;
+    lastPage: number;
+  };
+}
+
 export const fetchSucursales = async (
-  page = 1,
-  limit = 10,
   filterOptions?: FilterOptionsSucursales
-): Promise<PaginatedResponse<Sucursales>> => {
-  const response = await api.get<PaginatedResponse<Sucursales>>(`/sucursales/byBusiness/${BUSINESS_ID}`, {
-    params: { page, limit, ...filterOptions },
-  });
-  return response.data;
+): Promise<SucursalesResponse> => {
+  try {
+    const response = await api.get<SucursalesResponse>(`/sucursales/byBusiness/${BUSINESS_ID}`, {
+      params: { ...filterOptions },
+    });
+    return response.data;
+  } catch (e) {
+    console.error('Error al obtener sucursales:', e);
+    return { data: [], meta: { total: 0, pageIndex: 0, lastPage: 0 } };
+  }
 };
 
 export const fetchSucursalById = async (id: string): Promise<Sucursales> => {

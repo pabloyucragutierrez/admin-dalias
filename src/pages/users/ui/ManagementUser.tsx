@@ -300,7 +300,7 @@ export default function ManagementUser() {
   };
 
   return (
-    <div className="w-full mx-auto max-w-4xl">
+    <div className="w-full mx-auto">
       <h1 className="text-3xl text-blue-600 font-bold mb-8">
         {id && id !== 'new' ? 'Editar Usuario' : 'Nuevo Usuario'}
       </h1>

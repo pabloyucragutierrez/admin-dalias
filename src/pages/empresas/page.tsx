@@ -1,13 +1,14 @@
 import { Loader2, Plus, X } from 'lucide-react';
 import { useEmpresas } from '@/hooks/use-empresas';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { activeOrInactiveEmpresas, deleteEmpresas } from '@/services/empresas.service';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import type { Empresa } from '@/interfaces/empresas.interface';
+import { DataTable } from '@/components/data-table';
 import FilterEmpresas from './ui/FilterEmpresas';
-import EmpresasTable from './ui/EmpresasTable';
+import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
 
 export default function EmpresasPage() {
   const navigate = useNavigate();
@@ -25,12 +26,12 @@ export default function EmpresasPage() {
     clearFilters,
     filters,
   } = useEmpresas();
-
   const [empresaSelect, setEmpresaSelect] = useState<Empresa | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModalDelete, setShowModalDelete] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const refreshDataTable = useRef<() => void>(null);
 
   const handleChangeStatus = async (empresa: Empresa) => {
     setShowModalStatus(true);
@@ -124,17 +125,24 @@ export default function EmpresasPage() {
         </div>
       )}
 
-      <EmpresasTable
-        empresas={empresas}
-        loading={loading}
-        hasMore={hasMore}
-        fetchMoreEmpresas={fetchMoreEmpresas}
-        selectedEmpresas={selectedEmpresas}
-        toggleEmpresaSelection={toggleEmpresaSelection}
-        selectAllEmpresas={selectAllEmpresas}
-        changeStatusFn={handleChangeStatus}
-        deleteFn={handleDelete}
-      />
+      <div className="container mx-auto py-5">
+        <DataTable
+          columns={getColumns((empresa: Empresa) => {
+            handleChangeStatus(empresa);
+            refreshDataTable.current?.();
+          }, (empresa: Empresa) => {
+            handleDelete(empresa);
+            refreshDataTable.current?.();
+          })}
+          columnNames={columnNames}
+          url="empresas"
+          typeFilter={columnFilter}
+          stateFilter={stateFilter}
+          onRefresh={(callback) => {
+            refreshDataTable.current = callback;
+          }}
+        />
+      </div>
 
       {showModalStatus && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

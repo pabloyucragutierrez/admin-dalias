@@ -1,25 +1,20 @@
 import { Loader2, Plus, X } from 'lucide-react';
 import { useSucursales } from '@/hooks/use-sucursales';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { activeOrInactiveSucursales, deleteSucursales } from '@/services/sucursales.service';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import type { Sucursales } from '@/interfaces/sucursales.interface';
-import SucursalesTable from './ui/sucursales-table';
+import { DataTable } from '@/components/data-table';
 import FilterSucursales from './ui/FilterSucursales';
+import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
 
 export default function SucursalesPage() {
   const navigate = useNavigate();
   const {
-    sucursales,
-    loading,
     error,
-    hasMore,
-    fetchMoreSucursales,
-    selectedSucursales,
-    toggleSucursalSelection,
-    selectAllSucursales,
+    loading,
     refreshSucursales,
     applyFilters,
     clearFilters,
@@ -31,10 +26,15 @@ export default function SucursalesPage() {
   const [showModalDelete, setShowModalDelete] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const refreshDataTable = useRef<() => void>(null);
 
   const handleChangeStatus = async (sucursal: Sucursales) => {
     setShowModalStatus(true);
     setSucursalSelect(sucursal);
+  };
+
+  const handleEdit = async (sucursal: Sucursales) => {
+    navigate(`/sucursales/${sucursal.id}`);
   };
 
   const handleDelete = async (sucursal: Sucursales) => {
@@ -58,6 +58,7 @@ export default function SucursalesPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     refreshSucursales();
+    refreshDataTable.current?.();
     handleCancelStatus();
   };
 
@@ -75,6 +76,7 @@ export default function SucursalesPage() {
 
     toast.success(response?.message, { position: 'top-center' });
     refreshSucursales();
+    refreshDataTable.current?.();
     handleCancelDelete();
   };
 
@@ -108,33 +110,24 @@ export default function SucursalesPage() {
         loading={loading}
       />
 
-      {selectedSucursales.length > 0 && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
-          <p className="text-blue-800">
-            {selectedSucursales.length} sucursal
-            {selectedSucursales.length !== 1 ? 'es' : ''} seleccionada
-            {selectedSucursales.length !== 1 ? 's' : ''}
-          </p>
-        </div>
-      )}
-
       {error && (
         <div className="mb-4 p-4 bg-red-50 rounded-md">
           <p className="text-red-800">{error}</p>
         </div>
       )}
 
-      <SucursalesTable
-        sucursales={sucursales}
-        loading={loading}
-        hasMore={hasMore}
-        fetchMoreSucursales={fetchMoreSucursales}
-        selectedSucursales={selectedSucursales}
-        toggleSucursalSelection={toggleSucursalSelection}
-        selectAllSucursales={selectAllSucursales}
-        changeStatusFn={handleChangeStatus}
-        deleteFn={handleDelete}
-      />
+      <div className="container mx-auto py-5">
+        <DataTable
+          columns={getColumns(handleChangeStatus, handleEdit, handleDelete)}
+          columnNames={columnNames}
+          url={`/sucursales/byBusiness/5271c6b9-9280-4ca3-aef1-8543dce8dbe0`}
+          typeFilter={columnFilter}
+          stateFilter={stateFilter}
+          onRefresh={(callback) => {
+            refreshDataTable.current = callback;
+          }}
+        />
+      </div>
 
       {showModalStatus && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
