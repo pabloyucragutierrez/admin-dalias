@@ -1,31 +1,24 @@
-import { Loader2, Plus, X } from 'lucide-react';
-import { useEmpresas } from '@/hooks/use-empresas';
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { activeOrInactiveEmpresas, deleteEmpresas } from '@/services/empresas.service';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router';
-import type { Empresa } from '@/interfaces/empresas.interface';
-import { DataTable } from '@/components/data-table';
-import FilterEmpresas from './ui/FilterEmpresas';
-import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
+import { Loader2, Plus, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  activeOrInactiveEmpresas,
+  deleteEmpresas,
+} from "@/services/empresas.service";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+import type { Empresa } from "@/interfaces/empresas.interface";
+import { DataTable } from "@/components/data-table";
+import {
+  columnFilter,
+  columnNames,
+  getColumns,
+  stateFilter,
+} from "./ui/columns";
 
 export default function EmpresasPage() {
   const navigate = useNavigate();
-  const {
-    empresas,
-    loading,
-    error,
-    hasMore,
-    fetchMoreEmpresas,
-    selectedEmpresas,
-    toggleEmpresaSelection,
-    selectAllEmpresas,
-    refreshEmpresas,
-    applyFilters,
-    clearFilters,
-    filters,
-  } = useEmpresas();
+
   const [empresaSelect, setEmpresaSelect] = useState<Empresa | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModalDelete, setShowModalDelete] = useState<boolean>(false);
@@ -46,36 +39,36 @@ export default function EmpresasPage() {
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrInactiveEmpresas(empresaSelect?.id || '', {
+    const response = await activeOrInactiveEmpresas(empresaSelect?.id || "", {
       status: !empresaSelect?.status,
     });
 
     setLoadingStatus(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshEmpresas();
+    toast.success(response?.message, { position: "top-center" });
+
     handleCancelStatus();
   };
 
   const deleteFn = async () => {
     setLoadingDelete(true);
 
-    const response = await deleteEmpresas(empresaSelect?.id || '');
+    const response = await deleteEmpresas(empresaSelect?.id || "");
 
     setLoadingDelete(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshEmpresas();
+    toast.success(response?.message, { position: "top-center" });
+
     handleCancelDelete();
   };
 
@@ -95,47 +88,27 @@ export default function EmpresasPage() {
         <h1 className="text-4xl text-blue-600 font-bold">Empresas</h1>
         <Button
           className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
-          onClick={() => navigate('/empresas/new')}
+          onClick={() => navigate("/empresas/new")}
         >
           <Plus size={20} />
           Nueva Empresa
         </Button>
       </div>
 
-      <FilterEmpresas
-        onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
-        initialFilters={filters}
-        loading={loading}
-      />
-
-      {selectedEmpresas.length > 0 && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
-          <p className="text-blue-800">
-            {selectedEmpresas.length} empresa
-            {selectedEmpresas.length !== 1 ? 's' : ''} seleccionada
-            {selectedEmpresas.length !== 1 ? 's' : ''}
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 rounded-md">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
-
       <div className="container mx-auto py-5">
         <DataTable
-          columns={getColumns((empresa: Empresa) => {
-            handleChangeStatus(empresa);
-            refreshDataTable.current?.();
-          }, (empresa: Empresa) => {
-            handleDelete(empresa);
-            refreshDataTable.current?.();
-          })}
+          columns={getColumns(
+            (empresa: Empresa) => {
+              handleChangeStatus(empresa);
+              refreshDataTable.current?.();
+            },
+            (empresa: Empresa) => {
+              handleDelete(empresa);
+              refreshDataTable.current?.();
+            }
+          )}
           columnNames={columnNames}
-          url="empresas"
+          url="business"
           typeFilter={columnFilter}
           stateFilter={stateFilter}
           onRefresh={(callback) => {
@@ -161,8 +134,8 @@ export default function EmpresasPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas{' '}
-              {empresaSelect?.status ? 'desactivar' : 'activar'} a la empresa:{' '}
+              ¿Estás seguro de que deseas{" "}
+              {empresaSelect?.status ? "desactivar" : "activar"} a la empresa:{" "}
               {empresaSelect?.name}?
             </p>
 
@@ -186,7 +159,7 @@ export default function EmpresasPage() {
                     Cambiando estado...
                   </div>
                 ) : (
-                  'Aceptar'
+                  "Aceptar"
                 )}
               </Button>
             </div>
@@ -211,7 +184,7 @@ export default function EmpresasPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas eliminar a la empresa:{' '}
+              ¿Estás seguro de que deseas eliminar a la empresa:{" "}
               {empresaSelect?.name}?
             </p>
 
@@ -236,7 +209,7 @@ export default function EmpresasPage() {
                     Eliminando...
                   </div>
                 ) : (
-                  'Eliminar'
+                  "Eliminar"
                 )}
               </Button>
             </div>

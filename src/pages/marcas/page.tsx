@@ -1,5 +1,4 @@
 import { Loader2, Plus, X } from "lucide-react";
-import { useMarcas } from "@/hooks/use-marcas";
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
@@ -13,8 +12,12 @@ import {
 import { toast } from "sonner";
 import type { Marcas, MarcasDto } from "@/interfaces/marcas.interface";
 import { DataTable } from "@/components/data-table";
-import FilterMarcas from "./ui/filter-marcas";
-import { columnFilter, columnNames, getColumns, stateFilter } from "./ui/columns";
+import {
+  columnFilter,
+  columnNames,
+  getColumns,
+  stateFilter,
+} from "./ui/columns";
 
 interface FormInputs {
   code: string;
@@ -22,21 +25,6 @@ interface FormInputs {
 }
 
 export default function MarcasPage() {
-  const {
-    marcas,
-    loading,
-    error,
-    hasMore,
-    fetchMoreMarcas,
-    selectedMarcas,
-    toggleMarcaSelection,
-    selectAllMarcas,
-    refreshMarcas,
-    applyFilters,
-    clearFilters,
-    filters,
-  } = useMarcas();
-
   const [marcaSelect, setMarcaSelect] = useState<Marcas | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -72,7 +60,7 @@ export default function MarcasPage() {
     }
 
     toast.success(response?.message, { position: "top-center" });
-    refreshMarcas();
+
     refreshDataTable.current?.();
     handleCancelStatus();
   };
@@ -106,7 +94,6 @@ export default function MarcasPage() {
 
     toast.success(response?.message, { position: "top-center" });
     handleCancel();
-    refreshMarcas();
     refreshDataTable.current?.();
   };
 
@@ -136,29 +123,6 @@ export default function MarcasPage() {
           Nueva Marca
         </Button>
       </div>
-
-      <FilterMarcas
-        onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
-        initialFilters={filters}
-        loading={loading}
-      />
-
-      {selectedMarcas.length > 0 && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
-          <p className="text-blue-800">
-            {selectedMarcas.length} marca
-            {selectedMarcas.length !== 1 ? "s" : ""} seleccionada
-            {selectedMarcas.length !== 1 ? "s" : ""}
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 rounded-md">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
 
       <div className="container mx-auto py-5">
         <DataTable

@@ -1,25 +1,23 @@
-import { Loader2, Plus, X } from 'lucide-react';
-import { useSucursales } from '@/hooks/use-sucursales';
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { activeOrInactiveSucursales, deleteSucursales } from '@/services/sucursales.service';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router';
-import type { Sucursales } from '@/interfaces/sucursales.interface';
-import { DataTable } from '@/components/data-table';
-import FilterSucursales from './ui/FilterSucursales';
-import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
+import { Loader2, Plus, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  activeOrInactiveSucursales,
+  deleteSucursales,
+} from "@/services/sucursales.service";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+import type { Sucursales } from "@/interfaces/sucursales.interface";
+import { DataTable } from "@/components/data-table";
+import {
+  columnFilter,
+  columnNames,
+  getColumns,
+  stateFilter,
+} from "./ui/columns";
 
 export default function SucursalesPage() {
   const navigate = useNavigate();
-  const {
-    error,
-    loading,
-    refreshSucursales,
-    applyFilters,
-    clearFilters,
-    filters,
-  } = useSucursales();
 
   const [sucursalSelect, setSucursalSelect] = useState<Sucursales | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
@@ -45,19 +43,22 @@ export default function SucursalesPage() {
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrInactiveSucursales(sucursalSelect?.id || '', {
-      status: !sucursalSelect?.status,
-    });
+    const response = await activeOrInactiveSucursales(
+      sucursalSelect?.id || "",
+      {
+        status: !sucursalSelect?.status,
+      }
+    );
 
     setLoadingStatus(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshSucursales();
+    toast.success(response?.message, { position: "top-center" });
+
     refreshDataTable.current?.();
     handleCancelStatus();
   };
@@ -65,17 +66,16 @@ export default function SucursalesPage() {
   const deleteFn = async () => {
     setLoadingDelete(true);
 
-    const response = await deleteSucursales(sucursalSelect?.id || '');
+    const response = await deleteSucursales(sucursalSelect?.id || "");
 
     setLoadingDelete(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshSucursales();
+    toast.success(response?.message, { position: "top-center" });
     refreshDataTable.current?.();
     handleCancelDelete();
   };
@@ -96,25 +96,12 @@ export default function SucursalesPage() {
         <h1 className="text-4xl text-blue-600 font-bold">Sucursales</h1>
         <Button
           className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
-          onClick={() => navigate('/sucursales/new')}
+          onClick={() => navigate("/sucursales/new")}
         >
           <Plus size={20} />
           Nueva Sucursal
         </Button>
       </div>
-
-      <FilterSucursales
-        onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
-        initialFilters={filters}
-        loading={loading}
-      />
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 rounded-md">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
 
       <div className="container mx-auto py-5">
         <DataTable
@@ -146,8 +133,8 @@ export default function SucursalesPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas{' '}
-              {sucursalSelect?.status ? 'desactivar' : 'activar'} la sucursal:{' '}
+              ¿Estás seguro de que deseas{" "}
+              {sucursalSelect?.status ? "desactivar" : "activar"} la sucursal:{" "}
               {sucursalSelect?.name}?
             </p>
 
@@ -171,7 +158,7 @@ export default function SucursalesPage() {
                     Cambiando estado...
                   </div>
                 ) : (
-                  'Aceptar'
+                  "Aceptar"
                 )}
               </Button>
             </div>
@@ -196,7 +183,7 @@ export default function SucursalesPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas eliminar la sucursal:{' '}
+              ¿Estás seguro de que deseas eliminar la sucursal:{" "}
               {sucursalSelect?.name}?
             </p>
 
@@ -221,7 +208,7 @@ export default function SucursalesPage() {
                     Eliminando...
                   </div>
                 ) : (
-                  'Eliminar'
+                  "Eliminar"
                 )}
               </Button>
             </div>

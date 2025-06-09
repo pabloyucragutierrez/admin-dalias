@@ -9,10 +9,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BadgeCheck, Copy, Edit, FolderX, MoreHorizontal, Trash2 } from "lucide-react";
+import {
+  BadgeCheck,
+  Copy,
+  Edit,
+  FolderX,
+  MoreHorizontal,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import type { Sucursales } from "@/interfaces/sucursales.interface";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { FilterConfig } from "@/components/data-table";
 
 export const columnNames: Record<string, string> = {
   code: "Código",
@@ -24,16 +32,25 @@ export const columnNames: Record<string, string> = {
   status: "Estado",
 };
 
-export const columnFilter = [
+export const columnFilter: FilterConfig[] = [
   { id: "name", label: "Nombre" },
   { id: "code", label: "Código" },
   { id: "district", label: "Distrito" },
 ];
 
-export const stateFilter = [
-  { id: "none", label: "Todos" },
-  { id: "true", label: "Activo" },
-  { id: "false", label: "Inactivo" },
+export const stateFilter: FilterConfig[] = [
+  {
+    id: "all",
+    label: "Todos",
+  },
+  {
+    id: "activo",
+    label: "Activos",
+  },
+  {
+    id: "inactivo",
+    label: "Inactivos",
+  },
 ];
 
 export function getColumns(
@@ -87,7 +104,9 @@ export function getColumns(
       accessorKey: "createAt",
       header: "Fecha de Creación",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{formatDateTime(row.original.createAt)}</div>
+        <div className="text-sm text-gray-500">
+          {formatDateTime(row.original.createAt)}
+        </div>
       ),
     },
     {
@@ -122,27 +141,23 @@ export function getColumns(
               <span className="text-sm ml-2">Copiar ID de sucursal</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => onEdit(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onEdit(row.original)}>
               <Edit size={18} />
               <span className="text-sm ml-2">Editar</span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => onChangeStatus(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onChangeStatus(row.original)}>
               {row.original.status ? (
                 <FolderX size={18} />
               ) : (
                 <BadgeCheck size={18} />
               )}
               <span className="text-sm ml-2">
-                {row.original.status ? "Desactivar Sucursal" : "Activar Sucursal"}
+                {row.original.status
+                  ? "Desactivar Sucursal"
+                  : "Activar Sucursal"}
               </span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => onDelete(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onDelete(row.original)}>
               <Trash2 size={18} />
               <span className="text-sm ml-2">Eliminar</span>
             </DropdownMenuItem>

@@ -13,6 +13,7 @@ import { BadgeCheck, Copy, Edit, FolderX, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import type { Marcas } from "@/interfaces/marcas.interface";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { FilterConfig } from "@/components/data-table";
 
 export const columnNames: Record<string, string> = {
   code: "Código",
@@ -21,16 +22,27 @@ export const columnNames: Record<string, string> = {
   status: "Estado",
 };
 
-export const columnFilter = [
-  { id: "name", label: "Nombre" },
+export const columnFilter: FilterConfig[] = [
+  {
+    id: "name",
+    label: "Nombre",
+  },
 ];
 
-export const stateFilter = [
-  { id: "none", label: "Todos" },
-  { id: "true", label: "Activo" },
-  { id: "false", label: "Inactivo" },
+export const stateFilter: FilterConfig[] = [
+  {
+    id: "all",
+    label: "Todos",
+  },
+  {
+    id: "activo",
+    label: "Activos",
+  },
+  {
+    id: "inactivo",
+    label: "Inactivos",
+  },
 ];
-
 export function getColumns(
   onChangeStatus: (marca: Marcas) => void,
   onEdit: (marca: Marcas) => void
@@ -60,7 +72,9 @@ export function getColumns(
       accessorKey: "createAt",
       header: "Fecha de Creación",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{formatDateTime(row.original.createAt)}</div>
+        <div className="text-sm text-gray-500">
+          {formatDateTime(row.original.createAt)}
+        </div>
       ),
     },
     {
@@ -95,15 +109,11 @@ export function getColumns(
               <span className="text-sm ml-2">Copiar ID de marca</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => onEdit(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onEdit(row.original)}>
               <Edit size={18} />
               <span className="text-sm ml-2">Editar</span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => onChangeStatus(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onChangeStatus(row.original)}>
               {row.original.status ? (
                 <FolderX size={18} />
               ) : (

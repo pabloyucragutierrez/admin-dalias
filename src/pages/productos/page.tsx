@@ -1,31 +1,23 @@
-import { Loader2, Plus, X } from 'lucide-react';
-import { useProducts } from '@/hooks/use-products';
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { activeOrInactiveProduct, deleteProduct } from '@/services/products.service';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router';
-import type { Product } from '@/interfaces/products.interface';
-import { DataTable } from '@/components/data-table';
-import FilterProducts from './ui/FilterProducts';
-import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
+import { Loader2, Plus, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  activeOrInactiveProduct,
+  deleteProduct,
+} from "@/services/products.service";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+import type { Product } from "@/interfaces/products.interface";
+import { DataTable } from "@/components/data-table";
+import {
+  columnFilter,
+  columnNames,
+  getColumns,
+  stateFilter,
+} from "./ui/columns";
 
 export default function ProductsPage() {
   const navigate = useNavigate();
-  const {
-    products,
-    loading,
-    error,
-    hasMore,
-    fetchMoreProducts,
-    selectedProducts,
-    toggleProductSelection,
-    selectAllProducts,
-    refreshProducts,
-    applyFilters,
-    clearFilters,
-    filters,
-  } = useProducts();
 
   const [productSelect, setProductSelect] = useState<Product | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
@@ -47,19 +39,19 @@ export default function ProductsPage() {
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrInactiveProduct(productSelect?.id || '', {
+    const response = await activeOrInactiveProduct(productSelect?.id || "", {
       status: !productSelect?.status,
     });
 
     setLoadingStatus(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshProducts();
+    toast.success(response?.message, { position: "top-center" });
+
     refreshDataTable.current?.();
     handleCancelStatus();
   };
@@ -67,17 +59,17 @@ export default function ProductsPage() {
   const deleteFn = async () => {
     setLoadingDelete(true);
 
-    const response = await deleteProduct(productSelect?.id || '');
+    const response = await deleteProduct(productSelect?.id || "");
 
     setLoadingDelete(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshProducts();
+    toast.success(response?.message, { position: "top-center" });
+
     refreshDataTable.current?.();
     handleCancelDelete();
   };
@@ -98,35 +90,12 @@ export default function ProductsPage() {
         <h1 className="text-4xl text-blue-600 font-bold">Productos</h1>
         <Button
           className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
-          onClick={() => navigate('/products/new')}
+          onClick={() => navigate("/products/new")}
         >
           <Plus size={20} />
           Nuevo Producto
         </Button>
       </div>
-
-      <FilterProducts
-        onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
-        initialFilters={filters}
-        loading={loading}
-      />
-
-      {selectedProducts.length > 0 && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
-          <p className="text-blue-800">
-            {selectedProducts.length} producto
-            {selectedProducts.length !== 1 ? 's' : ''} seleccionado
-            {selectedProducts.length !== 1 ? 's' : ''}
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 rounded-md">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
 
       <div className="container mx-auto py-5">
         <DataTable
@@ -158,8 +127,8 @@ export default function ProductsPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas{' '}
-              {productSelect?.status ? 'desactivar' : 'activar'} el producto:{' '}
+              ¿Estás seguro de que deseas{" "}
+              {productSelect?.status ? "desactivar" : "activar"} el producto:{" "}
               {productSelect?.name}?
             </p>
 
@@ -183,7 +152,7 @@ export default function ProductsPage() {
                     Cambiando estado...
                   </div>
                 ) : (
-                  'Aceptar'
+                  "Aceptar"
                 )}
               </Button>
             </div>
@@ -208,7 +177,7 @@ export default function ProductsPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas eliminar el producto:{' '}
+              ¿Estás seguro de que deseas eliminar el producto:{" "}
               {productSelect?.name}?
             </p>
 
@@ -233,7 +202,7 @@ export default function ProductsPage() {
                     Eliminando...
                   </div>
                 ) : (
-                  'Eliminar'
+                  "Eliminar"
                 )}
               </Button>
             </div>

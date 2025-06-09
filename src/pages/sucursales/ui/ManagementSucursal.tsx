@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { createSucursales, fetchSucursalById, updateSucursales } from '@/services/sucursales.service';
-import { useNavigate, useParams } from 'react-router';
-import type { SucursalesDto } from '@/interfaces/sucursales.interface';
-import { geolocation } from '@/utils/geolocation';
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  createSucursales,
+  fetchSucursalById,
+  updateSucursales,
+} from "@/services/sucursales.service";
+import { useNavigate, useParams } from "react-router";
+import type { SucursalesDto } from "@/interfaces/sucursales.interface";
+import { geolocation } from "@/utils/geolocation";
 
 interface District {
   id: number;
@@ -58,21 +62,23 @@ export default function ManagementSucursal() {
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>({
     defaultValues: {
-      code: '',
-      name: '',
-      regionId: '',
-      provinceId: '',
-      districtId: '',
-      address: '',
-      reference: '',
-      phone: '',
+      code: "",
+      name: "",
+      regionId: "",
+      provinceId: "",
+      districtId: "",
+      address: "",
+      reference: "",
+      phone: "",
     },
   });
 
   const findDistrictByIdentifier = (identifier: string): District | null => {
     for (const region of geolocation.regions) {
       for (const province of region.children || []) {
-        const district = province.children?.find((d) => d.identifier === identifier);
+        const district = province.children?.find(
+          (d) => d.identifier === identifier
+        );
         if (district) return district;
       }
     }
@@ -97,15 +103,15 @@ export default function ManagementSucursal() {
   };
 
   useEffect(() => {
-    if (id && id !== 'new') {
+    if (id && id !== "new") {
       const loadSucursal = async () => {
         setLoading(true);
         try {
           const sucursal = await fetchSucursalById(id);
           if (sucursal) {
-            let regionId = '';
-            let provinceId = '';
-            let districtId = sucursal.district || '';
+            let regionId = "";
+            let provinceId = "";
+            const districtId = sucursal.district || "";
 
             if (districtId) {
               const district = findDistrictByIdentifier(districtId);
@@ -120,9 +126,9 @@ export default function ManagementSucursal() {
                     setAvailableProvinces(region.children || []);
                     setSelectedProvince(province.id);
                     setAvailableDistricts(province.children || []);
-                    setValue('regionId', regionId);
-                    setValue('provinceId', provinceId);
-                    setValue('districtId', districtId);
+                    setValue("regionId", regionId);
+                    setValue("provinceId", provinceId);
+                    setValue("districtId", districtId);
                   }
                 }
               }
@@ -135,17 +141,22 @@ export default function ManagementSucursal() {
               provinceId,
               districtId,
               address: sucursal.address,
-              reference: sucursal.reference || '',
+              reference: sucursal.reference || "",
               phone: sucursal.phone,
             });
           } else {
-            toast.error('Error al cargar la sucursal', { position: 'top-center' });
-            navigate('/sucursales');
+            toast.error("Error al cargar la sucursal", {
+              position: "top-center",
+            });
+            navigate("/sucursales");
           }
         } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-          toast.error('Error al cargar la sucursal: ' + errorMessage, { position: 'top-center' });
-          navigate('/sucursales');
+          const errorMessage =
+            err instanceof Error ? err.message : "Unknown error";
+          toast.error("Error al cargar la sucursal: " + errorMessage, {
+            position: "top-center",
+          });
+          navigate("/sucursales");
         } finally {
           setLoading(false);
         }
@@ -162,8 +173,8 @@ export default function ManagementSucursal() {
     setSelectedProvince(null);
     setAvailableProvinces(region?.children || []);
     setAvailableDistricts([]);
-    setValue('provinceId', '');
-    setValue('districtId', '');
+    setValue("provinceId", "");
+    setValue("districtId", "");
   };
 
   const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -172,16 +183,16 @@ export default function ManagementSucursal() {
 
     setSelectedProvince(provinceId);
     setAvailableDistricts(province?.children || []);
-    setValue('districtId', '');
+    setValue("districtId", "");
   };
 
   const onSubmit = async (values: FormInputs) => {
     if (!values.districtId) {
-      toast.warning('Debe seleccionar un distrito', { position: 'top-center' });
+      toast.warning("Debe seleccionar un distrito", { position: "top-center" });
       return;
     }
 
-    const payload: Omit<SucursalesDto, 'businessId'> = {
+    const payload: Omit<SucursalesDto, "businessId"> = {
       code: values.code,
       name: values.name,
       district: values.districtId,
@@ -191,31 +202,34 @@ export default function ManagementSucursal() {
     };
 
     try {
-      const response = id && id !== 'new'
-        ? await updateSucursales(id, payload)
-        : await createSucursales(payload);
+      const response =
+        id && id !== "new"
+          ? await updateSucursales(id, payload)
+          : await createSucursales(payload);
 
       if (!response?.success) {
-        toast.warning(response?.message, { position: 'top-center' });
+        toast.warning(response?.message, { position: "top-center" });
         return;
       }
 
-      toast.success(response?.message, { position: 'top-center' });
-      navigate('/sucursales');
+      toast.success(response?.message, { position: "top-center" });
+      navigate("/sucursales");
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      toast.error('Error al guardar la sucursal: ' + errorMessage, { position: 'top-center' });
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      toast.error("Error al guardar la sucursal: " + errorMessage, {
+        position: "top-center",
+      });
     }
   };
 
   const handleCancel = () => {
-    navigate('/sucursales');
+    navigate("/sucursales");
   };
 
   return (
     <div className="w-full mx-auto">
       <h1 className="text-3xl text-blue-600 font-bold mb-6">
-        {id && id !== 'new' ? 'Editar Sucursal' : 'Nueva Sucursal'}
+        {id && id !== "new" ? "Editar Sucursal" : "Nueva Sucursal"}
       </h1>
 
       {loading ? (
@@ -226,7 +240,9 @@ export default function ManagementSucursal() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* General Information Card */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">Información General</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Información General
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="code">Código</Label>
@@ -235,11 +251,13 @@ export default function ManagementSucursal() {
                   type="text"
                   placeholder="Código de la sucursal"
                   className="w-full text-base py-2"
-                  {...register('code', {
-                    required: 'Código es requerido',
+                  {...register("code", {
+                    required: "Código es requerido",
                   })}
                 />
-                {errors.code && <p className="text-red-600 text-sm">{errors.code.message}</p>}
+                {errors.code && (
+                  <p className="text-red-600 text-sm">{errors.code.message}</p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="name">Nombre</Label>
@@ -248,25 +266,29 @@ export default function ManagementSucursal() {
                   type="text"
                   placeholder="Nombre de la sucursal"
                   className="w-full text-base py-2"
-                  {...register('name', {
-                    required: 'Nombre es requerido',
+                  {...register("name", {
+                    required: "Nombre es requerido",
                   })}
                 />
-                {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
+                {errors.name && (
+                  <p className="text-red-600 text-sm">{errors.name.message}</p>
+                )}
               </div>
             </div>
           </div>
 
           {/* Location and Contact Card */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">Ubicación y Contacto</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Ubicación y Contacto
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="regionId">Región</Label>
                 <select
                   id="regionId"
                   className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register('regionId', { required: 'Región es requerida' })}
+                  {...register("regionId", { required: "Región es requerida" })}
                   onChange={handleRegionChange}
                 >
                   <option value="">Selecciona una región</option>
@@ -276,14 +298,20 @@ export default function ManagementSucursal() {
                     </option>
                   ))}
                 </select>
-                {errors.regionId && <p className="text-red-600 text-sm">{errors.regionId.message}</p>}
+                {errors.regionId && (
+                  <p className="text-red-600 text-sm">
+                    {errors.regionId.message}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="provinceId">Provincia</Label>
                 <select
                   id="provinceId"
                   className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                  {...register('provinceId', { required: 'Provincia es requerida' })}
+                  {...register("provinceId", {
+                    required: "Provincia es requerida",
+                  })}
                   onChange={handleProvinceChange}
                   disabled={!selectedRegion}
                 >
@@ -294,7 +322,11 @@ export default function ManagementSucursal() {
                     </option>
                   ))}
                 </select>
-                {errors.provinceId && <p className="text-red-600 text-sm">{errors.provinceId.message}</p>}
+                {errors.provinceId && (
+                  <p className="text-red-600 text-sm">
+                    {errors.provinceId.message}
+                  </p>
+                )}
               </div>
             </div>
             <div className="flex flex-col space-y-2 mt-6">
@@ -302,7 +334,9 @@ export default function ManagementSucursal() {
               <select
                 id="districtId"
                 className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                {...register('districtId', { required: 'Distrito es requerido' })}
+                {...register("districtId", {
+                  required: "Distrito es requerido",
+                })}
                 disabled={!selectedProvince}
               >
                 <option value="">Selecciona un distrito</option>
@@ -312,7 +346,11 @@ export default function ManagementSucursal() {
                   </option>
                 ))}
               </select>
-              {errors.districtId && <p className="text-red-600 text-sm">{errors.districtId.message}</p>}
+              {errors.districtId && (
+                <p className="text-red-600 text-sm">
+                  {errors.districtId.message}
+                </p>
+              )}
             </div>
             <div className="flex flex-col space-y-2 mt-6">
               <Label htmlFor="address">Dirección</Label>
@@ -321,11 +359,13 @@ export default function ManagementSucursal() {
                 type="text"
                 placeholder="Dirección"
                 className="w-full text-base py-2"
-                {...register('address', {
-                  required: 'Dirección es requerida',
+                {...register("address", {
+                  required: "Dirección es requerida",
                 })}
               />
-              {errors.address && <p className="text-red-600 text-sm">{errors.address.message}</p>}
+              {errors.address && (
+                <p className="text-red-600 text-sm">{errors.address.message}</p>
+              )}
             </div>
             <div className="flex flex-col space-y-2 mt-6">
               <Label htmlFor="reference">Referencia (Opcional)</Label>
@@ -334,7 +374,7 @@ export default function ManagementSucursal() {
                 type="text"
                 placeholder="Referencia"
                 className="w-full text-base py-2"
-                {...register('reference')}
+                {...register("reference")}
               />
             </div>
             <div className="flex flex-col space-y-2 mt-6">
@@ -344,15 +384,17 @@ export default function ManagementSucursal() {
                 type="text"
                 placeholder="Teléfono"
                 className="w-full text-base py-2"
-                {...register('phone', {
-                  required: 'Teléfono es requerido',
+                {...register("phone", {
+                  required: "Teléfono es requerido",
                   pattern: {
                     value: /^\+?\d{7,15}$/,
-                    message: 'Teléfono inválido',
+                    message: "Teléfono inválido",
                   },
                 })}
               />
-              {errors.phone && <p className="text-red-600 text-sm">{errors.phone.message}</p>}
+              {errors.phone && (
+                <p className="text-red-600 text-sm">{errors.phone.message}</p>
+              )}
             </div>
           </div>
 
@@ -378,7 +420,7 @@ export default function ManagementSucursal() {
                   Guardando...
                 </div>
               ) : (
-                'Guardar'
+                "Guardar"
               )}
             </Button>
           </div>

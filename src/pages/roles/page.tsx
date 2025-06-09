@@ -1,37 +1,29 @@
-import { Loader2, Plus, X } from 'lucide-react';
-import { useRoles } from '@/hooks/use-roles';
-import { useState, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { activeOrInactiveRoles, createRoles, updateRoles } from '@/services/roles.service';
-import { toast } from 'sonner';
-import type { Roles, RolesDto } from '@/interfaces/roles.interface';
-import { DataTable } from '@/components/data-table';
-import FilterRoles from './ui/FilterRoles';
-import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
+import { Loader2, Plus, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  activeOrInactiveRoles,
+  createRoles,
+  updateRoles,
+} from "@/services/roles.service";
+import { toast } from "sonner";
+import type { Roles, RolesDto } from "@/interfaces/roles.interface";
+import { DataTable } from "@/components/data-table";
+import {
+  columnFilter,
+  columnNames,
+  getColumns,
+  stateFilter,
+} from "./ui/columns";
 
 interface FormInputs {
   name: string;
 }
 
 export default function RolesPage() {
-  const {
-    roles,
-    loading,
-    error,
-    hasMore,
-    fetchMoreRoles,
-    selectedRoles,
-    toggleRolSelection,
-    selectAllRoles,
-    refreshRoles,
-    applyFilters,
-    clearFilters,
-    filters,
-  } = useRoles();
-
   const [rolSelect, setRolSelect] = useState<Roles | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -54,19 +46,19 @@ export default function RolesPage() {
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrInactiveRoles(rolSelect?.id || '', {
+    const response = await activeOrInactiveRoles(rolSelect?.id || "", {
       status: !rolSelect?.status,
     });
 
     setLoadingStatus(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshRoles();
+    toast.success(response?.message, { position: "top-center" });
+
     refreshDataTable.current?.();
     handleCancelStatus();
   };
@@ -78,7 +70,7 @@ export default function RolesPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>({
     defaultValues: {
-      name: '',
+      name: "",
     },
   });
 
@@ -92,13 +84,13 @@ export default function RolesPage() {
       : await createRoles(payload);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
+    toast.success(response?.message, { position: "top-center" });
     handleCancel();
-    refreshRoles();
+
     refreshDataTable.current?.();
   };
 
@@ -106,7 +98,7 @@ export default function RolesPage() {
     setShowModal(false);
     setRolSelect(null);
     reset({
-      name: '',
+      name: "",
     });
   };
 
@@ -128,29 +120,6 @@ export default function RolesPage() {
         </Button>
       </div>
 
-      <FilterRoles
-        onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
-        initialFilters={filters}
-        loading={loading}
-      />
-
-      {selectedRoles.length > 0 && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
-          <p className="text-blue-800">
-            {selectedRoles.length} rol
-            {selectedRoles.length !== 1 ? 'es' : ''} seleccionado
-            {selectedRoles.length !== 1 ? 's' : ''}
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 rounded-md">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
-
       <div className="container mx-auto py-5">
         <DataTable
           columns={getColumns(handleChangeStatus, handleEdit)}
@@ -169,7 +138,7 @@ export default function RolesPage() {
           <div className="bg-white p-6 rounded-md shadow-lg w-[400px]">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold">
-                {rolSelect ? 'Editar Rol' : 'Nuevo Rol'}
+                {rolSelect ? "Editar Rol" : "Nuevo Rol"}
               </h2>
               <button
                 type="button"
@@ -189,8 +158,8 @@ export default function RolesPage() {
                   id="name"
                   type="text"
                   placeholder="Nombre del rol"
-                  {...register('name', {
-                    required: 'Nombre es requerido',
+                  {...register("name", {
+                    required: "Nombre es requerido",
                   })}
                 />
                 {errors.name && (
@@ -214,7 +183,7 @@ export default function RolesPage() {
                       Guardando...
                     </div>
                   ) : (
-                    'Guardar'
+                    "Guardar"
                   )}
                 </Button>
               </div>
@@ -240,8 +209,8 @@ export default function RolesPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas{' '}
-              {rolSelect?.status ? 'desactivar' : 'activar'} el rol:{' '}
+              ¿Estás seguro de que deseas{" "}
+              {rolSelect?.status ? "desactivar" : "activar"} el rol:{" "}
               {rolSelect?.name}?
             </p>
 
@@ -265,7 +234,7 @@ export default function RolesPage() {
                     Cambiando estado...
                   </div>
                 ) : (
-                  'Aceptar'
+                  "Aceptar"
                 )}
               </Button>
             </div>

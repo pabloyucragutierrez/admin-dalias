@@ -1,5 +1,4 @@
 import { Loader2, Plus, X } from "lucide-react";
-import { useUnidades } from "@/hooks/use-unidades";
 import { useState, useRef } from "react";
 import type { Unidades, UnidadesDto } from "@/interfaces";
 import { useForm } from "react-hook-form";
@@ -13,8 +12,12 @@ import {
 } from "@/services/unidades.service";
 import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
-import { columnFilter, columnNames, getColumns, stateFilter } from "./ui/columns";
-import FilterUnidades from "./ui/FilterUnidades";
+import {
+  columnFilter,
+  columnNames,
+  getColumns,
+  stateFilter,
+} from "./ui/columns";
 
 interface FormInputs {
   name: string;
@@ -22,21 +25,6 @@ interface FormInputs {
 }
 
 export default function UnidadesPage() {
-  const {
-    unidades,
-    loading,
-    error,
-    hasMore,
-    fetchMoreUnidades,
-    selectedUnidades,
-    toggleUnidadSelection,
-    selectAllUnidades,
-    refreshUnidades,
-    applyFilters,
-    clearFilters,
-    filters,
-  } = useUnidades();
-
   const [unidadSelect, setUnidadSelect] = useState<Unidades | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -63,7 +51,7 @@ export default function UnidadesPage() {
     }
 
     toast.success(response?.message, { position: "top-center" });
-    refreshUnidades();
+
     refreshDataTable.current?.();
     handleCancelStatus();
   };
@@ -106,7 +94,6 @@ export default function UnidadesPage() {
 
     toast.success(response?.message, { position: "top-center" });
     handleCancel();
-    refreshUnidades();
     refreshDataTable.current?.();
   };
 
@@ -136,29 +123,6 @@ export default function UnidadesPage() {
           Nueva Unidad
         </Button>
       </div>
-
-      <FilterUnidades
-        onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
-        initialFilters={filters}
-        loading={loading}
-      />
-
-      {selectedUnidades.length > 0 && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
-          <p className="text-blue-800">
-            {selectedUnidades.length} unidad
-            {selectedUnidades.length !== 1 ? "es" : ""} seleccionada
-            {selectedUnidades.length !== 1 ? "s" : ""}
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 rounded-md">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
 
       <div className="container mx-auto py-5">
         <DataTable

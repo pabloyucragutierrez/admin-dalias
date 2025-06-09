@@ -9,11 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BadgeCheck, Copy, Edit, FolderX, MoreHorizontal, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router";
+import {
+  BadgeCheck,
+  Copy,
+  Edit,
+  FolderX,
+  MoreHorizontal,
+  Trash2,
+} from "lucide-react";
+import { Link } from "react-router";
 import { toast } from "sonner";
 import type { User } from "@/interfaces";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { FilterConfig } from "@/components/data-table";
 
 export const columnNames: Record<string, string> = {
   name: "Nombre",
@@ -30,66 +38,77 @@ export const columnFilter = [
   { id: "name", label: "Nombre" },
   { id: "lastName", label: "Apellido" },
   { id: "email", label: "Email" },
-  { id: "documentType", label: "Tipo de Documento" },
-  { id: "documentNumber", label: "Nº Documento" },
 ];
 
-export const stateFilter = [
-  { id: "none", label: "Todos" },
-  { id: "ACTIVO", label: "Activo" },
-  { id: "INACTIVO", label: "Inactivo" },
+export const stateFilter: FilterConfig[] = [
+  {
+    id: "all",
+    label: "Todos",
+  },
+  {
+    id: "activo",
+    label: "Activos",
+  },
+  {
+    id: "inactivo",
+    label: "Inactivos",
+  },
 ];
 
 export function getColumns(
   onChangeStatus: (user: User) => void,
   onDelete: (user: User) => void
 ): ColumnDef<User>[] {
-  const navigate = useNavigate();
-
   return [
     {
-      accessorKey: "person.name",
+      accessorKey: "name",
       header: "Nombre",
       cell: ({ row }) => (
-        <button
+        <Link
+          to={`/users/${row.original.id}`}
           type="button"
           className="text-sm font-medium text-gray-900 hover:underline hover:cursor-pointer"
-          onClick={() => navigate(`/users/${row.original.id}`)}
         >
           {row.original.person.name}
-        </button>
+        </Link>
       ),
     },
     {
-      accessorKey: "person.lastName",
+      accessorKey: "lastName",
       header: "Apellido",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{row.original.person.lastName}</div>
+        <div className="text-sm text-gray-500">
+          {row.original.person.lastName}
+        </div>
       ),
     },
     {
-      accessorKey: "person.email",
+      accessorKey: "email",
       header: "Email",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">{row.original.person.email}</div>
       ),
     },
     {
-      accessorKey: "person.documentType",
+      accessorKey: "documentType",
       header: "Tipo de Documento",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{row.original.person.documentType}</div>
+        <div className="text-sm text-gray-500">
+          {row.original.person.documentType}
+        </div>
       ),
     },
     {
-      accessorKey: "person.documentNumber",
+      accessorKey: "documentNumber",
       header: "Nº Documento",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{row.original.person.documentNumber}</div>
+        <div className="text-sm text-gray-500">
+          {row.original.person.documentNumber}
+        </div>
       ),
     },
     {
-      accessorKey: "person.PhonesPersons[0].phone",
+      accessorKey: "phone",
       header: "Teléfono",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">
@@ -101,7 +120,9 @@ export function getColumns(
       accessorKey: "createAt",
       header: "Fecha de Creación",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{formatDateTime(row.original.createAt)}</div>
+        <div className="text-sm text-gray-500">
+          {formatDateTime(row.original.createAt)}
+        </div>
       ),
     },
     {
@@ -136,15 +157,16 @@ export function getColumns(
               <span className="text-sm ml-2">Copiar ID de usuario</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => navigate(`/users/${row.original.id}`)}
-            >
-              <Edit size={18} />
-              <span className="text-sm ml-2">Editar</span>
+            <DropdownMenuItem>
+              <Link
+                className="flex flex-row items-center gap-2"
+                to={`/users/${row.original.id}`}
+              >
+                <Edit size={18} />
+                <span className="text-sm ml-2">Editar</span>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => onChangeStatus(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onChangeStatus(row.original)}>
               {row.original.status ? (
                 <FolderX size={18} />
               ) : (
@@ -154,9 +176,7 @@ export function getColumns(
                 {row.original.status ? "Desactivar Usuario" : "Activar Usuario"}
               </span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => onDelete(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onDelete(row.original)}>
               <Trash2 size={18} />
               <span className="text-sm ml-2">Eliminar</span>
             </DropdownMenuItem>

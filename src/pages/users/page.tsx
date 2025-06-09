@@ -1,31 +1,21 @@
-import { Loader2, Plus, X } from 'lucide-react';
-import { useUsers } from '@/hooks/use-users';
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { activeOrInactiveUsers, deleteUsers } from '@/services/users.service';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router';
-import type { User } from '@/interfaces/users.interface';
-import FilterUsers from './ui/FilterUsers';
-import { DataTable } from '@/components/data-table';
-import { columnFilter, columnNames, getColumns, stateFilter } from './ui/columns';
+import { Loader2, Plus, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { activeOrInactiveUsers, deleteUsers } from "@/services/users.service";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+import type { User } from "@/interfaces/users.interface";
+import { DataTable } from "@/components/data-table";
+import {
+  columnFilter,
+  columnNames,
+  getColumns,
+  stateFilter,
+} from "./ui/columns";
 
 export default function UsersPage() {
   const navigate = useNavigate();
-  const {
-    users,
-    loading,
-    error,
-    hasMore,
-    fetchMoreUsers,
-    selectedUsers,
-    toggleUserSelection,
-    selectAllUsers,
-    refreshUsers,
-    applyFilters,
-    clearFilters,
-    filters,
-  } = useUsers();
+
   const [userSelect, setUserSelect] = useState<User | null>(null);
   const [showModalStatus, setShowModalStatus] = useState<boolean>(false);
   const [showModalDelete, setShowModalDelete] = useState<boolean>(false);
@@ -46,36 +36,36 @@ export default function UsersPage() {
   const changeStatusFn = async () => {
     setLoadingStatus(true);
 
-    const response = await activeOrInactiveUsers(userSelect?.id || '', {
+    const response = await activeOrInactiveUsers(userSelect?.id || "", {
       status: !userSelect?.status,
     });
 
     setLoadingStatus(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshUsers();
+    toast.success(response?.message, { position: "top-center" });
+
     handleCancelStatus();
   };
 
   const deleteFn = async () => {
     setLoadingDelete(true);
 
-    const response = await deleteUsers(userSelect?.id || '');
+    const response = await deleteUsers(userSelect?.id || "");
 
     setLoadingDelete(false);
 
     if (!response?.success) {
-      toast.warning(response?.message, { position: 'top-center' });
+      toast.warning(response?.message, { position: "top-center" });
       return;
     }
 
-    toast.success(response?.message, { position: 'top-center' });
-    refreshUsers();
+    toast.success(response?.message, { position: "top-center" });
+
     handleCancelDelete();
   };
 
@@ -95,45 +85,25 @@ export default function UsersPage() {
         <h1 className="text-4xl text-blue-600 font-bold">Usuarios</h1>
         <Button
           className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
-          onClick={() => navigate('/users/new')}
+          onClick={() => navigate("/users/new")}
         >
           <Plus size={20} />
           Nuevo Usuario
         </Button>
       </div>
 
-      <FilterUsers
-        onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
-        initialFilters={filters}
-        loading={loading}
-      />
-
-      {selectedUsers.length > 0 && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-md flex flex-row items-center w-full justify-between mt-10">
-          <p className="text-blue-800">
-            {selectedUsers.length} usuario
-            {selectedUsers.length !== 1 ? 's' : ''} seleccionado
-            {selectedUsers.length !== 1 ? 's' : ''}
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 rounded-md">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
-
       <div className="container mx-auto py-5">
         <DataTable
-          columns={getColumns((user: User) => {
-            handleChangeStatus(user);
-            refreshDataTable.current?.();
-          }, (user: User) => {
-            handleDelete(user);
-            refreshDataTable.current?.();
-          })}
+          columns={getColumns(
+            (user: User) => {
+              handleChangeStatus(user);
+              refreshDataTable.current?.();
+            },
+            (user: User) => {
+              handleDelete(user);
+              refreshDataTable.current?.();
+            }
+          )}
           columnNames={columnNames}
           url="users"
           typeFilter={columnFilter}
@@ -161,8 +131,8 @@ export default function UsersPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas{' '}
-              {userSelect?.status ? 'desactivar' : 'activar'} al usuario:{' '}
+              ¿Estás seguro de que deseas{" "}
+              {userSelect?.status ? "desactivar" : "activar"} al usuario:{" "}
               {userSelect?.person.name} {userSelect?.person.lastName}?
             </p>
 
@@ -186,7 +156,7 @@ export default function UsersPage() {
                     Cambiando estado...
                   </div>
                 ) : (
-                  'Aceptar'
+                  "Aceptar"
                 )}
               </Button>
             </div>
@@ -211,7 +181,7 @@ export default function UsersPage() {
             <hr className="mt-1 mb-4" />
 
             <p className="text-gray-600 font-medium">
-              ¿Estás seguro de que deseas eliminar al usuario:{' '}
+              ¿Estás seguro de que deseas eliminar al usuario:{" "}
               {userSelect?.person.name} {userSelect?.person.lastName}?
             </p>
 
@@ -236,7 +206,7 @@ export default function UsersPage() {
                     Eliminando...
                   </div>
                 ) : (
-                  'Eliminar'
+                  "Eliminar"
                 )}
               </Button>
             </div>
