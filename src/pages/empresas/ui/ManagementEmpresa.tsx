@@ -313,14 +313,14 @@ export default function ManagementEmpresa() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
-                <Label htmlFor="regionId">Región</Label>
+                <Label htmlFor="regionId">Departamento</Label>
                 <select
                   id="regionId"
                   className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("regionId", { required: "Región es requerida" })}
+                  {...register("regionId", { required: "Departamento es requerido" })}
                   onChange={handleRegionChange}
                 >
-                  <option value="">Selecciona una región</option>
+                  <option value="">Selecciona un departamento</option>
                   {geolocation.regions.map((region) => (
                     <option key={region.id} value={region.id.toString()}>
                       {region.name}

@@ -224,7 +224,7 @@ const BannersPage: React.FC = () => {
                   </span>
                   <div
                     onClick={() => handleClicImage(banner.id, "movil")}
-                    className="relative border-2 border-dashed border-gray-300 rounded-lg cursor-pointer overflow-hidden flex items-center justify-center w-full h-48 bg-gray-50 hover:border-blue-500 transition-colors"
+                    className="relative border-2 border-dashed border-gray-300 rounded-lg cursor-pointer overflow-hidden flex items-center justify-center w-fit h-48 bg-gray-50 hover:border-blue-500 transition-colors"
                   >
                     {previews[banner.id]?.movil ? (
                       <img

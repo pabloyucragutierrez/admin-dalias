@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { createCategorias, fetchCategorias, updateCategorias } from "@/services/categorias.service";
+import { createCategorias, fetchCategorias, fetchCategoriaById, updateCategorias } from "@/services/categorias.service";
 import { useNavigate, useParams } from "react-router";
 import type { Categorias } from "@/interfaces";
 import { Label } from "@/components/ui/label";
@@ -55,26 +55,32 @@ export default function ManagementCategory() {
     }
   };
 
+  const getCategoryById = async (categoryId: string) => {
+    setLoading(true);
+    try {
+      const response = await fetchCategoriaById(categoryId);
+      reset({
+        name: response.name || "",
+        fatherId: response.fatherId || undefined,
+      });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      toast.error("Error al cargar la categoría: " + errorMessage, { position: "top-center" });
+      navigate("/categorias");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getCategories();
   }, []);
 
   useEffect(() => {
     if (id && id !== "new" && !isLoadingCategories) {
-      setLoading(true);
-      const category = categories.find((cat) => cat.id === id);
-      if (category) {
-        reset({
-          name: category.name || "",
-          fatherId: category.fatherId || undefined,
-        });
-      } else {
-        toast.error("Error al cargar la categoría", { position: "top-center" });
-        navigate("/categorias");
-      }
-      setLoading(false);
+      getCategoryById(id);
     }
-  }, [id, categories, isLoadingCategories, reset, navigate]);
+  }, [id, isLoadingCategories]);
 
   const onSubmit = async (values: FormInputs) => {
     try {

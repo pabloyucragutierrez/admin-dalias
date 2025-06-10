@@ -10,6 +10,11 @@ export const fetchCategorias = async () => {
   return response.data;
 };
 
+export const fetchCategoriaById = async (id: string) => {
+  const response = await api.get<Categorias>(`/categorias/${id}`);
+  return response.data;
+};
+
 export const createCategorias = async (payload: CategoriasDto) => {
   try {
     const response = await api.post(`/categorias`, payload);

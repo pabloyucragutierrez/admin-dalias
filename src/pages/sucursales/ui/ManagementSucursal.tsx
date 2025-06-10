@@ -277,21 +277,47 @@ export default function ManagementSucursal() {
             </div>
           </div>
 
-          {/* Location and Contact Card */}
+          {/* Contact Card */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
             <h2 className="text-xl font-semibold text-gray-700 mb-6">
-              Ubicación y Contacto
+              Contacto
+            </h2>
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="phone">Teléfono</Label>
+              <Input
+                id="phone"
+                type="text"
+                placeholder="Teléfono"
+                className="w-full text-base py-2"
+                {...register("phone", {
+                  required: "Teléfono es requerido",
+                  pattern: {
+                    value: /^\+?\d{7,15}$/,
+                    message: "Teléfono inválido",
+                  },
+                })}
+              />
+              {errors.phone && (
+                <p className="text-red-600 text-sm">{errors.phone.message}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Location Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Ubicación
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
-                <Label htmlFor="regionId">Región</Label>
+                <Label htmlFor="regionId">Departamento</Label>
                 <select
                   id="regionId"
                   className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   {...register("regionId", { required: "Región es requerida" })}
                   onChange={handleRegionChange}
                 >
-                  <option value="">Selecciona una región</option>
+                  <option value="">Selecciona un departamento</option>
                   {geolocation.regions.map((region) => (
                     <option key={region.id} value={region.id.toString()}>
                       {region.name}
@@ -369,32 +395,11 @@ export default function ManagementSucursal() {
             </div>
             <div className="flex flex-col space-y-2 mt-6">
               <Label htmlFor="reference">Referencia (Opcional)</Label>
-              <Input
-                id="reference"
-                type="text"
-                placeholder="Referencia"
-                className="w-full text-base py-2"
+              <textarea
+                className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 h-[6rem]" placeholder="Referencia (Opcional)"
+                id=""
                 {...register("reference")}
-              />
-            </div>
-            <div className="flex flex-col space-y-2 mt-6">
-              <Label htmlFor="phone">Teléfono</Label>
-              <Input
-                id="phone"
-                type="text"
-                placeholder="Teléfono"
-                className="w-full text-base py-2"
-                {...register("phone", {
-                  required: "Teléfono es requerido",
-                  pattern: {
-                    value: /^\+?\d{7,15}$/,
-                    message: "Teléfono inválido",
-                  },
-                })}
-              />
-              {errors.phone && (
-                <p className="text-red-600 text-sm">{errors.phone.message}</p>
-              )}
+              ></textarea>
             </div>
           </div>
 

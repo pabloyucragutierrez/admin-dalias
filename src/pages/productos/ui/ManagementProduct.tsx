@@ -400,7 +400,7 @@ export default function ManagementProduct() {
                 </div>
               </div>
               {/* Main Image */}
-              <div className="flex flex-col space-y-2 w-full sm:w-[21%]">
+              <div className="flex flex-col space-y-2 w-full sm:w-[20%]">
                 <Label>Imagen Principal</Label>
                 <div
                   onClick={handleClicPrincipalImage}
