@@ -49,9 +49,11 @@ export default function ManagementCategory() {
       reset({
         linea: response.linea || "",
         name: response.name || "",
-        children: response.children?.map(familia => ({
+        children: response.children?.map((familia) => ({
           categoria: familia.name,
-          subfamilias: familia.children?.map(subfamilia => ({ nombre: subfamilia.name })) || [{ nombre: "" }],
+          subfamilias: familia.children?.map((subfamilia) => ({ nombre: subfamilia.name })) || [
+            { nombre: "" },
+          ],
         })) || [{ categoria: "", subfamilias: [{ nombre: "" }] }],
       });
     } catch (err: unknown) {
@@ -105,7 +107,7 @@ export default function ManagementCategory() {
   };
 
   return (
-    <div className="w-full mx-auto p-6">
+    <div className="w-full mx-auto sm:p-6 p-0">
       <h1 className="text-3xl font-bold text-blue-600 mb-8">
         {id && id !== "new" ? "Editar Familia" : "Nueva Familia"}
       </h1>
@@ -151,7 +153,7 @@ export default function ManagementCategory() {
 
           {/* Lista de Familias Card */}
           <div className="border rounded-lg p-6 bg-white shadow-md">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex sm:flex-row flex-col sm:justify-between items-start gap-2 sm:gap-0 sm:items-center mb-6">
               <h2 className="text-xl font-semibold text-gray-800">Lista de Familias</h2>
               <Button
                 type="button"
@@ -165,26 +167,28 @@ export default function ManagementCategory() {
             </div>
 
             {familiaFields.map((familia, familiaIndex) => (
-              <div key={familia.id} className="mb-6 p-4 border rounded-md bg-gray-50 relative">
-                {familiaIndex > 0 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => removeFamilia(familiaIndex)}
-                    className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
-                )}
+              <div key={familia.id} className="mb-6 p-4 border rounded-md bg-white relative">
+                <div className="flex justify-between items-center mb-4">
+                  <Label htmlFor={`children.${familiaIndex}.categoria`}>Familia {familiaIndex + 1}</Label>
+                  {familiaIndex > 0 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => removeFamilia(familiaIndex)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
+                  )}
+                </div>
                 <div className="flex flex-col space-y-2 mb-4">
-                  <Label htmlFor={`children.${familiaIndex}.categoria`}>Familia</Label>
                   <Input
                     id={`children.${familiaIndex}.categoria`}
                     type="text"
-                    placeholder="Nombre de la Familia"
+                    placeholder={`Nombre de la Familia ${familiaIndex + 1}`}
                     className="w-full text-base py-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                     {...register(`children.${familiaIndex}.categoria`, {
-                      required: "Familia es requerida",
+                      required: `Familia ${familiaIndex + 1} es requerida`,
                     })}
                   />
                   {errors.children?.[familiaIndex]?.categoria && (
@@ -251,7 +255,7 @@ function Subfamilias({ control, familiaIndex, register, errors }: SubfamiliasPro
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex sm:flex-row flex-col sm:justify-between items-start gap-2 sm:gap-0 sm:items-center mb-6">
         <Label>Subfamilias</Label>
         <Button
           type="button"
@@ -264,15 +268,15 @@ function Subfamilias({ control, familiaIndex, register, errors }: SubfamiliasPro
         </Button>
       </div>
       {fields.map((subfamilia, subfamiliaIndex) => (
-        <div key={subfamilia.id} className="flex items-center gap-4">
-          <div className="flex-1">
+        <div key={subfamilia.id} className="flex items-center gap-4 relative">
+          <div className="w-full">
             <Input
               id={`children.${familiaIndex}.subfamilias.${subfamiliaIndex}.nombre`}
               type="text"
-              placeholder="Nombre de la subfamilia"
+              placeholder={`Nombre de la subfamilia ${subfamiliaIndex + 1}`}
               className="w-full text-base py-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
               {...register(`children.${familiaIndex}.subfamilias.${subfamiliaIndex}.nombre`, {
-                required: "Subfamilia es requerida",
+                required: `Subfamilia ${subfamiliaIndex + 1} es requerida`,
               })}
             />
             {errors.children?.[familiaIndex]?.subfamilias?.[subfamiliaIndex]?.nombre && (
@@ -281,12 +285,12 @@ function Subfamilias({ control, familiaIndex, register, errors }: SubfamiliasPro
               </p>
             )}
           </div>
-          {subfamiliaIndex > 0 && (
+          {fields.length > 1 && subfamiliaIndex !== 0 && (
             <Button
               type="button"
               variant="ghost"
               onClick={() => remove(subfamiliaIndex)}
-              className="text-red-500 hover:text-red-700"
+              className="text-red-500 hover:text-red-700 absolute top-[50%] right-2 translate-y-[-50%]"
             >
               <Trash2 className="h-5 w-5" />
             </Button>
