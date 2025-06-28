@@ -31,7 +31,7 @@ export const createProduct = async (payload: ProductDto) => {
     const formData = new FormData();
     formData.append("sku", payload.sku);
     formData.append("name", payload.name);
-    formData.append("codeBarras", payload.codeBarras);
+    formData.append("codigoOrigen", payload.codigoOrigen);
     formData.append("description", payload.description);
     formData.append("shortDescription", payload.shortDescription);
     formData.append("marcaId", payload.marcaId);
@@ -47,8 +47,10 @@ export const createProduct = async (payload: ProductDto) => {
     payload.categoriesId.forEach((id, index) => {
       formData.append(`categoriesId[${index}]`, id);
     });
-    payload.sucursalesId.forEach((id, index) => {
-      formData.append(`sucursalesId[${index}]`, id);
+    payload.sucursalesId.forEach((sucursal, index) => {
+      formData.append(`sucursalesId[${index}][sucursalId]`, sucursal.sucursalId);
+      formData.append(`sucursalesId[${index}][numberStand]`, sucursal.numberStand.toString());
+      formData.append(`sucursalesId[${index}][flatNumber]`, sucursal.flatNumber.toString());
     });
     if (payload.file) {
       formData.append("file", payload.file);
@@ -74,7 +76,7 @@ export const updateProduct = async (id: string, payload: ProductDto) => {
     const formData = new FormData();
     formData.append("sku", payload.sku);
     formData.append("name", payload.name);
-    formData.append("codeBarras", payload.codeBarras);
+    formData.append("codigoOrigen", payload.codigoOrigen);
     formData.append("description", payload.description);
     formData.append("shortDescription", payload.shortDescription);
     formData.append("marcaId", payload.marcaId);
@@ -90,8 +92,10 @@ export const updateProduct = async (id: string, payload: ProductDto) => {
     payload.categoriesId.forEach((id, index) => {
       formData.append(`categoriesId[${index}]`, id);
     });
-    payload.sucursalesId.forEach((id, index) => {
-      formData.append(`sucursalesId[${index}]`, id);
+    payload.sucursalesId.forEach((sucursal, index) => {
+      formData.append(`sucursalesId[${index}][sucursalId]`, sucursal.sucursalId);
+      formData.append(`sucursalesId[${index}][numberStand]`, sucursal.numberStand.toString());
+      formData.append(`sucursalesId[${index}][flatNumber]`, sucursal.flatNumber.toString());
     });
     if (payload.file) {
       formData.append("file", payload.file);

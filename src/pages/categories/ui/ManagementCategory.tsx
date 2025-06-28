@@ -3,8 +3,10 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { createCategorias, fetchCategoriaById, updateCategorias } from "@/services/categorias.service";
+import { fetchActiveLineas } from "@/services/lineas.service";
 import { useNavigate, useParams } from "react-router";
-import type { Categorias } from "@/interfaces";
+import type { Categorias } from "@/interfaces/categorias.interface";
+import type { Linea } from "@/interfaces/lineas.interface";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,6 +24,7 @@ export default function ManagementCategory() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [lineas, setLineas] = useState<Linea[]>([]);
 
   const {
     handleSubmit,
@@ -41,6 +44,16 @@ export default function ManagementCategory() {
     control,
     name: "children",
   });
+
+  const loadLineas = async () => {
+    try {
+      const activeLineas = await fetchActiveLineas();
+      setLineas(activeLineas);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Error al cargar las líneas";
+      toast.error(errorMessage, { position: "top-center" });
+    }
+  };
 
   const getCategoryById = async (categoryId: string) => {
     setLoading(true);
@@ -66,6 +79,7 @@ export default function ManagementCategory() {
   };
 
   useEffect(() => {
+    loadLineas();
     if (id && id !== "new") {
       getCategoryById(id);
     }
@@ -79,10 +93,12 @@ export default function ManagementCategory() {
         familia: values.children.map((familia) => ({
           name: familia.categoria,
           id: "", // Backend generará IDs para nuevas familias
-          subfamilia: familia.subfamilias.map((subfamilia) => ({
-            name: subfamilia.nombre,
-            id: "", // Backend generará IDs para nuevas subfamilias
-          })),
+          subfamilia: familia.subfamilias
+            .filter((subfamilia) => subfamilia.nombre.trim() !== "")
+            .map((subfamilia) => ({
+              name: subfamilia.nombre,
+              id: "", // Backend generará IDs para nuevas subfamilias
+            })),
         })),
       };
       const response = id && id !== "new"
@@ -124,15 +140,20 @@ export default function ManagementCategory() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="linea">Línea</Label>
-                <Input
+                <select
                   id="linea"
-                  type="text"
-                  placeholder="Nombre de la línea"
-                  className="w-full text-base py-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   {...register("linea", {
                     required: "Línea es requerida",
                   })}
-                />
+                >
+                  <option value="">Selecciona una línea</option>
+                  {lineas.map((linea) => (
+                    <option key={linea.id} value={linea.id}>
+                      {linea.name}
+                    </option>
+                  ))}
+                </select>
                 {errors.linea && <p className="text-red-500 text-sm">{errors.linea.message}</p>}
               </div>
               <div className="flex flex-col space-y-2">
@@ -153,7 +174,7 @@ export default function ManagementCategory() {
 
           {/* Lista de Familias Card */}
           <div className="border rounded-lg p-6 bg-white shadow-md">
-            <div className="flex sm:flex-row flex-col sm:justify-between items-start gap-2 sm:gap-0 sm:items-center mb-6">
+            <div className="flex flex-row justify-between gap-2 sm:gap-0 items-center mb-6">
               <h2 className="text-xl font-semibold text-gray-800">Lista de Familias</h2>
               <Button
                 type="button"
@@ -168,7 +189,7 @@ export default function ManagementCategory() {
 
             {familiaFields.map((familia, familiaIndex) => (
               <div key={familia.id} className="mb-6 p-4 border rounded-md bg-white relative">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex flex-row justify-between gap-2 sm:gap-0 items-center mb-4">
                   <Label htmlFor={`children.${familiaIndex}.categoria`}>Familia {familiaIndex + 1}</Label>
                   {familiaIndex > 0 && (
                     <Button
@@ -255,7 +276,7 @@ function Subfamilias({ control, familiaIndex, register, errors }: SubfamiliasPro
 
   return (
     <div className="space-y-4">
-      <div className="flex sm:flex-row flex-col sm:justify-between items-start gap-2 sm:gap-0 sm:items-center mb-6">
+      <div className="flex flex-row justify-between gap-2 sm:gap-0 items-center mb-6">
         <Label>Subfamilias</Label>
         <Button
           type="button"
@@ -268,32 +289,36 @@ function Subfamilias({ control, familiaIndex, register, errors }: SubfamiliasPro
         </Button>
       </div>
       {fields.map((subfamilia, subfamiliaIndex) => (
-        <div key={subfamilia.id} className="flex items-center gap-4 relative">
-          <div className="w-full">
-            <Input
-              id={`children.${familiaIndex}.subfamilias.${subfamiliaIndex}.nombre`}
-              type="text"
-              placeholder={`Nombre de la subfamilia ${subfamiliaIndex + 1}`}
-              className="w-full text-base py-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              {...register(`children.${familiaIndex}.subfamilias.${subfamiliaIndex}.nombre`, {
-                required: `Subfamilia ${subfamiliaIndex + 1} es requerida`,
-              })}
-            />
-            {errors.children?.[familiaIndex]?.subfamilias?.[subfamiliaIndex]?.nombre && (
-              <p className="text-red-500 text-sm">
-                {errors.children[familiaIndex].subfamilias[subfamiliaIndex].nombre?.message}
-              </p>
+        <div key={subfamilia.id} className="space-y-2">
+          <div className="flex flex-row justify-between gap-2 sm:gap-0 items-center">
+            <Label
+              htmlFor={`children.${familiaIndex}.subfamilias.${subfamiliaIndex}.nombre`}
+              className="text-sm font-medium text-gray-700"
+            >
+              Subfamilia {subfamiliaIndex + 1}
+            </Label>
+            {fields.length > 1 && subfamiliaIndex !== 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => remove(subfamiliaIndex)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 className="h-5 w-5" />
+              </Button>
             )}
           </div>
-          {fields.length > 1 && subfamiliaIndex !== 0 && (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => remove(subfamiliaIndex)}
-              className="text-red-500 hover:text-red-700 absolute top-[50%] right-2 translate-y-[-50%]"
-            >
-              <Trash2 className="h-5 w-5" />
-            </Button>
+          <Input
+            id={`children.${familiaIndex}.subfamilias.${subfamiliaIndex}.nombre`}
+            type="text"
+            placeholder={`Nombre de la subfamilia ${subfamiliaIndex + 1}`}
+            className="w-full text-base py-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            {...register(`children.${familiaIndex}.subfamilias.${subfamiliaIndex}.nombre`)}
+          />
+          {errors.children?.[familiaIndex]?.subfamilias?.[subfamiliaIndex]?.nombre && (
+            <p className="text-red-500 text-sm">
+              {errors.children[familiaIndex].subfamilias[subfamiliaIndex].nombre?.message}
+            </p>
           )}
         </div>
       ))}

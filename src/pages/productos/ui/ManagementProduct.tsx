@@ -12,7 +12,7 @@ import {
   fetchActiveUnits,
 } from "@/services/products.service";
 import { useNavigate, useParams } from "react-router";
-import type { ProductDto } from "@/interfaces/products.interface";
+import type { ProductDto, SucursalesProductDTO } from "@/interfaces/products.interface";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ interface OptionSelect {
 interface FormInputs {
   sku: string;
   name: string;
-  codeBarras: string;
+  codigoOrigen: string;
   description: string;
   shortDescription: string;
   marcaId: string;
@@ -42,9 +42,14 @@ interface FormInputs {
   stock: number;
   stockMin: number;
   categoriesId: string[];
-  sucursalesId: string[];
+  sucursalesId: SucursalesProductDTO[];
   file?: File;
   imageGalery?: File[];
+}
+
+interface BranchOption extends OptionSelect {
+  quantityStands: number;
+  flatsByStand: number;
 }
 
 export default function ManagementProduct() {
@@ -53,7 +58,7 @@ export default function ManagementProduct() {
   const [loading, setLoading] = useState(false);
 
   const [categoryOptions, setCategoryOptions] = useState<OptionSelect[]>([]);
-  const [branchOptions, setBranchOptions] = useState<OptionSelect[]>([]);
+  const [branchOptions, setBranchOptions] = useState<BranchOption[]>([]);
   const [brandOptions, setBrandOptions] = useState<OptionSelect[]>([]);
   const [unitOptions, setUnitOptions] = useState<OptionSelect[]>([]);
 
@@ -78,7 +83,7 @@ export default function ManagementProduct() {
     defaultValues: {
       sku: "",
       name: "",
-      codeBarras: "",
+      codigoOrigen: "",
       description: "",
       shortDescription: "",
       marcaId: "",
@@ -97,6 +102,8 @@ export default function ManagementProduct() {
       imageGalery: [],
     },
   });
+
+  const selectedSucursales = watch("sucursalesId");
 
   useEffect(() => {
     const loadData = async () => {
@@ -118,6 +125,8 @@ export default function ManagementProduct() {
           activeBranches?.map((branch) => ({
             label: branch.name,
             value: branch.id,
+            quantityStands: branch.Almacen[0]?.quantityStands || 0,
+            flatsByStand: branch.Almacen[0]?.flatsByStand || 0,
           })) || []
         );
         setBrandOptions(
@@ -152,14 +161,14 @@ export default function ManagementProduct() {
             reset({
               sku: product.sku,
               name: product.name,
-              codeBarras: product.codeBarras,
+              codigoOrigen: product.codigoOrigen,
               description: product.description,
               shortDescription: product.shortDescription,
               marcaId: product.marcaId,
               unidadId: product.unidadId,
               price: product.price,
               purchasePrice: product.purchasePrice,
-              offer: !!product.offer, // Aseguramos que offer sea booleano
+              offer: !!product.offer,
               discountedPrice: product.discountedPrice,
               priceDateFrom: product.priceDateFrom
                 ? new Date(product.priceDateFrom).toISOString().slice(0, 16)
@@ -172,9 +181,11 @@ export default function ManagementProduct() {
               categoriesId: product.ProductCategories.map(
                 (cat) => cat.categoryId
               ),
-              sucursalesId: product.ProductSucursales.map(
-                (suc) => suc.sucursalId
-              ),
+              sucursalesId: product.ProductSucursales.map((suc) => ({
+                sucursalId: suc.sucursalId,
+                numberStand: suc.numberStand,
+                flatNumber: suc.flatNumber,
+              })),
             });
             setValueDescrip(product.description);
             setValueShortDescrip(product.shortDescription);
@@ -300,7 +311,7 @@ export default function ManagementProduct() {
     const payload: ProductDto = {
       sku: values.sku,
       name: values.name,
-      codeBarras: values.codeBarras,
+      codigoOrigen: values.codigoOrigen,
       description: valueDescrip,
       shortDescription: valueShortDescrip,
       marcaId: values.marcaId,
@@ -344,6 +355,12 @@ export default function ManagementProduct() {
   const handleCancel = () => {
     navigate("/products");
   };
+
+  const generateNumberOptions = (max: number) =>
+    Array.from({ length: max }, (_, i) => ({
+      label: `${i + 1}`,
+      value: i + 1,
+    }));
 
   return (
     <div className="w-full mx-auto">
@@ -454,19 +471,19 @@ export default function ManagementProduct() {
                 )}
               </div>
               <div className="flex flex-col space-y-2">
-                <Label htmlFor="codeBarras">Código de Barras</Label>
+                <Label htmlFor="codigoOrigen">Código de Origen</Label>
                 <Input
-                  id="codeBarras"
+                  id="codigoOrigen"
                   type="text"
-                  placeholder="Introduce el código de barras"
+                  placeholder="Introduce el código de origen"
                   className="w-full text-base py-2"
-                  {...register("codeBarras", {
-                    required: "El código de barras es obligatorio",
+                  {...register("codigoOrigen", {
+                    required: "El código de origen es obligatorio",
                   })}
                 />
-                {errors.codeBarras && (
+                {errors.codigoOrigen && (
                   <p className="text-red-600 text-sm">
-                    {errors.codeBarras.message}
+                    {errors.codigoOrigen.message}
                   </p>
                 )}
               </div>
@@ -606,13 +623,17 @@ export default function ManagementProduct() {
                       isMulti
                       options={branchOptions}
                       value={branchOptions.filter((option) =>
-                        field.value.includes(option.value)
+                        field.value.some((suc) => suc.sucursalId === option.value)
                       )}
                       onChange={(selected) => {
-                        const selectedIds = selected
-                          ? selected.map((option) => option.value)
+                        const selectedSucursales = selected
+                          ? selected.map((option) => ({
+                              sucursalId: option.value,
+                              numberStand: 1,
+                              flatNumber: 1,
+                            }))
                           : [];
-                        field.onChange(selectedIds);
+                        field.onChange(selectedSucursales);
                       }}
                       placeholder="Selecciona sucursales"
                       isClearable
@@ -629,6 +650,86 @@ export default function ManagementProduct() {
                 )}
               </div>
             </div>
+
+            {selectedSucursales.length > 0 && (
+              <div className="mt-6 space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700">
+                  Configuración de Sucursales
+                </h3>
+                {selectedSucursales.map((sucursal, index) => {
+                  const branch = branchOptions.find(
+                    (opt) => opt.value === sucursal.sucursalId
+                  );
+                  return (
+                    <div
+                      key={sucursal.sucursalId}
+                      className="border p-4 rounded-lg"
+                    >
+                      <h4 className="font-medium">{branch?.label}</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                        <div className="flex flex-col space-y-2">
+                          <Label>Cantidad de Stands</Label>
+                          <Controller
+                            name={`sucursalesId.${index}.numberStand`}
+                            control={control}
+                            rules={{
+                              required: "Debes seleccionar un número de stands",
+                            }}
+                            render={({ field }) => (
+                              <Select
+                                options={generateNumberOptions(
+                                  branch?.quantityStands || 0
+                                )}
+                                value={generateNumberOptions(
+                                  branch?.quantityStands || 0
+                                ).find((opt) => opt.value === field.value)}
+                                onChange={(selected) =>
+                                  field.onChange(
+                                    selected ? selected.value : 1
+                                  )
+                                }
+                                placeholder="Selecciona número de stands"
+                                classNamePrefix="select"
+                                className="text-base"
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="flex flex-col space-y-2">
+                          <Label>Pisos por Stand</Label>
+                          <Controller
+                            name={`sucursalesId.${index}.flatNumber`}
+                            control={control}
+                            rules={{
+                              required:
+                                "Debes seleccionar un número de pisos",
+                            }}
+                            render={({ field }) => (
+                              <Select
+                                options={generateNumberOptions(
+                                  branch?.flatsByStand || 0
+                                )}
+                                value={generateNumberOptions(
+                                  branch?.flatsByStand || 0
+                                ).find((opt) => opt.value === field.value)}
+                                onChange={(selected) =>
+                                  field.onChange(
+                                    selected ? selected.value : 1
+                                  )
+                                }
+                                placeholder="Selecciona número de pisos"
+                                classNamePrefix="select"
+                                className="text-base"
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Pricing and Offer Section */}
@@ -698,7 +799,7 @@ export default function ManagementProduct() {
                     },
                     valueAsNumber: true,
                   })}
-                  readOnly={!!id && id !== "new"} // Forzamos booleano explícito
+                  readOnly={!!id && id !== "new"}
                 />
                 {errors.stock && (
                   <p className="text-red-600 text-sm">{errors.stock.message}</p>

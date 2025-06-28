@@ -28,6 +28,8 @@ export const columnNames: Record<string, string> = {
   district: "Distrito",
   address: "Dirección",
   phone: "Teléfono",
+  quantityStands: "Cantidad de Stands",
+  flatsByStand: "Pisos por Stand",
   createAt: "Fecha de Creación",
   status: "Estado",
 };
@@ -98,6 +100,24 @@ export function getColumns(
       header: "Teléfono",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">{row.original.phone}</div>
+      ),
+    },
+    {
+      accessorKey: "quantityStands",
+      header: "Cantidad de Stands",
+      cell: ({ row }) => (
+        <div className="text-sm text-gray-500">
+          {row.original.Almacen?.length > 0 ? row.original.Almacen[0].quantityStands : "N/A"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "flatsByStand",
+      header: "Pisos por Stand",
+      cell: ({ row }) => (
+        <div className="text-sm text-gray-500">
+          {row.original.Almacen?.length > 0 ? row.original.Almacen[0].flatsByStand : "N/A"}
+        </div>
       ),
     },
     {

@@ -37,7 +37,7 @@ export function getMenuList(): Group[] {
         },
         {
           href: "",
-          label: "Productos",
+          label: "Catalogo",
           icon: ShoppingBag,
           submenus: [
             {
@@ -55,6 +55,10 @@ export function getMenuList(): Group[] {
             {
               href: "/products",
               label: "Productos",
+            },
+            {
+              href: "/lineas",
+              label: "Líneas",
             },
           ],
         },

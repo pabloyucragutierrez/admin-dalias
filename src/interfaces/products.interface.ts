@@ -20,6 +20,8 @@ export interface ProductSucursal {
   id: string;
   productId: string;
   sucursalId: string;
+  numberStand: number;
+  flatNumber: number;
   createAt: string;
   updatedAt: string;
 }
@@ -28,7 +30,7 @@ export interface Product {
   id: string;
   sku: string;
   name: string;
-  codeBarras: string;
+  codigoOrigen: string;
   description: string;
   shortDescription: string;
   marcaId: string;
@@ -42,7 +44,7 @@ export interface Product {
   stock: number;
   stockMin: number;
   categoriesId: string[];
-  sucursalesId: string[];
+  sucursalesId: SucursalesProductDTO[];
   status: boolean;
   createAt: string;
   updatedAt: string;
@@ -53,10 +55,16 @@ export interface Product {
   ProductSucursales: ProductSucursal[];
 }
 
+export interface SucursalesProductDTO {
+  sucursalId: string;
+  numberStand: number;
+  flatNumber: number;
+}
+
 export interface ProductDto {
   sku: string;
   name: string;
-  codeBarras: string;
+  codigoOrigen: string;
   description: string;
   shortDescription: string;
   marcaId: string;
@@ -70,7 +78,7 @@ export interface ProductDto {
   stock: number;
   stockMin: number;
   categoriesId: string[];
-  sucursalesId: string[];
+  sucursalesId: SucursalesProductDTO[];
   file?: File;
   imageGalery?: File[];
 }
@@ -89,6 +97,10 @@ export interface Branch {
   status: boolean;
   createAt: string;
   updatedAt: string;
+  Almacen: {
+    quantityStands: number;
+    flatsByStand: number;
+  }[];
 }
 
 export interface Brand {
@@ -113,5 +125,5 @@ export interface FilterOptionsProducts {
   name?: string;
   sku?: string;
   marca?: string;
-  status?: string; // Cambiado de boolean a string ("ACTIVO"/"INACTIVO")
+  status?: string;
 }
