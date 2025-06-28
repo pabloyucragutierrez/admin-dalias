@@ -43,6 +43,8 @@ interface FormInputs {
   address: string;
   reference: string;
   phone: string;
+  quantityStands: number;
+  flatsByStand: number;
 }
 
 export default function ManagementSucursal() {
@@ -70,6 +72,8 @@ export default function ManagementSucursal() {
       address: "",
       reference: "",
       phone: "",
+      quantityStands: 0,
+      flatsByStand: 0,
     },
   });
 
@@ -143,6 +147,8 @@ export default function ManagementSucursal() {
               address: sucursal.address,
               reference: sucursal.reference || "",
               phone: sucursal.phone,
+              quantityStands: sucursal.Almacen?.length > 0 ? sucursal.Almacen[0].quantityStands : 0,
+              flatsByStand: sucursal.Almacen?.length > 0 ? sucursal.Almacen[0].flatsByStand : 0,
             });
           } else {
             toast.error("Error al cargar la sucursal", {
@@ -199,6 +205,8 @@ export default function ManagementSucursal() {
       address: values.address,
       reference: values.reference || undefined,
       phone: values.phone,
+      quantityStands: values.quantityStands,
+      flatsByStand: values.flatsByStand,
     };
 
     try {
@@ -396,10 +404,54 @@ export default function ManagementSucursal() {
             <div className="flex flex-col space-y-2 mt-6">
               <Label htmlFor="reference">Referencia (Opcional)</Label>
               <textarea
-                className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 h-[6rem]" placeholder="Referencia (Opcional)"
-                id=""
+                className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 h-[6rem]"
+                placeholder="Referencia (Opcional)"
+                id="reference"
                 {...register("reference")}
               ></textarea>
+            </div>
+          </div>
+
+          {/* Almacen Card */}
+          <div className="border rounded-lg p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">
+              Almacen
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="quantityStands">Cantidad de Stands</Label>
+                <Input
+                  id="quantityStands"
+                  type="number"
+                  placeholder="Cantidad de stands"
+                  className="w-full text-base py-2"
+                  {...register("quantityStands", {
+                    required: "Cantidad de stands es requerida",
+                    min: { value: 0, message: "La cantidad no puede ser negativa" },
+                    valueAsNumber: true,
+                  })}
+                />
+                {errors.quantityStands && (
+                  <p className="text-red-600 text-sm">{errors.quantityStands.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="flatsByStand">Pisos por Stand</Label>
+                <Input
+                  id="flatsByStand"
+                  type="number"
+                  placeholder="Pisos por stand"
+                  className="w-full text-base py-2"
+                  {...register("flatsByStand", {
+                    required: "Pisos por stand es requerido",
+                    min: { value: 0, message: "La cantidad no puede ser negativa" },
+                    valueAsNumber: true,
+                  })}
+                />
+                {errors.flatsByStand && (
+                  <p className="text-red-600 text-sm">{errors.flatsByStand.message}</p>
+                )}
+              </div>
             </div>
           </div>
 

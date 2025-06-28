@@ -19,6 +19,8 @@ import CarruselPage from "./pages/carrusel/page";
 import NewCarrusel from "./pages/carrusel/ui/NewCarrusel";
 import BannersPage from "./pages/banners/page";
 import NewBanner from "./pages/banners/ui/NewBanner";
+import LineasPage from "./pages/lineas/page";
+import ManagementLinea from "./pages/lineas/ui/ManagementLinea";
 
 export const router = createBrowserRouter([
   {
@@ -80,6 +82,14 @@ export const router = createBrowserRouter([
       {
         path: "products/:id",
         element: <ManagementProduct />,
+      },
+      {
+        path: "lineas",
+        element: <LineasPage />,
+      },
+      {
+        path: "lineas/:id",
+        element: <ManagementLinea />,
       },
       {
         path: "carrusel",

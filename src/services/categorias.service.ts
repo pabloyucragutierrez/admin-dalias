@@ -14,7 +14,17 @@ export const fetchCategoriaById = async (id: string) => {
 
 export const createCategorias = async (payload: CategoriasDto) => {
   try {
-    const response = await api.post(`/categorias`, payload);
+    // Only include subfamilia if it has non-empty values
+    const cleanedPayload = {
+      ...payload,
+      familia: payload.familia.map(familia => ({
+        ...familia,
+        subfamilia: familia.subfamilia.length > 0 && familia.subfamilia.some(sf => sf.name.trim() !== "")
+          ? familia.subfamilia
+          : undefined
+      }))
+    };
+    const response = await api.post(`/categorias`, cleanedPayload);
     return response.data as ApiResponse<Categorias>;
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : "Error desconocido al crear la categoría";
@@ -24,7 +34,17 @@ export const createCategorias = async (payload: CategoriasDto) => {
 
 export const updateCategorias = async (id: string, payload: CategoriasDto) => {
   try {
-    const response = await api.patch(`/categorias/${id}`, payload);
+    // Only include subfamilia if it has non-empty values
+    const cleanedPayload = {
+      ...payload,
+      familia: payload.familia.map(familia => ({
+        ...familia,
+        subfamilia: familia.subfamilia.length > 0 && familia.subfamilia.some(sf => sf.name.trim() !== "")
+          ? familia.subfamilia
+          : undefined
+      }))
+    };
+    const response = await api.patch(`/categorias/${id}`, cleanedPayload);
     return response.data as ApiResponse<Categorias>;
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : "Error desconocido al actualizar la categoría";

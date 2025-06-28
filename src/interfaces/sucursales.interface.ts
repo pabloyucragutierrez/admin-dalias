@@ -1,3 +1,13 @@
+export interface Almacen {
+  id: string;
+  sucursalId: string;
+  quantityStands: number;
+  flatsByStand: number;
+  status: boolean;
+  createAt: string;
+  updatedAt: string;
+}
+
 export interface Sucursales {
   id: string;
   businessId: string;
@@ -10,6 +20,7 @@ export interface Sucursales {
   status: boolean;
   createAt: string;
   updatedAt: string;
+  Almacen: Almacen[];
 }
 
 export interface SucursalesDto {
@@ -20,6 +31,8 @@ export interface SucursalesDto {
   address: string;
   reference?: string;
   phone: string;
+  quantityStands: number;
+  flatsByStand: number;
 }
 
 export interface FilterOptionsSucursales {
