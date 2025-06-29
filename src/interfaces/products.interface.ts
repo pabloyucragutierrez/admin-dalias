@@ -30,7 +30,7 @@ export interface Product {
   id: string;
   sku: string;
   name: string;
-  codigoOrigen: string;
+  codigoOriginal: string;
   description: string;
   shortDescription: string;
   marcaId: string;

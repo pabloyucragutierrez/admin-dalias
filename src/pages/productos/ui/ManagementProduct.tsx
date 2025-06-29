@@ -12,7 +12,10 @@ import {
   fetchActiveUnits,
 } from "@/services/products.service";
 import { useNavigate, useParams } from "react-router";
-import type { ProductDto, SucursalesProductDTO } from "@/interfaces/products.interface";
+import type {
+  ProductDto,
+  SucursalesProductDTO,
+} from "@/interfaces/products.interface";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -161,7 +164,7 @@ export default function ManagementProduct() {
             reset({
               sku: product.sku,
               name: product.name,
-              codigoOrigen: product.codigoOrigen,
+              codigoOrigen: product.codigoOriginal,
               description: product.description,
               shortDescription: product.shortDescription,
               marcaId: product.marcaId,
@@ -623,7 +626,9 @@ export default function ManagementProduct() {
                       isMulti
                       options={branchOptions}
                       value={branchOptions.filter((option) =>
-                        field.value.some((suc) => suc.sucursalId === option.value)
+                        field.value.some(
+                          (suc) => suc.sucursalId === option.value
+                        )
                       )}
                       onChange={(selected) => {
                         const selectedSucursales = selected
@@ -668,7 +673,7 @@ export default function ManagementProduct() {
                       <h4 className="font-medium">{branch?.label}</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                         <div className="flex flex-col space-y-2">
-                          <Label>Cantidad de Stands</Label>
+                          <Label>Seleccionar el Stand</Label>
                           <Controller
                             name={`sucursalesId.${index}.numberStand`}
                             control={control}
@@ -684,9 +689,7 @@ export default function ManagementProduct() {
                                   branch?.quantityStands || 0
                                 ).find((opt) => opt.value === field.value)}
                                 onChange={(selected) =>
-                                  field.onChange(
-                                    selected ? selected.value : 1
-                                  )
+                                  field.onChange(selected ? selected.value : 1)
                                 }
                                 placeholder="Selecciona número de stands"
                                 classNamePrefix="select"
@@ -701,8 +704,7 @@ export default function ManagementProduct() {
                             name={`sucursalesId.${index}.flatNumber`}
                             control={control}
                             rules={{
-                              required:
-                                "Debes seleccionar un número de pisos",
+                              required: "Debes seleccionar un número de pisos",
                             }}
                             render={({ field }) => (
                               <Select
@@ -713,9 +715,7 @@ export default function ManagementProduct() {
                                   branch?.flatsByStand || 0
                                 ).find((opt) => opt.value === field.value)}
                                 onChange={(selected) =>
-                                  field.onChange(
-                                    selected ? selected.value : 1
-                                  )
+                                  field.onChange(selected ? selected.value : 1)
                                 }
                                 placeholder="Selecciona número de pisos"
                                 classNamePrefix="select"
@@ -854,7 +854,8 @@ export default function ManagementProduct() {
                         "El precio con descuento es obligatorio si está en oferta",
                       min: {
                         value: 0,
-                        message: "El precio con descuento no puede ser negativo",
+                        message:
+                          "El precio con descuento no puede ser negativo",
                       },
                       valueAsNumber: true,
                     })}
