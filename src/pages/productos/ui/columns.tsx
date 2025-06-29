@@ -10,7 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BadgeCheck, Copy, Edit, FolderX, MoreHorizontal, Trash2 } from "lucide-react";
+import {
+  BadgeCheck,
+  Copy,
+  Edit,
+  FolderX,
+  MoreHorizontal,
+  Trash2,
+} from "lucide-react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import type { Product, Brand } from "@/interfaces/products.interface";
@@ -66,7 +73,11 @@ export function getColumns(
       header: "Imagen",
       cell: ({ row }) => (
         <img
-          src={row.original.ProductImages.find((img) => img.typeImage === 'THUMBNAIL')?.url || ''}
+          src={
+            row.original.ProductImages.find(
+              (img) => img.typeImage === "THUMBNAIL"
+            )?.url || ""
+          }
           alt={row.original.name}
           className="h-12 w-12 object-contain rounded"
         />
@@ -94,9 +105,11 @@ export function getColumns(
     },
     {
       accessorKey: "codeBarras",
-      header: "Código de Barras",
+      header: "Código Original",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{row.original.codeBarras}</div>
+        <div className="text-sm text-gray-500">
+          {row.original.codigoOriginal}
+        </div>
       ),
     },
     {
@@ -104,7 +117,8 @@ export function getColumns(
       header: "Marca",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">
-          {brands.find((brand) => brand.id === row.original.marcaId)?.name || 'Sin marca'}
+          {brands.find((brand) => brand.id === row.original.marcaId)?.name ||
+            "Sin marca"}
         </div>
       ),
     },
@@ -112,7 +126,9 @@ export function getColumns(
       accessorKey: "price",
       header: "Precio",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">${row.original.price.toFixed(2)}</div>
+        <div className="text-sm text-gray-500">
+          ${row.original.price.toFixed(2)}
+        </div>
       ),
     },
     {
@@ -126,7 +142,9 @@ export function getColumns(
       accessorKey: "createAt",
       header: "Fecha de Creación",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{formatDateTime(row.original.createAt)}</div>
+        <div className="text-sm text-gray-500">
+          {formatDateTime(row.original.createAt)}
+        </div>
       ),
     },
     {
@@ -167,21 +185,19 @@ export function getColumns(
               <Edit size={18} />
               <span className="text-sm ml-2">Editar</span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => onChangeStatus(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onChangeStatus(row.original)}>
               {row.original.status ? (
                 <FolderX size={18} />
               ) : (
                 <BadgeCheck size={18} />
               )}
               <span className="text-sm ml-2">
-                {row.original.status ? "Desactivar Producto" : "Activar Producto"}
+                {row.original.status
+                  ? "Desactivar Producto"
+                  : "Activar Producto"}
               </span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => onDelete(row.original)}
-            >
+            <DropdownMenuItem onSelect={() => onDelete(row.original)}>
               <Trash2 size={18} />
               <span className="text-sm ml-2">Eliminar</span>
             </DropdownMenuItem>

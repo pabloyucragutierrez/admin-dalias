@@ -1,11 +1,11 @@
-import { Badge } from '@/components/ui/badge';
-import type { Product } from '@/interfaces/products.interface';
-import { formatDateTime } from '@/utils';
-import { ChevronDown, Edit, FolderX, BadgeCheck, Trash2 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { fetchActiveBrands } from '@/services/products.service'; // Nuevo import
-import type { Brand } from '@/interfaces/products.interface';
+import { Badge } from "@/components/ui/badge";
+import type { Product } from "@/interfaces/products.interface";
+import { formatDateTime } from "@/utils";
+import { ChevronDown, Edit, FolderX, BadgeCheck, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router";
+import { fetchActiveBrands } from "@/services/products.service"; // Nuevo import
+import type { Brand } from "@/interfaces/products.interface";
 
 interface ProductsTableProps {
   products: Product[];
@@ -39,37 +39,42 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   const [brands, setBrands] = useState<Brand[]>([]);
 
   const availableColumns = [
-    { id: 'image', label: 'Imagen' },
-    { id: 'sku', label: 'SKU' },
-    { id: 'name', label: 'Nombre' },
-    { id: 'codeBarras', label: 'Código de Barras' },
-    { id: 'brand', label: 'Marca' }, // Nueva columna
-    { id: 'price', label: 'Precio' },
-    { id: 'stock', label: 'Stock' },
-    { id: 'createAt', label: 'Fecha de Creación' },
+    { id: "image", label: "Imagen" },
+    { id: "sku", label: "SKU" },
+    { id: "name", label: "Nombre" },
+    { id: "codeBarras", label: "Código de Barras" },
+    { id: "brand", label: "Marca" }, // Nueva columna
+    { id: "price", label: "Precio" },
+    { id: "stock", label: "Stock" },
+    { id: "createAt", label: "Fecha de Creación" },
   ];
 
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(() => {
-    const initialVisibility: ColumnVisibility = {};
-    availableColumns.forEach((column) => {
-      initialVisibility[column.id] = true;
-    });
-    return initialVisibility;
-  });
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
+    () => {
+      const initialVisibility: ColumnVisibility = {};
+      availableColumns.forEach((column) => {
+        initialVisibility[column.id] = true;
+      });
+      return initialVisibility;
+    }
+  );
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -133,14 +138,19 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
             <span>Columnas</span>
             <ChevronDown
               size={16}
-              className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+              className={`transition-transform duration-200 ${
+                dropdownOpen ? "rotate-180" : ""
+              }`}
             />
           </div>
           {dropdownOpen && (
             <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-md z-10 border border-gray-200">
               <div className="p-3 min-w-[240px]">
                 {availableColumns.map((column) => (
-                  <div key={column.id} className="flex items-center gap-2 py-1 cursor-pointer">
+                  <div
+                    key={column.id}
+                    className="flex items-center gap-2 py-1 cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       id={`column-${column.id}`}
@@ -148,7 +158,10 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                       onChange={() => toggleColumnVisibility(column.id)}
                       className="rounded border-gray-300"
                     />
-                    <label htmlFor={`column-${column.id}`} className="text-sm text-gray-700">
+                    <label
+                      htmlFor={`column-${column.id}`}
+                      className="text-sm text-gray-700"
+                    >
                       {column.label}
                     </label>
                   </div>
@@ -164,58 +177,94 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[#f0f0f0] sticky top-0">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   <input
                     type="checkbox"
-                    checked={selectedProducts.length === uniqueProducts.length && uniqueProducts.length > 0}
+                    checked={
+                      selectedProducts.length === uniqueProducts.length &&
+                      uniqueProducts.length > 0
+                    }
                     onChange={selectAllProducts}
                     className="rounded border-gray-300"
                   />
                 </th>
                 {columnVisibility.image && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Imagen
                   </th>
                 )}
                 {columnVisibility.sku && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     SKU
                   </th>
                 )}
                 {columnVisibility.name && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Nombre
                   </th>
                 )}
                 {columnVisibility.codeBarras && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Código de Barras
                   </th>
                 )}
                 {columnVisibility.brand && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Marca
                   </th>
                 )}
                 {columnVisibility.price && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Precio
                   </th>
                 )}
                 {columnVisibility.stock && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Stock
                   </th>
                 )}
                 {columnVisibility.createAt && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Fecha de Creación
                   </th>
                 )}
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Estado
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Acciones
                 </th>
               </tr>
@@ -224,8 +273,12 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
               {uniqueProducts.map((product, index) => (
                 <tr
                   key={`${product.id}-${index}`}
-                  ref={index === uniqueProducts.length - 1 ? lastProductRef : null}
-                  className={selectedProducts.includes(product.id) ? 'bg-blue-50' : ''}
+                  ref={
+                    index === uniqueProducts.length - 1 ? lastProductRef : null
+                  }
+                  className={
+                    selectedProducts.includes(product.id) ? "bg-blue-50" : ""
+                  }
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <input
@@ -238,7 +291,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                   {columnVisibility.image && (
                     <td className="px-6 py-4 whitespace-nowrap">
                       <img
-                        src={product.ProductImages.find((img) => img.typeImage === 'THUMBNAIL')?.url || ''}
+                        src={
+                          product.ProductImages.find(
+                            (img) => img.typeImage === "THUMBNAIL"
+                          )?.url || ""
+                        }
                         alt={product.name}
                         className="h-12 w-12 object-contain rounded"
                       />
@@ -257,39 +314,50 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                   )}
                   {columnVisibility.name && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{product.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {product.name}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.codeBarras && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{product.codeBarras}</div>
+                      <div className="text-sm text-gray-500">
+                        {product.codigoOriginal}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.brand && (
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
-                        {brands.find((brand) => brand.id === product.marcaId)?.name || 'Sin marca'}
+                        {brands.find((brand) => brand.id === product.marcaId)
+                          ?.name || "Sin marca"}
                       </div>
                     </td>
                   )}
                   {columnVisibility.price && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">${product.price.toFixed(2)}</div>
+                      <div className="text-sm text-gray-500">
+                        ${product.price.toFixed(2)}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.stock && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{product.stock}</div>
+                      <div className="text-sm text-gray-500">
+                        {product.stock}
+                      </div>
                     </td>
                   )}
                   {columnVisibility.createAt && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{formatDateTime(product.createAt)}</div>
+                      <div className="text-sm text-gray-500">
+                        {formatDateTime(product.createAt)}
+                      </div>
                     </td>
                   )}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={product.status ? 'success' : 'destructive'}>
-                      {product.status ? 'Activo' : 'Inactivo'}
+                    <Badge variant={product.status ? "success" : "destructive"}>
+                      {product.status ? "Activo" : "Inactivo"}
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
