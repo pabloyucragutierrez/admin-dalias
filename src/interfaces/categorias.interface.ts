@@ -40,3 +40,24 @@ export interface FilterOptionsCategorias {
   name?: string;
   state?: string;
 }
+
+export interface CategorySelect {
+  id: string;
+  lineasId: string;
+  name: string;
+  fatherId: string;
+  status: boolean;
+  createAt: string;
+  updatedAt: string;
+  father: Father;
+}
+
+export interface Father {
+  id: string;
+  lineasId: string;
+  name: string;
+  fatherId: string;
+  status: boolean;
+  createAt: string;
+  updatedAt: string;
+}

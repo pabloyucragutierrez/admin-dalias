@@ -1,8 +1,12 @@
-import type { ApiResponse, PaginatedResponse, StatusDto } from "@/interfaces";
+import type {
+  ApiResponse,
+  CategorySelect,
+  PaginatedResponse,
+  StatusDto,
+} from "@/interfaces";
 import type {
   Product,
   ProductDto,
-  Category,
   Branch,
   Brand,
   Unit,
@@ -34,7 +38,6 @@ export const createProduct = async (payload: ProductDto) => {
     formData.append("codigoOrigen", payload.codigoOrigen);
     formData.append("description", payload.description);
     formData.append("shortDescription", payload.shortDescription);
-    formData.append("marcaId", payload.marcaId);
     formData.append("unidadId", payload.unidadId);
     formData.append("price", payload.price.toString());
     formData.append("purchasePrice", payload.purchasePrice.toString());
@@ -44,13 +47,20 @@ export const createProduct = async (payload: ProductDto) => {
     formData.append("priceDateTo", payload.priceDateTo);
     formData.append("stock", payload.stock.toString());
     formData.append("stockMin", payload.stockMin.toString());
-    payload.categoriesId.forEach((id, index) => {
-      formData.append(`categoriesId[${index}]`, id);
-    });
+    formData.append(`categoryId`, payload.categoria);
     payload.sucursalesId.forEach((sucursal, index) => {
-      formData.append(`sucursalesId[${index}][sucursalId]`, sucursal.sucursalId);
-      formData.append(`sucursalesId[${index}][numberStand]`, sucursal.numberStand.toString());
-      formData.append(`sucursalesId[${index}][flatNumber]`, sucursal.flatNumber.toString());
+      formData.append(
+        `sucursalesId[${index}][sucursalId]`,
+        sucursal.sucursalId
+      );
+      formData.append(
+        `sucursalesId[${index}][numberStand]`,
+        sucursal.numberStand.toString()
+      );
+      formData.append(
+        `sucursalesId[${index}][flatNumber]`,
+        sucursal.flatNumber.toString()
+      );
     });
     if (payload.file) {
       formData.append("file", payload.file);
@@ -79,7 +89,6 @@ export const updateProduct = async (id: string, payload: ProductDto) => {
     formData.append("codigoOrigen", payload.codigoOrigen);
     formData.append("description", payload.description);
     formData.append("shortDescription", payload.shortDescription);
-    formData.append("marcaId", payload.marcaId);
     formData.append("unidadId", payload.unidadId);
     formData.append("price", payload.price.toString());
     formData.append("purchasePrice", payload.purchasePrice.toString());
@@ -89,13 +98,20 @@ export const updateProduct = async (id: string, payload: ProductDto) => {
     formData.append("priceDateTo", payload.priceDateTo);
     formData.append("stock", payload.stock.toString());
     formData.append("stockMin", payload.stockMin.toString());
-    payload.categoriesId.forEach((id, index) => {
-      formData.append(`categoriesId[${index}]`, id);
-    });
+    formData.append(`categoryId`, payload.categoria);
     payload.sucursalesId.forEach((sucursal, index) => {
-      formData.append(`sucursalesId[${index}][sucursalId]`, sucursal.sucursalId);
-      formData.append(`sucursalesId[${index}][numberStand]`, sucursal.numberStand.toString());
-      formData.append(`sucursalesId[${index}][flatNumber]`, sucursal.flatNumber.toString());
+      formData.append(
+        `sucursalesId[${index}][sucursalId]`,
+        sucursal.sucursalId
+      );
+      formData.append(
+        `sucursalesId[${index}][numberStand]`,
+        sucursal.numberStand.toString()
+      );
+      formData.append(
+        `sucursalesId[${index}][flatNumber]`,
+        sucursal.flatNumber.toString()
+      );
     });
     if (payload.file) {
       formData.append("file", payload.file);
@@ -142,8 +158,8 @@ export const activeOrInactiveProduct = async (
   }
 };
 
-export const fetchActiveCategories = async (): Promise<Category[]> => {
-  const response = await api.get<Category[]>("/categorias/actives");
+export const fetchActiveCategories = async (): Promise<CategorySelect[]> => {
+  const response = await api.get<CategorySelect[]>("/categorias/actives");
   return response.data;
 };
 

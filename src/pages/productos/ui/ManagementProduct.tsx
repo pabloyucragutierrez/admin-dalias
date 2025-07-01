@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Loader2, Trash2, Upload, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -8,11 +8,10 @@ import {
   updateProduct,
   fetchActiveCategories,
   fetchActiveBranches,
-  fetchActiveBrands,
-  fetchActiveUnits,
 } from "@/services/products.service";
 import { useNavigate, useParams } from "react-router";
 import type {
+  Product,
   ProductDto,
   SucursalesProductDTO,
 } from "@/interfaces/products.interface";
@@ -22,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import Select from "react-select";
 import Quill from "quill";
 import Editor from "@/components/editor";
+import type { CategorySelect } from "@/interfaces";
 
 interface OptionSelect {
   label: string;
@@ -34,8 +34,6 @@ interface FormInputs {
   codigoOrigen: string;
   description: string;
   shortDescription: string;
-  marcaId: string;
-  unidadId: string;
   price: number;
   purchasePrice: number;
   offer: boolean;
@@ -44,7 +42,10 @@ interface FormInputs {
   priceDateTo: string;
   stock: number;
   stockMin: number;
-  categoriesId: string[];
+  marca: string;
+  familia: string;
+  subfamilia: string;
+  categoria: string;
   sucursalesId: SucursalesProductDTO[];
   file?: File;
   imageGalery?: File[];
@@ -60,10 +61,10 @@ export default function ManagementProduct() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const [categoryOptions, setCategoryOptions] = useState<OptionSelect[]>([]);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [categoriesData, setCategoriesData] = useState<CategorySelect[]>([]);
+
   const [branchOptions, setBranchOptions] = useState<BranchOption[]>([]);
-  const [brandOptions, setBrandOptions] = useState<OptionSelect[]>([]);
-  const [unitOptions, setUnitOptions] = useState<OptionSelect[]>([]);
 
   const [preview, setPreview] = useState<string | null>(null);
   const [gallery, setGallery] = useState<(string | File)[]>([]);
@@ -89,8 +90,6 @@ export default function ManagementProduct() {
       codigoOrigen: "",
       description: "",
       shortDescription: "",
-      marcaId: "",
-      unidadId: "",
       price: 0,
       purchasePrice: 0,
       offer: false,
@@ -98,8 +97,11 @@ export default function ManagementProduct() {
       priceDateFrom: "",
       priceDateTo: "",
       stock: 0,
-      stockMin: 0,
-      categoriesId: [],
+      stockMin: 10,
+      marca: "",
+      familia: "",
+      subfamilia: "",
+      categoria: "",
       sucursalesId: [],
       file: undefined,
       imageGalery: [],
@@ -107,41 +109,68 @@ export default function ManagementProduct() {
   });
 
   const selectedSucursales = watch("sucursalesId");
+  const selectedMarca = watch("marca");
+  const selectedFamilia = watch("familia");
+
+  // Función para obtener categorías padres (marcas)
+  const marcaOptions = useMemo(() => {
+    const padres = categoriesData.filter(
+      (cat) => cat.fatherId === null && cat.status
+    );
+    return padres.map((cat) => ({
+      value: cat.id,
+      label: cat.name,
+    }));
+  }, [categoriesData]);
+
+  // Función para obtener categorías medias (familias) basadas en la marca seleccionada
+  const familiaOptions = useMemo(() => {
+    if (!selectedMarca) return [];
+
+    const familias = categoriesData.filter(
+      (cat) => cat.fatherId === selectedMarca && cat.status
+    );
+
+    return familias.map((cat) => ({
+      value: cat.id,
+      label: cat.name,
+    }));
+  }, [categoriesData, selectedMarca]);
+
+  // Función para obtener categorías hijas basadas en la familia seleccionada
+  const categoriaOptions = useMemo(() => {
+    if (!selectedFamilia) return [];
+
+    const hijos = categoriesData.filter(
+      (cat) =>
+        cat.fatherId === selectedFamilia &&
+        cat.status &&
+        // Verificar que no sea padre de otras categorías (es hoja)
+        !categoriesData.some((c) => c.fatherId === cat.id)
+    );
+
+    return hijos.map((cat) => ({
+      value: cat.id,
+      label: cat.name,
+    }));
+  }, [categoriesData, selectedFamilia]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [activeCategories, activeBranches, activeBrands, activeUnits] =
-          await Promise.all([
-            fetchActiveCategories(),
-            fetchActiveBranches(),
-            fetchActiveBrands(),
-            fetchActiveUnits(),
-          ]);
-        setCategoryOptions(
-          activeCategories?.map((cat) => ({
-            label: cat.name,
-            value: cat.id,
-          })) || []
-        );
+        const [activeCategories, activeBranches] = await Promise.all([
+          fetchActiveCategories(),
+          fetchActiveBranches(),
+        ]);
+
+        setCategoriesData(activeCategories);
+
         setBranchOptions(
           activeBranches?.map((branch) => ({
             label: branch.name,
             value: branch.id,
             quantityStands: branch.Almacen[0]?.quantityStands || 0,
             flatsByStand: branch.Almacen[0]?.flatsByStand || 0,
-          })) || []
-        );
-        setBrandOptions(
-          activeBrands?.map((brand) => ({
-            label: brand.name,
-            value: brand.id,
-          })) || []
-        );
-        setUnitOptions(
-          activeUnits?.map((unit) => ({
-            label: unit.name,
-            value: unit.id,
           })) || []
         );
       } catch (err: unknown) {
@@ -161,14 +190,13 @@ export default function ManagementProduct() {
         try {
           const product = await fetchProductById(id);
           if (product) {
+            setProduct(product);
             reset({
               sku: product.sku,
               name: product.name,
               codigoOrigen: product.codigoOriginal,
               description: product.description,
               shortDescription: product.shortDescription,
-              marcaId: product.marcaId,
-              unidadId: product.unidadId,
               price: product.price,
               purchasePrice: product.purchasePrice,
               offer: !!product.offer,
@@ -181,9 +209,7 @@ export default function ManagementProduct() {
                 : "",
               stock: product.stock,
               stockMin: product.stockMin,
-              categoriesId: product.ProductCategories.map(
-                (cat) => cat.categoryId
-              ),
+
               sucursalesId: product.ProductSucursales.map((suc) => ({
                 sucursalId: suc.sucursalId,
                 numberStand: suc.numberStand,
@@ -192,6 +218,7 @@ export default function ManagementProduct() {
             });
             setValueDescrip(product.description);
             setValueShortDescrip(product.shortDescription);
+
             const mainImage = product.ProductImages.find(
               (img) => img.typeImage === "THUMBNAIL"
             )?.url;
@@ -224,6 +251,27 @@ export default function ManagementProduct() {
       loadProduct();
     }
   }, [id, reset, navigate]);
+
+  useEffect(() => {
+    if (id && id !== "new" && categoriesData.length > 0 && product) {
+      const existFather = categoriesData.find(
+        (cat) => cat.id === product.categoria.fatherId
+      );
+
+      console.log(existFather);
+
+      if (existFather) {
+        if (existFather.fatherId === null) {
+          setValue("marca", existFather.id);
+          setValue("familia", product.categoria.id);
+        } else {
+          setValue("marca", existFather?.father.id);
+          setValue("familia", existFather?.id);
+          setValue("subfamilia", product.categoria.id);
+        }
+      }
+    }
+  }, [id, categoriesData, product, setValue]);
 
   const handleClicPrincipalImage = () => {
     fileInputRef.current?.click();
@@ -270,8 +318,8 @@ export default function ManagementProduct() {
   };
 
   const onSubmit = async (values: FormInputs) => {
-    if (values.categoriesId.length === 0) {
-      toast.warning("Debe seleccionar al menos una categoría", {
+    if (!values.familia) {
+      toast.warning("Debe seleccionar al menos la familia", {
         position: "top-center",
       });
       return;
@@ -280,14 +328,6 @@ export default function ManagementProduct() {
       toast.warning("Debe seleccionar al menos una sucursal", {
         position: "top-center",
       });
-      return;
-    }
-    if (!values.marcaId) {
-      toast.warning("Debe seleccionar una marca", { position: "top-center" });
-      return;
-    }
-    if (!values.unidadId) {
-      toast.warning("Debe seleccionar una unidad", { position: "top-center" });
       return;
     }
     if (!valueDescrip) {
@@ -311,14 +351,21 @@ export default function ManagementProduct() {
       }
     }
 
+    let categoriaId: string = "";
+
+    if (values.subfamilia) {
+      categoriaId = values.subfamilia;
+    } else {
+      categoriaId = values.familia;
+    }
+
     const payload: ProductDto = {
       sku: values.sku,
       name: values.name,
       codigoOrigen: values.codigoOrigen,
       description: valueDescrip,
       shortDescription: valueShortDescrip,
-      marcaId: values.marcaId,
-      unidadId: values.unidadId,
+      unidadId: "9f487b00-a8f7-483c-9b70-644a879a4be5",
       price: values.price,
       purchasePrice: values.purchasePrice,
       offer: values.offer,
@@ -327,7 +374,7 @@ export default function ManagementProduct() {
       priceDateTo: values.priceDateTo || "",
       stock: values.stock,
       stockMin: values.stockMin,
-      categoriesId: values.categoriesId,
+      categoria: categoriaId,
       sucursalesId: values.sucursalesId,
       file: values.file,
       imageGalery: values.imageGalery,
@@ -364,6 +411,19 @@ export default function ManagementProduct() {
       label: `${i + 1}`,
       value: i + 1,
     }));
+
+  const handleMarcaChange = (selectedOption: OptionSelect | null) => {
+    const newValue = selectedOption?.value || "";
+    setValue("marca", newValue);
+    setValue("familia", "");
+    setValue("subfamilia", "");
+  };
+
+  const handleFamiliaChange = (selectedOption: OptionSelect | null) => {
+    const newValue = selectedOption?.value || "";
+    setValue("familia", newValue);
+    setValue("subfamilia", "");
+  };
 
   return (
     <div className="w-full mx-auto">
@@ -490,68 +550,6 @@ export default function ManagementProduct() {
                   </p>
                 )}
               </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="marcaId">Marca</Label>
-                <Controller
-                  name="marcaId"
-                  control={control}
-                  rules={{ required: "Debes seleccionar una marca" }}
-                  render={({ field }) => (
-                    <Select
-                      options={brandOptions}
-                      value={
-                        brandOptions.find(
-                          (option) => option.value === field.value
-                        ) || null
-                      }
-                      onChange={(selected) =>
-                        field.onChange(selected ? selected.value : "")
-                      }
-                      placeholder="Selecciona una marca"
-                      isClearable
-                      isSearchable
-                      classNamePrefix="select"
-                      className="text-base"
-                    />
-                  )}
-                />
-                {errors.marcaId && (
-                  <p className="text-red-600 text-sm">
-                    {errors.marcaId.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="unidadId">Unidad</Label>
-                <Controller
-                  name="unidadId"
-                  control={control}
-                  rules={{ required: "Debes seleccionar una unidad" }}
-                  render={({ field }) => (
-                    <Select
-                      options={unitOptions}
-                      value={
-                        unitOptions.find(
-                          (option) => option.value === field.value
-                        ) || null
-                      }
-                      onChange={(selected) =>
-                        field.onChange(selected ? selected.value : "")
-                      }
-                      placeholder="Selecciona una unidad"
-                      isClearable
-                      isSearchable
-                      classNamePrefix="select"
-                      className="text-base"
-                    />
-                  )}
-                />
-                {errors.unidadId && (
-                  <p className="text-red-600 text-sm">
-                    {errors.unidadId.message}
-                  </p>
-                )}
-              </div>
             </div>
             <div className="flex flex-col space-y-2 mt-6">
               <Label htmlFor="description">Descripción Completa</Label>
@@ -577,29 +575,28 @@ export default function ManagementProduct() {
             </h2>
             <hr className="mb-5" />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col space-y-2">
-                <Label>Categorías</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Marca
+                </label>
                 <Controller
-                  name="categoriesId"
+                  name="marca"
                   control={control}
-                  rules={{
-                    required: "Debes seleccionar al menos una categoría",
-                  }}
+                  rules={{ required: "Debe seleccionar una marca" }}
                   render={({ field }) => (
                     <Select
-                      isMulti
-                      options={categoryOptions}
-                      value={categoryOptions.filter((option) =>
-                        field.value.includes(option.value)
-                      )}
+                      {...field}
+                      options={marcaOptions}
+                      value={
+                        marcaOptions.find(
+                          (option) => option.value === field.value
+                        ) || null
+                      }
                       onChange={(selected) => {
-                        const selectedIds = selected
-                          ? selected.map((option) => option.value)
-                          : [];
-                        field.onChange(selectedIds);
+                        handleMarcaChange(selected);
                       }}
-                      placeholder="Selecciona categorías"
+                      placeholder="Selecciona una marca"
                       isClearable
                       isSearchable
                       classNamePrefix="select"
@@ -607,12 +604,100 @@ export default function ManagementProduct() {
                     />
                   )}
                 />
-                {errors.categoriesId && (
-                  <p className="text-red-600 text-sm">
-                    {errors.categoriesId.message}
+                {errors.marca && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.marca.message}
                   </p>
                 )}
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Familia
+                </label>
+                <Controller
+                  name="familia"
+                  control={control}
+                  rules={{
+                    required: selectedMarca
+                      ? "Debe seleccionar una familia"
+                      : false,
+                  }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={familiaOptions}
+                      value={
+                        familiaOptions.find(
+                          (option) => option.value === field.value
+                        ) || null
+                      }
+                      onChange={(selected) => {
+                        field.onChange(selected?.value || "");
+                        handleFamiliaChange(selected);
+                      }}
+                      placeholder="Selecciona una familia"
+                      isClearable
+                      isSearchable
+                      isDisabled={!selectedMarca || familiaOptions.length === 0}
+                      classNamePrefix="select"
+                      className="text-base"
+                    />
+                  )}
+                />
+                {errors.familia && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.familia.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {selectedFamilia && categoriaOptions.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Sub Familia
+                  </label>
+                  <Controller
+                    name="subfamilia"
+                    control={control}
+                    rules={{
+                      required: selectedFamilia
+                        ? "Debe seleccionar una categoría"
+                        : false,
+                    }}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={categoriaOptions}
+                        value={
+                          categoriaOptions.find(
+                            (option) => option.value === field.value
+                          ) || null
+                        }
+                        onChange={(selected) => {
+                          field.onChange(selected?.value || "");
+                        }}
+                        placeholder="Selecciona una categoría"
+                        isClearable
+                        isSearchable
+                        isDisabled={
+                          !selectedFamilia || categoriaOptions.length === 0
+                        }
+                        classNamePrefix="select"
+                        className="text-base"
+                      />
+                    )}
+                  />
+                  {errors.subfamilia && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.subfamilia.message}
+                    </p>
+                  )}
+                </div>
+              )}
+
               <div className="flex flex-col space-y-2">
                 <Label>Sucursales</Label>
                 <Controller
@@ -847,6 +932,7 @@ export default function ManagementProduct() {
                     id="discountedPrice"
                     type="number"
                     step="0.01"
+                    min="0"
                     placeholder="Introduce el precio con descuento"
                     className="w-full text-base py-2"
                     {...register("discountedPrice", {
@@ -870,7 +956,7 @@ export default function ManagementProduct() {
                   <Label htmlFor="priceDateFrom">Fecha Inicio Oferta</Label>
                   <Input
                     id="priceDateFrom"
-                    type="datetime-local"
+                    type="date"
                     className="w-full text-base py-2"
                     {...register("priceDateFrom", {
                       required:
@@ -887,7 +973,7 @@ export default function ManagementProduct() {
                   <Label htmlFor="priceDateTo">Fecha Fin Oferta</Label>
                   <Input
                     id="priceDateTo"
-                    type="datetime-local"
+                    type="date"
                     className="w-full text-base py-2"
                     {...register("priceDateTo", {
                       required:

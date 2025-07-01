@@ -49,10 +49,6 @@ export function getMenuList(): Group[] {
               label: "Categorias",
             },
             {
-              href: "/marcas",
-              label: "Marcas",
-            },
-            {
               href: "/products",
               label: "Productos",
             },

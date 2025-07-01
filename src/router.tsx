@@ -4,7 +4,6 @@ import DashboardPage from "./pages/dashboard/page";
 import UnidadesPage from "./pages/unidades/page";
 import CategoriesPage from "./pages/categories/page";
 import ManagementCategory from "./pages/categories/ui/ManagementCategory";
-import MarcasPage from "./pages/marcas/page";
 import RolesPage from "./pages/roles/page";
 import SucursalesPage from "./pages/sucursales/page";
 import ManagementSucursal from "./pages/sucursales/ui/ManagementSucursal";
@@ -43,10 +42,7 @@ export const router = createBrowserRouter([
         path: "categorias/:id",
         element: <ManagementCategory />,
       },
-      {
-        path: "marcas",
-        element: <MarcasPage />,
-      },
+
       {
         path: "roles",
         element: <RolesPage />,

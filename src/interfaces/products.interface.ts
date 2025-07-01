@@ -1,3 +1,5 @@
+import type { Categorias } from "./categorias.interface";
+
 export interface ProductCategory {
   id: string;
   productId: string;
@@ -50,7 +52,7 @@ export interface Product {
   updatedAt: string;
   mainImage?: string;
   galleryImages?: string[];
-  ProductCategories: ProductCategory[];
+  categoria: Categorias;
   ProductImages: ProductImage[];
   ProductSucursales: ProductSucursal[];
 }
@@ -67,7 +69,6 @@ export interface ProductDto {
   codigoOrigen: string;
   description: string;
   shortDescription: string;
-  marcaId: string;
   unidadId: string;
   price: number;
   purchasePrice: number;
@@ -77,18 +78,10 @@ export interface ProductDto {
   priceDateTo: string;
   stock: number;
   stockMin: number;
-  categoriesId: string[];
+  categoria: string;
   sucursalesId: SucursalesProductDTO[];
   file?: File;
   imageGalery?: File[];
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  status: boolean;
-  createAt: string;
-  updatedAt: string;
 }
 
 export interface Branch {
