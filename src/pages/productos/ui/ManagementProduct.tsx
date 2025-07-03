@@ -956,7 +956,7 @@ export default function ManagementProduct() {
                   <Label htmlFor="priceDateFrom">Fecha Inicio Oferta</Label>
                   <Input
                     id="priceDateFrom"
-                    type="datetime-local"
+                    type="date"
                     className="w-full text-base py-2"
                     {...register("priceDateFrom", {
                       required: watch("offer")
@@ -974,7 +974,7 @@ export default function ManagementProduct() {
                   <Label htmlFor="priceDateTo">Fecha Fin Oferta</Label>
                   <Input
                     id="priceDateTo"
-                    type="datetime-local"
+                    type="date"
                     className="w-full text-base py-2"
                     {...register("priceDateTo", {
                       required: watch("offer")
