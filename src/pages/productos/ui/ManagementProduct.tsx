@@ -956,11 +956,12 @@ export default function ManagementProduct() {
                   <Label htmlFor="priceDateFrom">Fecha Inicio Oferta</Label>
                   <Input
                     id="priceDateFrom"
-                    type="date"
+                    type="datetime-local"
                     className="w-full text-base py-2"
                     {...register("priceDateFrom", {
-                      required:
-                        "La fecha de inicio es obligatoria si está en oferta",
+                      required: watch("offer")
+                        ? "La fecha de inicio es obligatoria si está en oferta"
+                        : false,
                     })}
                   />
                   {errors.priceDateFrom && (
@@ -973,11 +974,12 @@ export default function ManagementProduct() {
                   <Label htmlFor="priceDateTo">Fecha Fin Oferta</Label>
                   <Input
                     id="priceDateTo"
-                    type="date"
+                    type="datetime-local"
                     className="w-full text-base py-2"
                     {...register("priceDateTo", {
-                      required:
-                        "La fecha de fin es obligatoria si está en oferta",
+                      required: watch("offer")
+                        ? "La fecha de fin es obligatoria si está en oferta"
+                        : false,
                     })}
                   />
                   {errors.priceDateTo && (

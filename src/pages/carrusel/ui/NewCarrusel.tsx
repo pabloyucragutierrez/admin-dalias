@@ -8,8 +8,6 @@ import { createBanner } from '@/services/carrusel.service';
 import { useNavigate } from 'react-router';
 
 interface FormInputs {
-  webImage: FileList;
-  mobileImage: FileList;
   url: string;
 }
 
@@ -18,6 +16,8 @@ const NewCarrusel: React.FC = () => {
   const [webPreview, setWebPreview] = useState<string | null>(null);
   const [mobilePreview, setMobilePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [webFile, setWebFile] = useState<File | null>(null);
+  const [mobileFile, setMobileFile] = useState<File | null>(null);
 
   const {
     register,
@@ -26,8 +26,6 @@ const NewCarrusel: React.FC = () => {
     reset,
   } = useForm<FormInputs>({
     defaultValues: {
-      webImage: undefined,
-      mobileImage: undefined,
       url: '',
     },
   });
@@ -40,8 +38,10 @@ const NewCarrusel: React.FC = () => {
       const file = e.target.files[0];
       const url = URL.createObjectURL(file);
       if (type === 'web') {
+        setWebFile(file);
         setWebPreview(url);
       } else {
+        setMobileFile(file);
         setMobilePreview(url);
       }
     }
@@ -50,8 +50,8 @@ const NewCarrusel: React.FC = () => {
   const onSubmit = async (data: FormInputs) => {
     setLoading(true);
     const formData = new FormData();
-    formData.append('file', data.webImage[0]);
-    formData.append('movil', data.mobileImage[0]);
+    if (webFile) formData.append('file', webFile);
+    if (mobileFile) formData.append('movil', mobileFile);
     formData.append('url', data.url);
 
     try {
@@ -59,6 +59,8 @@ const NewCarrusel: React.FC = () => {
       if (response) {
         toast.success('Carrusel creado con éxito', { position: 'top-center' });
         reset();
+        setWebFile(null);
+        setMobileFile(null);
         setWebPreview(null);
         setMobilePreview(null);
         navigate('/carrusel');
@@ -75,6 +77,8 @@ const NewCarrusel: React.FC = () => {
 
   const handleCancel = () => {
     reset();
+    setWebFile(null);
+    setMobileFile(null);
     setWebPreview(null);
     setMobilePreview(null);
     navigate('/carrusel');
@@ -117,12 +121,6 @@ const NewCarrusel: React.FC = () => {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    {...register('webImage', {
-                      required: 'La imagen web es obligatoria',
-                      validate: (files) =>
-                        files && files[0]?.type.startsWith('image/') ||
-                        'Solo se permiten imágenes',
-                    })}
                     onChange={(e) => handleImageChange(e, 'web')}
                   />
                   <label
@@ -133,7 +131,6 @@ const NewCarrusel: React.FC = () => {
                   </label>
                 </div>
                 <p className="text-sm text-gray-500">Dimensiones: 1920x600px</p>
-                {errors.webImage && <p className="text-red-600 text-sm">{errors.webImage.message}</p>}
                 {webPreview && (
                   <img
                     src={webPreview}
@@ -150,12 +147,6 @@ const NewCarrusel: React.FC = () => {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    {...register('mobileImage', {
-                      required: 'La imagen móvil es obligatoria',
-                      validate: (files) =>
-                        files && files[0]?.type.startsWith('image/') ||
-                        'Solo se permiten imágenes',
-                    })}
                     onChange={(e) => handleImageChange(e, 'mobile')}
                   />
                   <label
@@ -166,7 +157,6 @@ const NewCarrusel: React.FC = () => {
                   </label>
                 </div>
                 <p className="text-sm text-gray-500">Dimensiones: 600x800px</p>
-                {errors.mobileImage && <p className="text-red-600 text-sm">{errors.mobileImage.message}</p>}
                 {mobilePreview && (
                   <img
                     src={mobilePreview}
@@ -189,7 +179,7 @@ const NewCarrusel: React.FC = () => {
             </Button>
             <Button
               type="submit"
-              disabled={loading}
+              disabled={loading || !webFile || !mobileFile}
               className="text-base py-2 px-6"
             >
               {loading ? (
