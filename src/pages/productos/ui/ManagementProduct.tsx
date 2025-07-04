@@ -202,10 +202,10 @@ export default function ManagementProduct() {
               offer: !!product.offer,
               discountedPrice: product.discountedPrice,
               priceDateFrom: product.priceDateFrom
-                ? new Date(product.priceDateFrom).toISOString().slice(0, 16)
+                ? new Date(product.priceDateFrom).toISOString().split("T")[0]
                 : "",
               priceDateTo: product.priceDateTo
-                ? new Date(product.priceDateTo).toISOString().slice(0, 16)
+                ? new Date(product.priceDateTo).toISOString().split("T")[0]
                 : "",
               stock: product.stock,
               stockMin: product.stockMin,
@@ -963,6 +963,13 @@ export default function ManagementProduct() {
                         ? "La fecha de inicio es obligatoria si está en oferta"
                         : false,
                     })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setValue(
+                        "priceDateFrom",
+                        value ? new Date(value).toISOString().split("T")[0] : ""
+                      );
+                    }}
                   />
                   {errors.priceDateFrom && (
                     <p className="text-red-600 text-sm">
@@ -981,6 +988,13 @@ export default function ManagementProduct() {
                         ? "La fecha de fin es obligatoria si está en oferta"
                         : false,
                     })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setValue(
+                        "priceDateTo",
+                        value ? new Date(value).toISOString().split("T")[0] : ""
+                      );
+                    }}
                   />
                   {errors.priceDateTo && (
                     <p className="text-red-600 text-sm">
