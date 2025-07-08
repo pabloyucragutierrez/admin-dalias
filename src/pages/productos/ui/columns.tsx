@@ -105,7 +105,7 @@ export function getColumns(
     },
     {
       accessorKey: "codeBarras",
-      header: "Código Original",
+      header: "Código de fabricante",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">
           {row.original.codigoOriginal}
