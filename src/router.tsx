@@ -20,6 +20,8 @@ import BannersPage from "./pages/banners/page";
 import NewBanner from "./pages/banners/ui/NewBanner";
 import LineasPage from "./pages/lineas/page";
 import ManagementLinea from "./pages/lineas/ui/ManagementLinea";
+import Tarifas from "./pages/tarifas/page";
+import ManagementShippingRate from "./pages/tarifas/ui/ManagementShippingRate";
 
 export const router = createBrowserRouter([
   {
@@ -103,6 +105,14 @@ export const router = createBrowserRouter([
         path: "banners/new",
         element: <NewBanner />,
       },
+      {
+        path: "tarifas",
+        element: <Tarifas />,
+      },
+      {
+        path: "tarifas/:id",
+        element: <ManagementShippingRate />,
+      }
     ],
   },
   {

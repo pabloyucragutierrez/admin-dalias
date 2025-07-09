@@ -94,6 +94,10 @@ export function getMenuList(): Group[] {
               href: "/users",
               label: "Usuarios",
             },
+            {
+              href: "/tarifas",
+              label: "Tarifas",
+            },
           ],
         },
       ],
