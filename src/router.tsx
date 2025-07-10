@@ -22,6 +22,8 @@ import LineasPage from "./pages/lineas/page";
 import ManagementLinea from "./pages/lineas/ui/ManagementLinea";
 import Tarifas from "./pages/tarifas/page";
 import ManagementShippingRate from "./pages/tarifas/ui/ManagementShippingRate";
+import Bancos from "./pages/bancos/page";
+import BancosForm from "./pages/bancos/ui/management-bancos";
 
 export const router = createBrowserRouter([
   {
@@ -112,7 +114,15 @@ export const router = createBrowserRouter([
       {
         path: "tarifas/:id",
         element: <ManagementShippingRate />,
-      }
+      },
+      {
+        path: "bancos",
+        element: <Bancos />,
+      },
+      {
+        path: "bancos/:id",
+        element: <BancosForm />,
+      },
     ],
   },
   {

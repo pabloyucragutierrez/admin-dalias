@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -8,6 +8,11 @@ import { geolocation } from "@/utils/geolocation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  getShippingRateById,
+  createShippingRate,
+  updateShippingRate,
+} from "@/services/shipping-rate.service";
 
 interface District {
   id: number;
@@ -36,42 +41,16 @@ interface FormInputs {
   price: string;
 }
 
-const staticShippingRates: ShippingRate[] = [
-  {
-    id: "1",
-    districtId: "lima_lima_miraflores",
-    level: 3,
-    price: "15.00",
-    status: true,
-    createdAt: "2025-01-01T10:00:00Z",
-    updatedAt: "2025-01-01T10:00:00Z",
-  },
-  {
-    id: "2",
-    districtId: "arequipa_arequipa",
-    level: 2,
-    price: "12.50",
-    status: true,
-    createdAt: "2025-01-02T12:00:00Z",
-    updatedAt: "2025-01-02T12:00:00Z",
-  },
-  {
-    id: "3",
-    districtId: "1",
-    level: 1,
-    price: "10.00",
-    status: false,
-    createdAt: "2025-01-03T14:00:00Z",
-    updatedAt: "2025-01-03T14:00:00Z",
-  },
-];
-
 const ManagementShippingRate: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const title = id === "new" ? "Nueva Tarifa" : "Editar Tarifa";
+  const [loading, setLoading] = useState<boolean>(false);
+  const [shippingRate, setShippingRate] = useState<ShippingRate | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<number>(0);
   const [selectedRegion, setSelectedRegion] = useState<number | null>(null);
   const [selectedProvince, setSelectedProvince] = useState<number | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
   const [availableProvinces, setAvailableProvinces] = useState<Province[]>([]);
   const [availableDistricts, setAvailableDistricts] = useState<District[]>([]);
   const [isLimaRegion, setIsLimaRegion] = useState<boolean>(false);
@@ -80,6 +59,7 @@ const ManagementShippingRate: React.FC = () => {
   const {
     handleSubmit,
     register,
+    reset,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>({
@@ -94,9 +74,7 @@ const ManagementShippingRate: React.FC = () => {
   const findDistrictByIdentifier = (identifier: string): District | null => {
     for (const region of geolocation.regions) {
       for (const province of region.children || []) {
-        const district = province.children?.find(
-          (d) => d.identifier === identifier
-        );
+        const district = province.children?.find((d) => d.identifier === identifier);
         if (district) return district;
       }
     }
@@ -111,6 +89,10 @@ const ManagementShippingRate: React.FC = () => {
     return null;
   };
 
+  const findRegionById = (regionId: number): Region | null => {
+    return geolocation.regions.find((r) => r.id === regionId) || null;
+  };
+
   const findRegionByProvinceId = (provinceId: number): Region | null => {
     for (const region of geolocation.regions) {
       if (region.children?.some((p) => p.id === provinceId)) {
@@ -120,22 +102,20 @@ const ManagementShippingRate: React.FC = () => {
     return null;
   };
 
-  const findRegionById = (regionId: number): Region | null => {
-    return geolocation.regions.find((r) => r.id === regionId) || null;
-  };
-
-  useEffect(() => {
+  const handleGetShippingRateById = useCallback(async () => {
     if (id && id !== "new") {
       setLoading(true);
-      const rate = staticShippingRates.find((r) => r.id === id);
-      if (!rate) {
-        toast.error("Tarifa no encontrada", { position: "top-center" });
+      const response = await getShippingRateById(id);
+      if (!response) {
+        toast.warning("Tarifa no encontrada", { position: "top-center" });
         navigate("/tarifas");
         return;
       }
 
-      const district = findDistrictByIdentifier(rate.districtId);
+      setShippingRate(response);
+      const district = findDistrictByIdentifier(response.districtId);
       if (district) {
+        setSelectedLevel(district.level);
         const province = findProvinceById(district.parentId);
         if (province) {
           const region = findRegionByProvinceId(province.id);
@@ -146,17 +126,18 @@ const ManagementShippingRate: React.FC = () => {
             setIsLimaProvince(province.name === "Lima");
             setAvailableProvinces(region.children || []);
             setAvailableDistricts(province.children || []);
-            setValue("regionId", region.id.toString());
-            setValue("provinceId", province.id.toString());
-            setValue("districtId", rate.districtId);
-            setValue("price", rate.price);
+            setSelectedDistrict(response.districtId);
+            reset({
+              regionId: region.id.toString(),
+              provinceId: province.id.toString(),
+              districtId: response.districtId,
+              price: response.price,
+            });
           }
         }
       } else {
-        const provinceIdMatch = rate.districtId.split("_").pop();
-        const province = findProvinceById(
-          parseInt(provinceIdMatch || rate.districtId)
-        );
+        const provinceIdMatch = response.districtId.split('_').pop();
+        const province = findProvinceById(parseInt(provinceIdMatch || response.districtId));
         if (province) {
           const region = findRegionByProvinceId(province.id);
           if (region) {
@@ -166,28 +147,38 @@ const ManagementShippingRate: React.FC = () => {
             setIsLimaProvince(province.name === "Lima");
             setAvailableProvinces(region.children || []);
             setAvailableDistricts(province.children || []);
-            setValue("regionId", region.id.toString());
-            setValue("provinceId", province.id.toString());
-            setValue("districtId", "");
-            setValue("price", rate.price);
+            setSelectedDistrict("");
+            reset({
+              regionId: region.id.toString(),
+              provinceId: province.id.toString(),
+              districtId: "",
+              price: response.price,
+            });
           }
         } else {
-          const region = findRegionById(parseInt(rate.districtId));
+          const region = findRegionById(parseInt(response.districtId));
           if (region) {
             setSelectedRegion(region.id);
             setIsLimaRegion(region.name === "Lima");
             setAvailableProvinces(region.children || []);
             setAvailableDistricts([]);
-            setValue("regionId", region.id.toString());
-            setValue("provinceId", "");
-            setValue("districtId", "");
-            setValue("price", rate.price);
+            setSelectedDistrict("");
+            reset({
+              regionId: region.id.toString(),
+              provinceId: "",
+              districtId: "",
+              price: response.price,
+            });
           }
         }
       }
       setLoading(false);
     }
-  }, [id, setValue, navigate]);
+  }, [id, navigate, reset]);
+
+  useEffect(() => {
+    handleGetShippingRateById();
+  }, [handleGetShippingRateById]);
 
   const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const regionId = e.target.value ? parseInt(e.target.value) : null;
@@ -195,12 +186,15 @@ const ManagementShippingRate: React.FC = () => {
 
     setSelectedRegion(regionId);
     setSelectedProvince(null);
+    setSelectedLevel(0);
+    setSelectedDistrict("");
     setIsLimaRegion(region?.name === "Lima" || false);
     setIsLimaProvince(false);
-    setAvailableProvinces(region?.children || []);
-    setAvailableDistricts([]);
+    setValue("regionId", regionId?.toString() || "");
     setValue("provinceId", "");
     setValue("districtId", "");
+    setAvailableProvinces(region?.children || []);
+    setAvailableDistricts([]);
   };
 
   const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -208,50 +202,49 @@ const ManagementShippingRate: React.FC = () => {
     const province = availableProvinces.find((p) => p.id === provinceId);
 
     setSelectedProvince(provinceId);
+    setSelectedLevel(0);
+    setSelectedDistrict("");
     setIsLimaProvince(province?.name === "Lima" || false);
-    setAvailableDistricts(province?.children || []);
+    setValue("provinceId", provinceId?.toString() || "");
     setValue("districtId", "");
+    setAvailableDistricts(province?.children || []);
   };
 
   const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const identifier = e.target.value;
     const district = findDistrictByIdentifier(identifier);
-    console.log(district);
+    if (district) {
+      setSelectedLevel(district.level);
+    }
+    setSelectedDistrict(identifier);
+    setValue("districtId", identifier);
   };
 
-  const onSubmit = async (values: FormInputs) => {
-    if (!values.regionId) {
-      toast.warning("Debe seleccionar un departamento", {
-        position: "top-center",
-      });
-      return;
-    }
-    if (isLimaRegion && !values.provinceId) {
-      toast.warning("Debe seleccionar una provincia", {
-        position: "top-center",
-      });
-      return;
-    }
-    if (isLimaRegion && isLimaProvince && !values.districtId) {
-      toast.warning("Debe seleccionar un distrito", { position: "top-center" });
-      return;
-    }
+  const handleCancel = () => {
+    navigate("/tarifas");
+  };
 
-    let districtId = values.regionId;
+  const validatePrice = (value: string) => {
+    const num = parseFloat(value);
+    if (!value) return "El precio es requerido";
+    return (!isNaN(num) && num >= 0) || "El precio debe ser un número positivo";
+  };
+
+  const onSubmit = async (data: FormInputs) => {
+    setLoading(true);
+
+    let districtId = data.regionId;
     let level = 1;
 
     if (isLimaRegion) {
-      if (values.districtId && isLimaProvince) {
-        districtId = values.districtId;
-        const district = findDistrictByIdentifier(values.districtId);
-        level = district ? district.level : 3;
-      } else if (values.provinceId) {
-        const province = findProvinceById(parseInt(values.provinceId));
+      if (data.districtId && isLimaProvince) {
+        districtId = data.districtId;
+        level = selectedLevel;
+      } else if (data.provinceId) {
+        const province = findProvinceById(parseInt(data.provinceId));
         districtId = province
-          ? `${province.name.toLowerCase().replace(/\s+/g, "_")}_${
-              values.provinceId
-            }`
-          : values.provinceId;
+          ? `${province.name.toLowerCase().replace(/\s+/g, '_')}_${data.provinceId}`
+          : data.provinceId;
         level = 2;
       }
     }
@@ -259,52 +252,31 @@ const ManagementShippingRate: React.FC = () => {
     const payload = {
       districtId,
       level,
-      price: parseFloat(values.price),
+      price: parseFloat(data.price),
     };
 
-    setLoading(true);
-    setTimeout(() => {
-      if (id && id !== "new") {
-        const index = staticShippingRates.findIndex((r) => r.id === id);
-        if (index !== -1) {
-          staticShippingRates[index] = {
-            ...staticShippingRates[index],
-            districtId: payload.districtId,
-            level: payload.level,
-            price: payload.price.toFixed(2),
-            updatedAt: new Date().toISOString(),
-          };
-          toast.success("Tarifa actualizada exitosamente", {
-            position: "top-center",
-          });
-        }
-      } else {
-        const newRate: ShippingRate = {
-          id: `${staticShippingRates.length + 1}`,
-          districtId: payload.districtId,
-          level: payload.level,
-          price: payload.price.toFixed(2),
-          status: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        staticShippingRates.push(newRate);
-        toast.success("Tarifa creada exitosamente", { position: "top-center" });
-      }
-      setLoading(false);
-      navigate("/tarifas");
-    }, 500);
-  };
+    const response = shippingRate
+      ? await updateShippingRate(shippingRate.id, payload)
+      : await createShippingRate(payload);
 
-  const handleCancel = () => {
+    setLoading(false);
+
+    if (!response || response?.error) {
+      toast.warning(response?.message || "Error al guardar la tarifa", {
+        position: "top-center",
+      });
+      return;
+    }
+
+    toast.success(response?.message || "Tarifa guardada exitosamente", {
+      position: "top-center",
+    });
     navigate("/tarifas");
   };
 
   return (
     <div className="w-full mx-auto">
-      <h1 className="text-3xl text-blue-600 font-bold mb-6">
-        {id && id !== "new" ? "Editar Tarifa" : "Nueva Tarifa"}
-      </h1>
+      <h1 className="text-3xl text-blue-600 font-bold mb-6">{title}</h1>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
@@ -325,10 +297,8 @@ const ManagementShippingRate: React.FC = () => {
                   {...register("regionId", {
                     required: "Departamento es requerido",
                   })}
-                  onChange={(e) => {
-                    register("regionId").onChange(e);
-                    handleRegionChange(e);
-                  }}
+                  value={selectedRegion?.toString() || ""}
+                  onChange={handleRegionChange}
                 >
                   <option value="">Selecciona un departamento</option>
                   {geolocation.regions.map((region) => (
@@ -338,9 +308,7 @@ const ManagementShippingRate: React.FC = () => {
                   ))}
                 </select>
                 {errors.regionId && (
-                  <p className="text-red-600 text-sm">
-                    {errors.regionId.message}
-                  </p>
+                  <p className="text-red-600 text-sm">{errors.regionId.message}</p>
                 )}
               </div>
               {isLimaRegion && (
@@ -352,10 +320,8 @@ const ManagementShippingRate: React.FC = () => {
                     {...register("provinceId", {
                       required: isLimaRegion ? "Provincia es requerida" : false,
                     })}
-                    onChange={(e) => {
-                      register("provinceId").onChange(e);
-                      handleProvinceChange(e);
-                    }}
+                    value={selectedProvince?.toString() || ""}
+                    onChange={handleProvinceChange}
                     disabled={!selectedRegion}
                   >
                     <option value="">Selecciona una provincia</option>
@@ -366,9 +332,7 @@ const ManagementShippingRate: React.FC = () => {
                     ))}
                   </select>
                   {errors.provinceId && (
-                    <p className="text-red-600 text-sm">
-                      {errors.provinceId.message}
-                    </p>
+                    <p className="text-red-600 text-sm">{errors.provinceId.message}</p>
                   )}
                 </div>
               )}
@@ -379,30 +343,21 @@ const ManagementShippingRate: React.FC = () => {
                     id="districtId"
                     className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                     {...register("districtId", {
-                      required: isLimaProvince
-                        ? "Distrito es requerido"
-                        : false,
+                      required: isLimaProvince ? "Distrito es requerido" : false,
                     })}
-                    onChange={(e) => {
-                      register("districtId").onChange(e);
-                      handleDistrictChange(e);
-                    }}
+                    value={selectedDistrict}
+                    onChange={handleDistrictChange}
                     disabled={!selectedProvince}
                   >
                     <option value="">Selecciona un distrito</option>
                     {availableDistricts.map((district) => (
-                      <option
-                        key={district.identifier}
-                        value={district.identifier}
-                      >
+                      <option key={district.identifier} value={district.identifier}>
                         {district.name}
                       </option>
                     ))}
                   </select>
                   {errors.districtId && (
-                    <p className="text-red-600 text-sm">
-                      {errors.districtId.message}
-                    </p>
+                    <p className="text-red-600 text-sm">{errors.districtId.message}</p>
                   )}
                 </div>
               )}
@@ -415,10 +370,7 @@ const ManagementShippingRate: React.FC = () => {
                   className="w-full text-base py-2"
                   {...register("price", {
                     required: "Precio es requerido",
-                    pattern: {
-                      value: /^\d+(\.\d{1,2})?$/,
-                      message: "Precio debe ser un número válido (ej: 10.50)",
-                    },
+                    validate: validatePrice,
                   })}
                 />
                 {errors.price && (

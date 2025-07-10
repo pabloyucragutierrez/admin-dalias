@@ -21,3 +21,37 @@ export const genderTypes: OptionSelect[] = [
   { value: "Hombre", label: "Hombre" },
   { value: "Mujer", label: "Mujer" },
 ];
+
+export const entidades_financieras = [
+  "Banco de Crédito del Perú (BCP)",
+  "Yape",
+  "BBVA Perú",
+  "Plin",
+  "Lukita",
+  "Interbank",
+  "Tunki",
+  "Scotiabank Perú",
+  "Banco de la Nación",
+  "Banco Pichincha",
+  "Banco GNB Perú",
+  "Banco Falabella",
+  "Banco Ripley",
+  "Banco Santander Perú",
+  "Citibank del Perú",
+  "Mibanco",
+  "BanBif",
+  "ICBC PERU BANK",
+  "Caja Arequipa",
+  "Wayki App",
+  "Caja Cusco",
+  "Caja Huancayo",
+  "Caja Piura",
+  "Caja Trujillo",
+  "Financiera Compartamos",
+  "Financiera Confianza",
+  "Financiera Credinka",
+  "Financiera Efectiva",
+  "Caja Metropolitana",
+];
+
+export const billeteras = ["Yape", "Plin", "Lukita", "Tunki", "Wayki App"];

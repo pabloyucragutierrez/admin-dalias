@@ -98,6 +98,10 @@ export function getMenuList(): Group[] {
               href: "/tarifas",
               label: "Tarifas",
             },
+            {
+              href: "/bancos",
+              label: "Bancos",
+            },
           ],
         },
       ],

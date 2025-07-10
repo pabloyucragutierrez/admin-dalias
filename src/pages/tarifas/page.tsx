@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -17,41 +17,28 @@ import {
 } from "../../components/ui/alert-dialog";
 import { Link } from "react-router";
 import type { ShippingRate } from "@/interfaces/shipping-rate.interface";
-
-let staticShippingRates: ShippingRate[] = [
-  {
-    id: "1",
-    districtId: "lima_lima_miraflores",
-    level: 3,
-    price: "15.00",
-    status: true,
-    createdAt: "2025-01-01T10:00:00Z",
-    updatedAt: "2025-01-01T10:00:00Z",
-  },
-  {
-    id: "2",
-    districtId: "arequipa_arequipa",
-    level: 2,
-    price: "12.50",
-    status: true,
-    createdAt: "2025-01-02T12:00:00Z",
-    updatedAt: "2025-01-02T12:00:00Z",
-  },
-  {
-    id: "3",
-    districtId: "1",
-    level: 1,
-    price: "10.00",
-    status: false,
-    createdAt: "2025-01-03T14:00:00Z",
-    updatedAt: "2025-01-03T14:00:00Z",
-  },
-];
+import { getShippingRates, deleteShippingRate } from "../../services/shipping-rate.service";
 
 const Tarifas: React.FC = () => {
   const navigate = useNavigate();
-  const [shippingRates, setShippingRates] = useState<ShippingRate[]>(staticShippingRates);
+  const [shippingRates, setShippingRates] = useState<ShippingRate[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+
+  const fetchShippingRates = async () => {
+    setLoading(true);
+    const response = await getShippingRates();
+    if (response) {
+      setShippingRates(response);
+    } else {
+      toast.warning("Error al cargar las tarifas", { position: "top-center" });
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchShippingRates();
+  }, []);
 
   const getLocationNames = (districtId: string) => {
     const region = geolocation.regions.find((r) => r.id.toString() === districtId);
@@ -96,14 +83,20 @@ const Tarifas: React.FC = () => {
     };
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     setIsDeleting(id);
-    setTimeout(() => {
-      staticShippingRates = staticShippingRates.filter((r) => r.id !== id);
-      setShippingRates([...staticShippingRates]);
-      setIsDeleting(null);
-      toast.success("Tarifa eliminada correctamente", { position: "top-center" });
-    }, 500);
+    const response = await deleteShippingRate(id);
+    setIsDeleting(null);
+
+    if (!response || response?.error) {
+      toast.warning(response?.message || "Error al eliminar la tarifa", {
+        position: "top-center",
+      });
+      return;
+    }
+
+    toast.success("Tarifa eliminada correctamente", { position: "top-center" });
+    fetchShippingRates();
   };
 
   return (
@@ -119,7 +112,9 @@ const Tarifas: React.FC = () => {
         </Button>
       </div>
       <div className="mt-6">
-        {shippingRates.length === 0 ? (
+        {loading ? (
+          <div className="text-center text-gray-500">Cargando tarifas...</div>
+        ) : shippingRates.length === 0 ? (
           <div className="text-center text-gray-500">
             No hay tarifas registradas
           </div>
