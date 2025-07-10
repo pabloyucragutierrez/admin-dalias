@@ -36,7 +36,7 @@ interface FormInputs {
   price: string;
 }
 
-let staticShippingRates: ShippingRate[] = [
+const staticShippingRates: ShippingRate[] = [
   {
     id: "1",
     districtId: "lima_lima_miraflores",
@@ -80,7 +80,6 @@ const ManagementShippingRate: React.FC = () => {
   const {
     handleSubmit,
     register,
-    reset,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormInputs>({
@@ -95,7 +94,9 @@ const ManagementShippingRate: React.FC = () => {
   const findDistrictByIdentifier = (identifier: string): District | null => {
     for (const region of geolocation.regions) {
       for (const province of region.children || []) {
-        const district = province.children?.find((d) => d.identifier === identifier);
+        const district = province.children?.find(
+          (d) => d.identifier === identifier
+        );
         if (district) return district;
       }
     }
@@ -152,8 +153,10 @@ const ManagementShippingRate: React.FC = () => {
           }
         }
       } else {
-        const provinceIdMatch = rate.districtId.split('_').pop();
-        const province = findProvinceById(parseInt(provinceIdMatch || rate.districtId));
+        const provinceIdMatch = rate.districtId.split("_").pop();
+        const province = findProvinceById(
+          parseInt(provinceIdMatch || rate.districtId)
+        );
         if (province) {
           const region = findRegionByProvinceId(province.id);
           if (region) {
@@ -213,15 +216,20 @@ const ManagementShippingRate: React.FC = () => {
   const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const identifier = e.target.value;
     const district = findDistrictByIdentifier(identifier);
+    console.log(district);
   };
 
   const onSubmit = async (values: FormInputs) => {
     if (!values.regionId) {
-      toast.warning("Debe seleccionar un departamento", { position: "top-center" });
+      toast.warning("Debe seleccionar un departamento", {
+        position: "top-center",
+      });
       return;
     }
     if (isLimaRegion && !values.provinceId) {
-      toast.warning("Debe seleccionar una provincia", { position: "top-center" });
+      toast.warning("Debe seleccionar una provincia", {
+        position: "top-center",
+      });
       return;
     }
     if (isLimaRegion && isLimaProvince && !values.districtId) {
@@ -240,7 +248,9 @@ const ManagementShippingRate: React.FC = () => {
       } else if (values.provinceId) {
         const province = findProvinceById(parseInt(values.provinceId));
         districtId = province
-          ? `${province.name.toLowerCase().replace(/\s+/g, '_')}_${values.provinceId}`
+          ? `${province.name.toLowerCase().replace(/\s+/g, "_")}_${
+              values.provinceId
+            }`
           : values.provinceId;
         level = 2;
       }
@@ -264,7 +274,9 @@ const ManagementShippingRate: React.FC = () => {
             price: payload.price.toFixed(2),
             updatedAt: new Date().toISOString(),
           };
-          toast.success("Tarifa actualizada exitosamente", { position: "top-center" });
+          toast.success("Tarifa actualizada exitosamente", {
+            position: "top-center",
+          });
         }
       } else {
         const newRate: ShippingRate = {
@@ -310,7 +322,9 @@ const ManagementShippingRate: React.FC = () => {
                 <select
                   id="regionId"
                   className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("regionId", { required: "Departamento es requerido" })}
+                  {...register("regionId", {
+                    required: "Departamento es requerido",
+                  })}
                   onChange={(e) => {
                     register("regionId").onChange(e);
                     handleRegionChange(e);
@@ -324,7 +338,9 @@ const ManagementShippingRate: React.FC = () => {
                   ))}
                 </select>
                 {errors.regionId && (
-                  <p className="text-red-600 text-sm">{errors.regionId.message}</p>
+                  <p className="text-red-600 text-sm">
+                    {errors.regionId.message}
+                  </p>
                 )}
               </div>
               {isLimaRegion && (
@@ -350,7 +366,9 @@ const ManagementShippingRate: React.FC = () => {
                     ))}
                   </select>
                   {errors.provinceId && (
-                    <p className="text-red-600 text-sm">{errors.provinceId.message}</p>
+                    <p className="text-red-600 text-sm">
+                      {errors.provinceId.message}
+                    </p>
                   )}
                 </div>
               )}
@@ -361,7 +379,9 @@ const ManagementShippingRate: React.FC = () => {
                     id="districtId"
                     className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                     {...register("districtId", {
-                      required: isLimaProvince ? "Distrito es requerido" : false,
+                      required: isLimaProvince
+                        ? "Distrito es requerido"
+                        : false,
                     })}
                     onChange={(e) => {
                       register("districtId").onChange(e);
@@ -371,13 +391,18 @@ const ManagementShippingRate: React.FC = () => {
                   >
                     <option value="">Selecciona un distrito</option>
                     {availableDistricts.map((district) => (
-                      <option key={district.identifier} value={district.identifier}>
+                      <option
+                        key={district.identifier}
+                        value={district.identifier}
+                      >
                         {district.name}
                       </option>
                     ))}
                   </select>
                   {errors.districtId && (
-                    <p className="text-red-600 text-sm">{errors.districtId.message}</p>
+                    <p className="text-red-600 text-sm">
+                      {errors.districtId.message}
+                    </p>
                   )}
                 </div>
               )}
