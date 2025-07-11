@@ -117,8 +117,7 @@ export function getColumns(
       header: "Marca",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">
-          {brands.find((brand) => brand.id === row.original.marcaId)?.name ||
-            "Sin marca"}
+          {row.original.categoria?.name || "Sin marca"}
         </div>
       ),
     },
