@@ -48,13 +48,56 @@ export interface Product {
   categoriesId: string[];
   sucursalesId: SucursalesProductDTO[];
   status: boolean;
+  typeProduct?: string;
   createAt: string;
   updatedAt: string;
+  fatherId?: Product;
+  father?: Product;
   mainImage?: string;
   galleryImages?: string[];
   categoria: Categorias;
   ProductImages: ProductImage[];
+  stockProducts?: StockProduct[];
+  terminoProducts?: TerminoProduct[];
+
   ProductSucursales: ProductSucursal[];
+}
+
+export interface TerminoProduct {
+  id: string;
+  terminoId: string;
+  productId: string;
+  visible: boolean;
+  variation: boolean;
+  order: number;
+  termino: TerminoPrduct;
+}
+export interface TerminoPrduct {
+  id: string;
+  name: string;
+  attributeId: string;
+  sampleType: string;
+  sampleImage: string;
+  sampleColor: string;
+  sampleText: boolean;
+  createAt: string;
+  attribute: Attribute;
+}
+export interface Attribute {
+  id: string;
+  name: string;
+  status: boolean;
+  createAt: string;
+}
+
+export interface StockProduct {
+  id: string;
+  productId: string;
+  stock: number;
+  manageStock: boolean;
+  lowStock: number;
+  status: string;
+  createAt: string;
 }
 
 export interface SucursalesProductDTO {

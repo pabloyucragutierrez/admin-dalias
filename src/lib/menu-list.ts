@@ -102,6 +102,11 @@ export function getMenuList(): Group[] {
               href: "/bancos",
               label: "Bancos",
             },
+            {
+              href: "/stock",
+              label: "Stock",
+            },
+            
           ],
         },
       ],

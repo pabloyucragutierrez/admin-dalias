@@ -177,3 +177,12 @@ export const fetchActiveUnits = async (): Promise<Unit[]> => {
   const response = await api.get<Unit[]>("/unidades/actives");
   return response.data;
 };
+
+export async function getProductCombo() {
+  try {
+    const response = await api.get(`products/combo`);
+    return response.data as Product[];
+  } catch (e) {
+    console.log(e);
+  }
+}

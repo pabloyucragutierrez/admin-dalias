@@ -24,6 +24,8 @@ import Tarifas from "./pages/tarifas/page";
 import ManagementShippingRate from "./pages/tarifas/ui/ManagementShippingRate";
 import Bancos from "./pages/bancos/page";
 import BancosForm from "./pages/bancos/ui/management-bancos";
+import StockPage from "./pages/stock/page";
+import StockByIdPage from "./pages/stock/[id]/page";
 
 export const router = createBrowserRouter([
   {
@@ -122,6 +124,14 @@ export const router = createBrowserRouter([
       {
         path: "bancos/:id",
         element: <BancosForm />,
+      },
+       {
+        path: "stock",
+        element: <StockPage />,
+      },
+      {
+        path: "stock/nuevo",
+        element: <StockByIdPage />,
       },
     ],
   },
