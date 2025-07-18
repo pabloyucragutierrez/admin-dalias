@@ -51,8 +51,6 @@ export function getColumns(
   onDelete: (product: Product) => void
 ): ColumnDef<Product>[] {
   const navigate = useNavigate();
-  
-   
   return [
     {
       accessorKey: "image",
@@ -103,7 +101,7 @@ export function getColumns(
       header: "Marca",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">
-          {row.original.categoria.fatherId ? row.original.categoria.fatherId ? row.original.categoria.father.father.name : row.original.categoria.father.name : row.original.categoria.name  }
+          {row.original.categoria.fatherId ? row.original.categoria.fatherId ? row.original.categoria.father.name : row.original.categoria.father.name : row.original.categoria.name  }
         </div>
       ),
     },
