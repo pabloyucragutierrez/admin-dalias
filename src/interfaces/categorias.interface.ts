@@ -26,6 +26,34 @@ export interface Categorias {
   }[];
 }
 
+export interface CategoriasProduct {
+  id: string;
+  linea: string | null;
+  name: string;
+  status: boolean;
+  createAt: string;
+  updatedAt: string;
+  fatherId: string | null;
+  father: {
+    id: string;
+    linea: string | null;
+    name: string;
+    fatherId: string;
+    status: boolean;
+    createAt: string;
+    updatedAt: string;
+    father: {
+      id: string;
+      linea: string | null;
+      name: string;
+      fatherId: string;
+      status: boolean;
+      createAt: string;
+      updatedAt: string;
+    };
+  };
+}
+
 export interface CategoriasDto {
   linea: string;
   name: string;

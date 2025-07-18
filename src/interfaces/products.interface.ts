@@ -1,4 +1,4 @@
-import type { Categorias } from "./categorias.interface";
+import type {  CategoriasProduct } from "./categorias.interface";
 
 export interface ProductCategory {
   id: string;
@@ -55,7 +55,7 @@ export interface Product {
   father?: Product;
   mainImage?: string;
   galleryImages?: string[];
-  categoria: Categorias;
+  categoria: CategoriasProduct;
   ProductImages: ProductImage[];
   stockProducts?: StockProduct[];
   terminoProducts?: TerminoProduct[];
@@ -125,6 +125,7 @@ export interface ProductDto {
   sucursalesId: SucursalesProductDTO[];
   file?: File;
   imageGalery?: File[];
+  galleryImages?: string[];
 }
 
 export interface Branch {

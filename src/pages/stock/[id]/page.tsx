@@ -29,31 +29,14 @@ export default function StockByIdPage() {
       return;
     }
 
-    const filteredProducts = response.filter((product) => {
-      if (product.typeProduct === "VARIATION" && product.fatherId === null) {
-        return false;
-      }
-      return true;
-    });
-
-    setProductsAll(filteredProducts);
-    const options: OptionSelect[] = filteredProducts.map((product) => {
-      if (product.typeProduct === "SIMPLE" || product.fatherId === null) {
-        return {
-          value: product.id,
-          label: `${product.name} | Stock: ${
-            product.father?.stockProducts?.[0]?.stock ?? product.stockProducts?.[0]?.stock ?? 0
-          }`,
-        };
-      }
-
+   
+    setProductsAll(response);
+    const options: OptionSelect[] = response.map((product) => {
       return {
         value: product.id,
-        label: `${
-          product.father?.name ?? "Unknown"
-        } | Variación: ${
-          product.terminoProducts?.[0]?.termino?.name ?? "Unknown"
-        } | Stock: ${product.stockProducts?.[0]?.stock ?? 0}`,
+        label: `${product.name} | SKU: ${product.sku} | Stock: ${
+          product.stock
+        }`,
       };
     });
 

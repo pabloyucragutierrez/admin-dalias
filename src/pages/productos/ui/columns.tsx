@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { formatDateTime } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,9 +19,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import type { Product, Brand } from "@/interfaces/products.interface";
-import type { ColumnDef } from "@tanstack/react-table";
-import { fetchActiveBrands } from "@/services/products.service";
+import type { Product } from "@/interfaces/products.interface";
+import type { ColumnDef } from "@tanstack/react-table"; 
 
 export const columnNames: Record<string, string> = {
   image: "Imagen",
@@ -53,20 +51,8 @@ export function getColumns(
   onDelete: (product: Product) => void
 ): ColumnDef<Product>[] {
   const navigate = useNavigate();
-  const [brands, setBrands] = useState<Brand[]>([]);
-
-  useEffect(() => {
-    const loadBrands = async () => {
-      try {
-        const activeBrands = await fetchActiveBrands();
-        setBrands(activeBrands || []);
-      } catch (err) {
-        console.error("Error al cargar marcas:", err);
-      }
-    };
-    loadBrands();
-  }, []);
-
+  
+   
   return [
     {
       accessorKey: "image",
@@ -117,7 +103,7 @@ export function getColumns(
       header: "Marca",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">
-          {row.original.categoria?.name || "Sin marca"}
+          {row.original.categoria.fatherId ? row.original.categoria.fatherId ? row.original.categoria.father.father.name : row.original.categoria.father.name : row.original.categoria.name  }
         </div>
       ),
     },

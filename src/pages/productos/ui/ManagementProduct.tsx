@@ -49,6 +49,7 @@ interface FormInputs {
   sucursalesId: SucursalesProductDTO[];
   file?: File;
   imageGalery?: File[];
+  galleryImages?: string[];
 }
 
 interface BranchOption extends OptionSelect {
@@ -105,6 +106,7 @@ export default function ManagementProduct() {
       sucursalesId: [],
       file: undefined,
       imageGalery: [],
+      galleryImages: [],
     },
   });
 
@@ -378,6 +380,7 @@ export default function ManagementProduct() {
       sucursalesId: values.sucursalesId,
       file: values.file,
       imageGalery: values.imageGalery,
+      galleryImages: gallery.map((img) => img.toString()),
     };
 
     try {

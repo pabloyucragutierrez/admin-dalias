@@ -122,6 +122,12 @@ export const updateProduct = async (id: string, payload: ProductDto) => {
       });
     }
 
+    if (payload.galleryImages && payload.galleryImages.length > 0) {
+      payload.galleryImages.forEach((img) => {
+        formData.append("galleryImages[]", img);
+      });
+    }
+
     const response = await api.patch(`/products/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
@@ -180,7 +186,7 @@ export const fetchActiveUnits = async (): Promise<Unit[]> => {
 
 export async function getProductCombo() {
   try {
-    const response = await api.get(`products/combo`);
+    const response = await api.get(`products/activos`);
     return response.data as Product[];
   } catch (e) {
     console.log(e);

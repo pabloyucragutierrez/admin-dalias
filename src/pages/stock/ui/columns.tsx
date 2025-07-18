@@ -5,15 +5,15 @@ import { formatDateTime } from "@/utils";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export const columnNames: Record<string, string> = {
-  nameProduct: "Nombre Producto",
+  product: "Nombre Producto",
   quantity: "Cantidad",
   createAt: "Fecha de Creación",
-  status: "Estado",
+  type: "Tipo",
 };
 
 export const columnFilter: FilterConfig[] = [
   {
-    id: "nameProduct",
+    id: "product",
     label: "Nombre Producto",
   },
 ];
@@ -22,15 +22,20 @@ export const stateFilter: FilterConfig[] = [];
 
 export const getColumns = (): ColumnDef<ManagementStock>[] => [
   {
-    id: "nameProduct",
+    id: "product",
     header: "Nombre Producto",
     cell: ({ row }) => (
       <div className="text-sm font-medium text-gray-900">
-        {row.original.product.typeProduct === "SIMPLE"
-          ? row.original.product.name
-          : `${row.original.product.father?.name ?? "Unknown"} | Variación: ${
-              row.original.product.terminoProducts?.[0]?.termino?.name ?? "Unknown"
-            }`}
+        {row.original.product.name}
+      </div>
+    ),
+  },
+  {
+    id: "sku",
+    header: "SKU",
+    cell: ({ row }) => (
+      <div className="text-sm font-medium text-gray-900">
+        {row.original.product.sku}
       </div>
     ),
   },
@@ -39,6 +44,13 @@ export const getColumns = (): ColumnDef<ManagementStock>[] => [
     header: "Cantidad",
     cell: ({ row }) => (
       <div className="text-sm text-gray-500">{row.original.quantity}</div>
+    ),
+  },
+  {
+    accessorKey: "type",
+    header: "Tipo",
+    cell: ({ row }) => (
+      <div className="text-sm text-gray-500">{row.original.type}</div>
     ),
   },
   {
@@ -59,11 +71,5 @@ export const getColumns = (): ColumnDef<ManagementStock>[] => [
       <div className="text-sm text-gray-500">{formatDateTime(row.original.createAt)}</div>
     ),
   },
-  {
-    accessorKey: "status",
-    header: "Estado",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-500">{row.original.status}</div>
-    ),
-  },
+ 
 ];

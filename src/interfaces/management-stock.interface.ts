@@ -19,6 +19,6 @@ export interface ManagementStock {
   productId: string;
   product: Product;
   quantity: number;
-  status: string;
+  type: string;
   createAt: string;
 }
