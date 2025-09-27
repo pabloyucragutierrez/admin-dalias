@@ -166,8 +166,6 @@ export default function ManagementClient() {
 
             const response = id && id !== "nuevo" ? await fetchUpdateClient(id, payload) : await fetchCreateClient(payload);
 
-            console.log(response);
-
             if (!response?.success) {
                 toast.warning(response?.message, { position: "top-center" });
                 return;

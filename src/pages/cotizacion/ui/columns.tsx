@@ -1,19 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import type { Cliente } from "@/interfaces/client.interface";
+import type { Cotizacion } from "@/interfaces/cotizacion.interface";
 import { formatDateTime } from "@/utils";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Edit, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export const columnNames: Record<string, string> = {
-  typeDocument: 'Tipo de Documento',
-  document: 'Documento',
-  razonSocial: 'Razón Social',
-  name: 'Nombre',
-  email: 'Email',
-  phone: 'Teléfono',
   createAt: "Fecha de Creación",
   status: "Estado",
 };
@@ -32,45 +26,57 @@ export const stateFilter = [
   { id: "inactivo", label: "Inactivo" },
 ];
 
-
-export function getColumns(
-  onChangeStatus: (client: Cliente) => void
-): ColumnDef<Cliente>[] {
+export function getColumns(): ColumnDef<Cotizacion>[] {
     const navigate = useNavigate();
-    return [
+    return  [
         {
-            accessorKey: "typeDocument",
-            header: columnNames.typeDocument,
+            accessorKey: "code",
+            header: "Código",
+        },
+        {
+            accessorKey: "ruc",
+            header: "RUC Empresa",
+            cell: ({ row }) => (
+                <div className="text-sm text-gray-500">
+                    {row.original.business.ruc}
+                </div>
+            ),
+        },
+        {
+            accessorKey: "empresa",
+            header: "Empresa",
+            cell: ({ row }) => (
+                <div className="text-sm text-gray-500">
+                    {row.original.business.razonSocial}
+                </div>
+            ),
         },
         {
             accessorKey: "document",
-            header: columnNames.document,
-        },
-        {
-            accessorKey: 'razonSocial',
-            header: 'Razón Social',
+            header: "Cliente Documento",
             cell: ({ row }) => (
                 <div className="text-sm text-gray-500">
-                    {row.original.razonSocial !== '' ? row.original.razonSocial : '-'}
+                    {row.original.client.document}
                 </div>
             ),
         },
         {
-            accessorKey: "name",
-            header: "Nombre",
+            accessorKey: "cliente",
+            header: "Cliente",
             cell: ({ row }) => (
                 <div className="text-sm text-gray-500">
-                    {row.original.name} {row.original.lastName}
+                    {row.original.client.typeDocument === 'DNI' ? `${row.original.client.name} ${row.original.client.lastName}` : row.original.client.razonSocial}
                 </div>
             ),
-        },
-        {
-            accessorKey: "email",
-            header: "Email",
         },
         {
             accessorKey: "phone",
-            header: "Teléfono",
+            header: "Cliente Teléfono",
+            cell: ({ row }) => (
+                <div className="text-sm text-gray-500">
+                    {row.original.client.phone}
+                </div>
+            ),
         },
         {
             accessorKey: "createAt",
@@ -104,7 +110,7 @@ export function getColumns(
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                     <DropdownMenuItem
-                    onSelect={() => navigate(`/clientes/${row.original.id}`)}
+                    onSelect={() => navigate(`/cotizacion/${row.original.id}`)}
                     >
                     <Edit size={18} />
                     <span className="text-sm ml-2">Editar</span>

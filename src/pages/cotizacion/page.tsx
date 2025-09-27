@@ -1,9 +1,14 @@
+import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react"; 
 import { useNavigate } from "react-router";
+import { columnFilter, columnNames, getColumns, stateFilter } from "./ui/columns";
+import { useRef } from "react";
 
 export default function Cotizacion() { 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+
+  const refreshDataTable = useRef<() => void>(null);
 
   return (
     <>
@@ -16,6 +21,19 @@ export default function Cotizacion() {
           <Plus size={20} />
           Nueva Cotizacion
         </Button>
+      </div>
+
+      <div className="container mx-auto py-5">
+        <DataTable
+          columns={getColumns()}
+          columnNames={columnNames}
+          url="cotizacion"
+          typeFilter={columnFilter}
+          stateFilter={stateFilter}
+          onRefresh={(callback) => {
+            refreshDataTable.current = callback;
+          }}
+        />
       </div>
     </>
   );
