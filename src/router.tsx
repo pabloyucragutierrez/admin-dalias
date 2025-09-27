@@ -30,6 +30,7 @@ import Cotizacion from "./pages/cotizacion/page";
 import ManagementCotizacion from "./pages/cotizacion/ui/management-cotizacion";
 import Clients from "./pages/clients/page";
 import ManagementClient from "./pages/clients/ui/management-client";
+import ViewCotizacion from "./pages/cotizacion/ui/view-cotizacion";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
       {
         path: "cotizacion/:id",
         element: <ManagementCotizacion />,
+      },
+      {
+        path: "cotizacion/vista/:id",
+        element: <ViewCotizacion />,
       },
       {
         path: "clientes",

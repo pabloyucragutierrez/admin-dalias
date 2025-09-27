@@ -2,21 +2,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { Cotizacion } from "@/interfaces/cotizacion.interface";
+import { downloadCotizacionPdf } from "@/services/cotizacion.service";
 import { formatDateTime } from "@/utils";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Edit, MoreHorizontal } from "lucide-react";
+import { Download, Edit, Eye, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export const columnNames: Record<string, string> = {
-  createAt: "Fecha de Creación",
+    code: "Código",
+    ruc: "RUC Empresa",
+    empresa: "Empresa",
+    document: "Cliente Documento",
+    cliente: "Cliente",
+    phone: "Cliente Teléfono",
+    createAt: "Fecha de Creación",
   status: "Estado",
+  total: "Total",
 };
 
 export const columnFilter = [
-  { id: 'name', label: 'Nombre' },
-  { id: 'razonSocial', label: 'Razón Social' },
-  { id: "document", label: "N* Documento" },
-  { id: 'email', label: 'Email' }
+  { id: 'code', label: 'Código' },
+  { id: 'client', label: 'Cliente' },
+  { id: "business", label: "Empresa" },
 ];
 
 
@@ -28,6 +35,30 @@ export const stateFilter = [
 
 export function getColumns(): ColumnDef<Cotizacion>[] {
     const navigate = useNavigate();
+
+    const downloadPdf = async (id: string, code:string) => {
+        try {
+            const pdfBlob = await downloadCotizacionPdf(id);
+            
+            // Crear URL temporal para el blob
+            const url = window.URL.createObjectURL(pdfBlob);
+            
+            // Crear elemento de descarga temporal
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `cotizacion-${code}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            
+            // Limpiar
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error al descargar PDF:', error);
+            // Aquí podrías agregar una notificación de error si tienes un sistema de toast
+        }
+    }
+
     return  [
         {
             accessorKey: "code",
@@ -79,6 +110,15 @@ export function getColumns(): ColumnDef<Cotizacion>[] {
             ),
         },
         {
+            accessorKey: "total",
+            header: "Total",
+            cell: ({ row }) => (
+                <div className="text-sm text-gray-500">
+                    {row.original.CotizacionDetail.reduce((acc, product) => acc + product.price * product.quantity, 0)}
+                </div>
+            ),
+        },
+        {
             accessorKey: "createAt",
             header: "Fecha de Creación",
             cell: ({ row }) => (
@@ -101,23 +141,35 @@ export function getColumns(): ColumnDef<Cotizacion>[] {
             header: "Acciones",
             cell: ({ row }) => (
                 <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Abrir menú</span>
-                    <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                    <DropdownMenuItem
-                    onSelect={() => navigate(`/cotizacion/${row.original.id}`)}
-                    >
-                    <Edit size={18} />
-                    <span className="text-sm ml-2">Editar</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    }
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Abrir menú</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                            <DropdownMenuItem className="cursor-pointer"
+                                onSelect={() => navigate(`/cotizacion/vista/${row.original.id}`)}
+                                >
+                                <Eye size={18} />
+                                <span className="text-sm ml-2">Ver</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer"
+                                onSelect={() => navigate(`/cotizacion/${row.original.id}`)}
+                                >
+                                <Edit size={18} />
+                                <span className="text-sm ml-2">Editar</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer"
+                                onSelect={() => downloadPdf(row.original.id, row.original.code)}
+                                >
+                                <Download size={18} />
+                                <span className="text-sm ml-2">Descargar PDF</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                </DropdownMenu>
+            ),
+        }
     ]
 }

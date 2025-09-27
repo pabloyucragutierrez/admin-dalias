@@ -1,5 +1,6 @@
 import {
   BadgePercent,
+  ContactRound,
   LayoutGrid,
   Newspaper,
   Settings,
@@ -44,7 +45,7 @@ export function getMenuList(): Group[] {
         {
           href: "/clientes",
           label: "Clientes",
-          icon: Newspaper,
+          icon: ContactRound,
         },
         {
           href: "",

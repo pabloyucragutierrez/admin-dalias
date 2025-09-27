@@ -1,5 +1,5 @@
 import type { ApiResponse } from "@/interfaces";
-import type { CotizacionPayload } from "@/interfaces/cotizacion.interface";
+import type { Cotizacion, CotizacionPayload } from "@/interfaces/cotizacion.interface";
 import api from "@/lib/api";
 
 export const fetchCreateCotizacion = async (payload: CotizacionPayload) => {
@@ -12,12 +12,24 @@ export const fetchUpdateCotizacion = async (id: string, payload: CotizacionPaylo
   return response.data;
 };
 
-export async function getCotizacionById(id: string): Promise<any | null> {
+export async function getCotizacionById(id: string): Promise<Cotizacion | null> {
   try {
     const response = await api.get(`/cotizacion/${id}`);
-    return response.data as any;
+    return response.data as Cotizacion;
   } catch (e) {
     console.error('Error fetching cotizacion:', e);
     return null;
   }
 }
+
+export const downloadCotizacionPdf = async (id: string): Promise<Blob> => {
+  try {
+    const response = await api.get(`/cotizacion/${id}/pdf`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+    throw error;
+  }
+};

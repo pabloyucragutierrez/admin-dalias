@@ -13,6 +13,7 @@ import { fetchClientActiveList } from "@/services/client.service";
 import { fetchCreateCotizacion, fetchUpdateCotizacion, getCotizacionById } from "@/services/cotizacion.service";
 import { fetchEmpresaActiveList } from "@/services/empresas.service";
 import { getProductCombo } from "@/services/products.service";
+import { formatDateTime } from "@/utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon, Loader2, Minus, Plus, Search, Trash2, X } from "lucide-react";
@@ -56,7 +57,6 @@ export default function ManagementCotizacion() {
         control, 
         formState: { errors, isSubmitting },
         setValue,
-        reset
     } = useForm<FormInputs>({
         defaultValues: {
             clientId: "",
@@ -186,8 +186,6 @@ export default function ManagementCotizacion() {
             }))
         }
 
-        console.log(payload)
-
         const response = id && id !== "nuevo" ? await fetchUpdateCotizacion(id, payload) : await fetchCreateCotizacion(payload);
 
         if (!response?.success) {
@@ -299,6 +297,20 @@ export default function ManagementCotizacion() {
                     </div>
                 ) : (
                     <>
+                        {id && id !== "nuevo" && cotizaciontData && (
+                            <div className="flex flex-col lg:flex-row items-start gap-5">
+                                <div className="flex flex-col w-full gap-1">
+                                    <Label htmlFor="code">Código</Label>
+                                    <div className="w-full py-1 px-2 bg-gray-100 border rounded-sm">{cotizaciontData?.code}</div>
+                                </div>
+
+                                 <div className="flex flex-col w-full gap-1">
+                                    <Label htmlFor="createAt">Fecha de Cotización</Label>
+                                    <div className="w-full py-1 px-2 bg-gray-100 border rounded-sm">{formatDateTime(cotizaciontData?.createAt || '')}</div>
+                                </div>
+                            </div>
+                        )}
+                      
                         <div className="flex flex-col lg:flex-row items-start gap-5">
                             <div className="flex flex-col space-y-2 w-full">
                                 <Label htmlFor="businessId">Empresas</Label>
@@ -314,7 +326,7 @@ export default function ManagementCotizacion() {
                                         <SelectContent>
                                             {empresas.map((empresa) => (
                                                 <SelectItem key={empresa.id} value={empresa.id}>
-                                                    {empresa.name}
+                                                    {empresa.razonSocial}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -599,14 +611,14 @@ export default function ManagementCotizacion() {
                                 variant="outline"
                                 onClick={() => navigate("/cotizacion")}
                                 disabled={isSubmitting}
-                                className="text-base py-2 px-6"
+                                className="text-base py-2 px-6 cursor-pointer"
                             >
                                 Cancelar
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={isSubmitting || selectedProducts.length === 0}
-                                className="text-base py-2 px-6"
+                                className="text-base py-2 px-6 cursor-pointer"
                             >
                                 {isSubmitting ? "Guardando..." : "Guardar Cotización"}
                             </Button>
