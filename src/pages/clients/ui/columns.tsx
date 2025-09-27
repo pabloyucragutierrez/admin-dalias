@@ -34,7 +34,6 @@ export const stateFilter = [
 
 
 export function getColumns(
-  onChangeStatus: (client: Cliente) => void
 ): ColumnDef<Cliente>[] {
     const navigate = useNavigate();
     return [
