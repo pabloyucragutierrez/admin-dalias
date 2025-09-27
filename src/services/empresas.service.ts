@@ -17,6 +17,11 @@ export const fetchEmpresas = async (
   return response.data;
 };
 
+export const fetchEmpresaActiveList = async (): Promise<Empresa[]> => {
+  const response = await api.get<Empresa[]>(`/business/actives`);
+  return response.data;
+};
+
 export const fetchEmpresaById = async (id: string): Promise<Empresa> => {
   const response = await api.get<Empresa>(`/business/${id}`);
   return response.data;

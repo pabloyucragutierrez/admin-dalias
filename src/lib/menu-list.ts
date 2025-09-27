@@ -1,6 +1,7 @@
 import {
   BadgePercent,
   LayoutGrid,
+  Newspaper,
   Settings,
   ShoppingBag,
   type LucideIcon,
@@ -34,6 +35,16 @@ export function getMenuList(): Group[] {
           href: "/",
           label: "Dashboard",
           icon: LayoutGrid,
+        },
+        {
+          href: "/cotizacion",
+          label: "Cotizaciones",
+          icon: Newspaper,
+        },
+        {
+          href: "/clientes",
+          label: "Clientes",
+          icon: Newspaper,
         },
         {
           href: "",

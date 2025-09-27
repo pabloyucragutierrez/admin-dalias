@@ -5,20 +5,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  DropdownMenuLabel, 
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   BadgeCheck,
-  Copy,
+ 
   Edit,
   FolderX,
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
+import { useNavigate } from "react-router"; 
 import type { Product } from "@/interfaces/products.interface";
 import type { ColumnDef } from "@tanstack/react-table"; 
 
@@ -152,16 +150,6 @@ export function getColumns(
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(row.original.id);
-                toast("ID copiado");
-              }}
-            >
-              <Copy size={18} />
-              <span className="text-sm ml-2">Copiar ID de producto</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem
               onSelect={() => navigate(`/products/${row.original.id}`)}
             >

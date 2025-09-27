@@ -26,6 +26,10 @@ import Bancos from "./pages/bancos/page";
 import BancosForm from "./pages/bancos/ui/management-bancos";
 import StockPage from "./pages/stock/page";
 import StockByIdPage from "./pages/stock/[id]/page";
+import Cotizacion from "./pages/cotizacion/page";
+import ManagementCotizacion from "./pages/cotizacion/ui/management-cotizacion";
+import Clients from "./pages/clients/page";
+import ManagementClient from "./pages/clients/ui/management-client";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +39,22 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <DashboardPage />,
+      },
+      {
+        path: "cotizacion",
+        element: <Cotizacion />,
+      },
+      {
+        path: "cotizacion/:id",
+        element: <ManagementCotizacion />,
+      },
+      {
+        path: "clientes",
+        element: <Clients />,
+      },
+      {
+        path: "clientes/:id",
+        element: <ManagementClient />,
       },
       {
         path: "unidades",
