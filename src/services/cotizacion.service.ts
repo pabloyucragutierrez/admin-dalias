@@ -24,7 +24,7 @@ export async function getCotizacionById(id: string): Promise<Cotizacion | null> 
 
 export const downloadCotizacionPdf = async (id: string): Promise<Blob> => {
   try {
-    const response = await api.get(`/cotizacion/${id}/pdf`, {
+    const response = await api.get(`/cotizacion/${id}/pdf-make`, {
       responseType: 'blob',
     });
     return response.data;
