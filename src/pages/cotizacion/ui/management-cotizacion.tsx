@@ -14,6 +14,7 @@ import { fetchCreateCotizacion, fetchUpdateCotizacion, getCotizacionById } from 
 import { fetchEmpresaActiveList } from "@/services/empresas.service";
 import { getProductCombo } from "@/services/products.service";
 import { formatDateTime } from "@/utils";
+import { typeEcommerce, typeMoney } from "@/utils/data";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon, Loader2, Minus, Plus, Search, Trash2, X } from "lucide-react";
@@ -26,6 +27,8 @@ interface FormInputs {
     clientId: string;
     businessId: string;
     dateEnd: Date;
+    typeEcommerce: string;
+    typeMoney: string;
 }
 
 interface SelectedProduct {
@@ -35,6 +38,7 @@ interface SelectedProduct {
     price: number;
     stock: number;
     quantity: number;
+    discount: number;
     mainImage?: string;
 }
 
@@ -57,11 +61,14 @@ export default function ManagementCotizacion() {
         control, 
         formState: { errors, isSubmitting },
         setValue,
+        watch
     } = useForm<FormInputs>({
         defaultValues: {
             clientId: "",
             businessId: "",
             dateEnd: new Date(),
+            typeEcommerce: "",
+            typeMoney: "",
         },
     });
 
@@ -100,6 +107,8 @@ export default function ManagementCotizacion() {
             setValue("clientId", cotizacionData.clientId);
             setValue("businessId", cotizacionData.businessId);
             setValue("dateEnd", new Date(cotizacionData.dateEnd));
+            setValue("typeEcommerce", cotizacionData.typeEcommerce);
+            setValue("typeMoney", cotizacionData.typeMoney);
         }
     }, [setValue]);
 
@@ -117,6 +126,7 @@ export default function ManagementCotizacion() {
                     price: detail.price,
                     stock: product.stock,
                     quantity: detail.quantity,
+                    discount: detail.discount || 0,
                     mainImage: getProductMainImage(product)
                 });
             }
@@ -156,6 +166,8 @@ export default function ManagementCotizacion() {
             } finally {
                 setLoading(false);
             }
+        } else {
+            setValue("typeMoney", "dolares");
         }
     }, [id, navigate, loadInitialData, fillFormWithQuotationData]);
 
@@ -179,10 +191,13 @@ export default function ManagementCotizacion() {
             clientId: values.clientId,
             businessId: values.businessId,
             dateEnd: values.dateEnd,
+            typeEcommerce: values.typeEcommerce,
+            typeMoney: values.typeMoney,
             details: selectedProducts.map(product => ({
                 productId: product.id,
                 quantity: product.quantity,
                 price: product.price,
+                discount: product.discount,
             }))
         }
 
@@ -234,6 +249,7 @@ export default function ManagementCotizacion() {
                 price: product.price,
                 stock: product.stock,
                 quantity: 1,
+                discount: 0,
                 mainImage: getProductMainImage(product)
             };
             setSelectedProducts(prev => [...prev, newProduct]);
@@ -264,16 +280,47 @@ export default function ManagementCotizacion() {
         }
     };
 
+    // Obtener el tipo de cambio desde las variables de entorno
+    const exchangeRate = parseFloat(import.meta.env.VITE_CAMBIO_DOLAR) || 3.75;
+
+    // Función para obtener el símbolo de moneda
+    const getCurrencySymbol = (currency: string) => {
+        return currency === "dolares" ? "$" : "S/.";
+    };
+
+    // Función para convertir precio según el tipo de moneda
+    const convertPrice = (price: number, currency: string) => {
+        return currency === "soles" ? price * exchangeRate : price;
+    };
+
     // Remover producto de la lista
     const removeProduct = (productId: string) => {
         setSelectedProducts(prev => prev.filter(p => p.id !== productId));
     };
 
+    // Actualizar descuento de producto
+    const updateDiscount = (productId: string, newDiscount: number) => {
+        // Validar que el descuento esté entre 0 y 100
+        if (newDiscount < 0 || newDiscount > 100) return;
+        
+        setSelectedProducts(prev => 
+            prev.map(p => 
+                p.id === productId 
+                    ? { ...p, discount: newDiscount }
+                    : p
+            )
+        );
+    };
+
     // Calcular total de la cotización
     const calculateTotal = () => {
-        return selectedProducts.reduce((total, product) => 
-            total + (product.price * product.quantity), 0
-        );
+        const selectedCurrency = watch("typeMoney");
+        return selectedProducts.reduce((total, product) => {
+            const convertedPrice = convertPrice(product.price, selectedCurrency);
+            const subtotal = convertedPrice * product.quantity;
+            const discountAmount = subtotal * (product.discount / 100);
+            return total + (subtotal - discountAmount);
+        }, 0);
     };
 
     // useEffect para procesar productos cuando están disponibles
@@ -422,7 +469,65 @@ export default function ManagementCotizacion() {
                             )}
                             </div>
 
-                            <div className="hidden lg:flex flex-col space-y-2 w-full"></div>
+                            <div className="flex flex-col space-y-2 w-full">
+                                <Label htmlFor="typeMoney">Tipo de Moneda</Label>
+                                <Controller
+                                    name="typeMoney"
+                                    control={control}
+                                    rules={{ required: 'Tipo de moneda es requerido' }}
+                                    render={({ field }) => (
+                                        <Select disabled={isSubmitting} onValueChange={field.onChange} value={field.value}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Seleccione una moneda" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {typeMoney.map((type) => (
+                                                <SelectItem key={type.value} value={type.value}>
+                                                    {type.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                        </Select>
+                                    )}
+                                />
+                                {errors.typeMoney && (
+                                <p className="text-red-600 text-sm ml-2">
+                                    {errors.typeMoney.message}
+                                </p>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col lg:flex-row items-start gap-5">
+                            <div className="flex flex-col space-y-2 w-full">
+                                <Label htmlFor="typeEcommerce">Tipo de Ecommerce</Label>
+                                <Controller
+                                    name="typeEcommerce"
+                                    control={control}
+                                    rules={{ required: 'Tipo de ecommerce es requerido' }}
+                                    render={({ field }) => (
+                                        <Select disabled={isSubmitting} onValueChange={field.onChange} value={field.value}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Seleccione un tipo de ecommerce" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {typeEcommerce.map((type) => (
+                                                <SelectItem key={type.value} value={type.value}>
+                                                    {type.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                        </Select>
+                                    )}
+                                />
+                                {errors.typeEcommerce && (
+                                <p className="text-red-600 text-sm ml-2">
+                                    {errors.typeEcommerce.message}
+                                </p>
+                                )}
+                            </div>
+
+                            <div className="w-full"></div>
                         </div>
 
                             {/* Buscador de Productos */}
@@ -483,7 +588,7 @@ export default function ManagementCotizacion() {
                                                         <div className="flex-1">
                                                             <p className="font-medium text-sm">{product.name}</p>
                                                             <p className="text-xs text-gray-500">SKU: {product.sku}</p>
-                                                            <p className="text-xs text-gray-600">Stock: {product.stock} | Precio: S/. {product.price.toFixed(2)}</p>
+                                                            <p className="text-xs text-gray-600">Stock: {product.stock} | Precio: {getCurrencySymbol(watch("typeMoney"))} {convertPrice(product.price, watch("typeMoney")).toFixed(2)}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -516,6 +621,7 @@ export default function ManagementCotizacion() {
                                                 <TableHead>SKU</TableHead>
                                                 <TableHead>Producto</TableHead>
                                                 <TableHead className="text-center">Cantidad</TableHead>
+                                                <TableHead className="text-center">Descuento (%)</TableHead>
                                                 <TableHead className="text-right">Precio Unit.</TableHead>
                                                 <TableHead className="text-right">Total</TableHead>
                                                 <TableHead className="w-16"></TableHead>
@@ -569,9 +675,23 @@ export default function ManagementCotizacion() {
                                                             </Button>
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell className="text-right">S/. {product.price.toFixed(2)}</TableCell>
+                                                    <TableCell className="text-center">
+                                                        <Input
+                                                            type="number"
+                                                            min="0"
+                                                            max="100"
+                                                            value={product.discount}
+                                                            onChange={(e) => {
+                                                                const value = parseFloat(e.target.value) || 0;
+                                                                updateDiscount(product.id, value);
+                                                            }}
+                                                            className="w-16 text-center"
+                                                            placeholder="0"
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell className="text-right">{getCurrencySymbol(watch("typeMoney"))} {convertPrice(product.price, watch("typeMoney")).toFixed(2)}</TableCell>
                                                     <TableCell className="text-right font-medium">
-                                                        S/. {(product.price * product.quantity).toFixed(2)}
+                                                        {getCurrencySymbol(watch("typeMoney"))} {(convertPrice(product.price, watch("typeMoney")) * product.quantity * (1 - product.discount / 100)).toFixed(2)}
                                                     </TableCell>
                                                     <TableCell>
                                                         <Button
@@ -596,7 +716,7 @@ export default function ManagementCotizacion() {
                                         <div className="flex justify-between items-center space-x-8">
                                             <span className="text-lg font-semibold">Total de la Cotización:</span>
                                             <span className="text-xl font-bold text-blue-600">
-                                                S/. {calculateTotal().toFixed(2)}
+                                                {getCurrencySymbol(watch("typeMoney"))} {calculateTotal().toFixed(2)}
                                             </span>
                                         </div>
                                     </div>

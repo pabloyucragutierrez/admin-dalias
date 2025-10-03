@@ -22,6 +22,17 @@ export const genderTypes: OptionSelect[] = [
   { value: "Mujer", label: "Mujer" },
 ];
 
+export const typeEcommerce: OptionSelect[] = [
+  { value: "PUBLIC", label: "Ecommerce Publico" },
+  { value: "PRIVATE", label: "Ecommerce Privado" },
+  { value: 'PUBLIC,PRIVATE', label: 'Ecommerce Publico y Privado' }
+];
+
+export const typeMoney: OptionSelect[] = [
+  { value: "soles", label: "Soles" },
+  { value: "dolares", label: "Dólares" },
+];
+
 export const entidades_financieras = [
   "Banco de Crédito del Perú (BCP)",
   "Yape",

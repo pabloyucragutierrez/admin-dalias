@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { Cotizacion } from "@/interfaces/cotizacion.interface";
+import type { Cotizacion, CotizacionDetail } from "@/interfaces/cotizacion.interface";
 import type { Product } from "@/interfaces/products.interface";
 import { getCotizacionById } from "@/services/cotizacion.service";
 import { getProductCombo } from "@/services/products.service";
-import { ArrowLeft, Building2, User, Calendar, FileText, Package, DollarSign, Phone, Mail, MapPin, Hash, Clock } from "lucide-react";
+import { ArrowLeft, Building2, User, Calendar, FileText, Package, DollarSign, Phone, Mail, MapPin, Hash, Clock, CircleDollarSign } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import { geolocation } from "@/utils/geolocation";
 interface ProductWithDetails extends Product {
     quotationQuantity: number;
     quotationPrice: number;
+    discount: number;
     subtotal: number;
 }
 
@@ -93,24 +94,33 @@ export default function ViewCotizacion() {
     }, []);
 
     // Función para procesar productos con detalles de cotización
-    const processProductsWithDetails = useCallback((cotizacionDetails: any[], allProducts: Product[]) => {
+    const processProductsWithDetails = useCallback((cotizacionDetails: CotizacionDetail[], allProducts: Product[]) => {
         const processedProducts: ProductWithDetails[] = [];
+
+        // Preparar helpers de moneda
+        const exchangeRate = parseFloat(import.meta.env.VITE_CAMBIO_DOLAR) || 3.75;
+        const selectedCurrency = cotizaciontData?.typeMoney || "dolares";
+        const convertPrice = (price: number) => selectedCurrency === "soles" ? price * exchangeRate : price;
 
         for (const detail of cotizacionDetails) {
             const product = allProducts.find(p => p.id === detail.productId);
             if (product) {
-                const subtotal = detail.quantity * detail.price;
+                const unitPriceConverted = convertPrice(detail.price);
+                const discountPercent = typeof detail.discount === 'number' ? Math.min(Math.max(detail.discount, 0), 100) : 0;
+                const discountedUnitPrice = unitPriceConverted * (1 - discountPercent / 100);
+                const subtotal = detail.quantity * discountedUnitPrice;
                 processedProducts.push({
                     ...product,
                     quotationQuantity: detail.quantity,
-                    quotationPrice: detail.price,
+                    quotationPrice: unitPriceConverted,
+                    discount: discountPercent,
                     subtotal: subtotal
                 });
             }
         }
 
         setProductsWithDetails(processedProducts);
-    }, []);
+    }, [cotizaciontData?.typeMoney]);
 
     const handleGetCotizacionById = useCallback(async () => {
         if (id && id !== "nuevo") {
@@ -154,10 +164,11 @@ export default function ViewCotizacion() {
 
     // Calcular totales
     const calculateTotals = () => {
-        const subtotal = productsWithDetails.reduce((sum, product) => sum + product.subtotal, 0);
-        const igv = subtotal * 0.18; // 18% IGV
-        const total = subtotal + igv;
-        
+        // Los precios mostrados ya incluyen IGV.
+        const gross = productsWithDetails.reduce((sum, product) => sum + product.subtotal, 0);
+        const igv = gross * (0.18 / 1.18); // componente de IGV incluido
+        const subtotal = gross - igv; // base imponible
+        const total = gross; // total con IGV incluido
         return { subtotal, igv, total };
     };
 
@@ -206,7 +217,7 @@ export default function ViewCotizacion() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="flex items-center gap-2">
                                 <Hash className="h-4 w-4 text-gray-500" />
                                 <div>
@@ -230,6 +241,13 @@ export default function ViewCotizacion() {
                                     <p className="font-semibold">
                                         {format(new Date(cotizaciontData.createAt), "dd 'de' MMMM 'de' yyyy", { locale: es })}
                                     </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <CircleDollarSign className="h-4 w-4 text-gray-500" />
+                                <div>
+                                    <p className="text-sm text-gray-500">Tipo de Moneda</p>
+                                    <p className="font-semibold">{cotizaciontData.typeMoney === 'soles' ? 'Soles' : 'Dólares'}</p>
                                 </div>
                             </div>
                         </div>
@@ -370,6 +388,7 @@ export default function ViewCotizacion() {
                                         <TableHead>SKU</TableHead>
                                         <TableHead>Producto</TableHead>
                                         <TableHead className="text-center">Cantidad</TableHead>
+                                        <TableHead className="text-center">Descuento (%)</TableHead>
                                         <TableHead className="text-right">Precio Unit.</TableHead>
                                         <TableHead className="text-right">Subtotal</TableHead>
                                     </TableRow>
@@ -404,11 +423,16 @@ export default function ViewCotizacion() {
                                                     {product.quotationQuantity}
                                                 </Badge>
                                             </TableCell>
+                                            <TableCell className="text-center">
+                                                <Badge variant="outline">
+                                                    {Number(product.discount ?? 0).toFixed(0)}%
+                                                </Badge>
+                                            </TableCell>
                                             <TableCell className="text-right font-medium">
-                                                S/. {product.quotationPrice.toFixed(2)}
+                                                {cotizaciontData.typeMoney === 'soles' ? 'S/.' : '$'} {product.quotationPrice.toFixed(2)}
                                             </TableCell>
                                             <TableCell className="text-right font-semibold">
-                                                S/. {product.subtotal.toFixed(2)}
+                                                {cotizaciontData.typeMoney === 'soles' ? 'S/.' : '$'} {product.subtotal.toFixed(2)}
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -430,16 +454,16 @@ export default function ViewCotizacion() {
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600">Subtotal:</span>
-                                <span className="font-medium">S/. {subtotal.toFixed(2)}</span>
+                                <span className="font-medium">{cotizaciontData.typeMoney === 'soles' ? 'S/.' : '$'} {subtotal.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-gray-600">IGV (18%):</span>
-                                <span className="font-medium">S/. {igv.toFixed(2)}</span>
+                                <span className="text-gray-600">IGV:</span>
+                                <span className="font-medium">{cotizaciontData.typeMoney === 'soles' ? 'S/.' : '$'} {igv.toFixed(2)}</span>
                             </div>
                             <Separator />
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-semibold">Total:</span>
-                                <span className="text-xl font-bold text-blue-600">S/. {total.toFixed(2)}</span>
+                                <span className="text-xl font-bold text-blue-600">{cotizaciontData.typeMoney === 'soles' ? 'S/.' : '$'} {total.toFixed(2)}</span>
                             </div>
                         </div>
                     </CardContent>

@@ -110,11 +110,32 @@ export function getColumns(): ColumnDef<Cotizacion>[] {
             ),
         },
         {
+            accessorKey: "typeMoney",
+            header: "Tipo Moneda",
+            cell: ({ row }) => (
+                <div className="text-sm text-gray-500">
+                    {row.original.typeMoney === 'soles' ? 'Soles' : 'Dólares'}
+                </div>
+            ),
+        },
+        {
             accessorKey: "total",
             header: "Total",
             cell: ({ row }) => (
                 <div className="text-sm text-gray-500">
-                    {row.original.CotizacionDetail.reduce((acc, product) => acc + product.price * product.quantity, 0)}
+                    {(() => {
+                        const exchangeRate = parseFloat(import.meta.env.VITE_CAMBIO_DOLAR) || 3.75;
+                        const isSoles = row.original.typeMoney === 'soles';
+                        const currencySymbol = isSoles ? 'S/.' : '$';
+                        const total = row.original.CotizacionDetail.reduce((sum: number, d: any) => {
+                            const unitUSD = Number(d.price) || 0;
+                            const unitConverted = isSoles ? unitUSD * exchangeRate : unitUSD;
+                            const discountPct = typeof d.discount === 'number' ? Math.min(Math.max(d.discount, 0), 100) : 0;
+                            const unitDiscounted = unitConverted * (1 - discountPct / 100);
+                            return sum + unitDiscounted * (Number(d.quantity) || 0);
+                        }, 0);
+                        return `${currencySymbol} ${total.toFixed(2)}`;
+                    })()}
                 </div>
             ),
         },

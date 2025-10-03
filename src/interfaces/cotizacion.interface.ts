@@ -5,6 +5,8 @@ export interface CotizacionPayload {
     clientId: string;
     businessId: string;
     dateEnd: Date;
+    typeEcommerce: string;
+    typeMoney: string;
     details: SelectedProduct[];
 }
 
@@ -12,6 +14,7 @@ export interface SelectedProduct {
     productId: string;
     quantity: number;
     price: number;
+    discount: number;
 }
 
 export interface Cotizacion {
@@ -21,6 +24,8 @@ export interface Cotizacion {
   businessId: string
   dateEnd: string
   status: boolean
+  typeEcommerce: string
+  typeMoney: string
   createAt: string
   updatedAt: string
   client: Cliente
@@ -34,4 +39,5 @@ export interface CotizacionDetail {
   productId: string
   quantity: number
   price: number
+  discount?: number
 }
