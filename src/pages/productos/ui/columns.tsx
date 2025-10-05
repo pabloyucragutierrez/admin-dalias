@@ -1,4 +1,4 @@
-import { formatDateTime } from "@/utils";
+import { formatDateTime, getEcommerceTypeLabel } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -119,6 +119,15 @@ export function getColumns(
         <div className="text-sm text-gray-500">{row.original.stock}</div>
       ),
     },
+    {
+      accessorKey: "typeEcommerce",
+      header: "Tipo de Ecommerce",
+      cell: ({ row }) => (
+        <div className="text-sm text-gray-500">
+          {getEcommerceTypeLabel(row.original.typeEcommerce)}
+        </div>
+      ),
+    }, 
     {
       accessorKey: "createAt",
       header: "Fecha de Creación",

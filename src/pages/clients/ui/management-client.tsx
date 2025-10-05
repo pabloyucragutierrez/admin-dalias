@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Cliente, ClientManagementPayload } from "@/interfaces/client.interface";
 import { fetchCreateClient, fetchUpdateClient, getClientById } from "@/services/client.service";
+import { typeEcommerce } from "@/utils/data";
 import { geolocation } from "@/utils/geolocation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -39,6 +40,7 @@ interface FormInputs {
     address: string;
     password: string;
     confirmPassword: string;
+    typeEcommerce: string;
 }
 
 export default function ManagementClient() {
@@ -78,6 +80,7 @@ export default function ManagementClient() {
             address: "",
             password: "",
             confirmPassword: "",
+            typeEcommerce: "",
         },
     });
 
@@ -107,6 +110,7 @@ export default function ManagementClient() {
             setValue("phone", response?.phone || "");
             setValue("departmentId", response?.department || "");
             setValue("address", response?.address || "");
+            setValue("typeEcommerce", response?.typeEcommerce || "");
 
             const regionId = response?.department ? parseInt(response?.department) : null;
             const region = geolocation.regions.find((r) => r.id === regionId);
@@ -162,6 +166,7 @@ export default function ManagementClient() {
                 address: values.address,
                 password: values.password,
                 plataforma: "admin",
+                typeEcommerce: values.typeEcommerce,
             }
 
             const response = id && id !== "nuevo" ? await fetchUpdateClient(id, payload) : await fetchCreateClient(payload);
@@ -548,7 +553,37 @@ export default function ManagementClient() {
                     </div>
                 )}
                 
+                <div className="flex flex-col lg:flex-row items-start gap-5">
+                    <div className="flex flex-col space-y-2 w-full">
+                        <Label htmlFor="typeEcommerce">Tipo de Ecommerce</Label>
+                        <Controller
+                            name="typeEcommerce"
+                            control={control}
+                            rules={{ required: 'Tipo de ecommerce es requerido' }}
+                            render={({ field }) => (
+                                <Select disabled={isSubmitting} onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Seleccione un tipo de ecommerce" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {typeEcommerce.map((type) => (
+                                        <SelectItem key={type.value} value={type.value}>
+                                            {type.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                                </Select>
+                            )}
+                        />
+                        {errors.typeEcommerce && (
+                        <p className="text-red-600 text-sm ml-2">
+                            {errors.typeEcommerce.message}
+                        </p>
+                        )}
+                    </div>
 
+                    <div className="w-full"></div>
+                </div>
 
                  {/* Form Actions */}
                 <div className="flex justify-end gap-4 mt-8">

@@ -1,17 +1,18 @@
 export interface ClientManagementPayload {
-    email: string;
-    documentType: string;
-    documentNumber: string;
-    name: string;
-    lastName: string;
-    razonSocial: string;
-    phone: string;
-    departmentId: string;
-    provinceId: string;
-    districtId: string;
-    address: string;
-    password: string;
-    plataforma: string;
+  email: string;
+  documentType: string;
+  documentNumber: string;
+  name: string;
+  lastName: string;
+  razonSocial: string;
+  phone: string;
+  departmentId: string;
+  provinceId: string;
+  districtId: string;
+  address: string;
+  password: string;
+  plataforma: string;
+  typeEcommerce: string;
 }
 
 export interface Cliente {
@@ -32,6 +33,7 @@ export interface Cliente {
   codeVerify: any
   verifiedAt: any
   status: boolean
+   typeEcommerce: string;
   createAt: string
   updatedAt: string
 }

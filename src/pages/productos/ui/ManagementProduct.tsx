@@ -22,6 +22,8 @@ import Select from "react-select";
 import Quill from "quill";
 import Editor from "@/components/editor";
 import type { CategorySelect } from "@/interfaces";
+import { Select as SelectShadcn, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { typeEcommerce } from "@/utils/data";
 
 interface OptionSelect {
   label: string;
@@ -45,6 +47,7 @@ interface FormInputs {
   marca: string;
   familia: string;
   subfamilia: string;
+  typeEcommerce: string;
   categoria: string;
   sucursalesId: SucursalesProductDTO[];
   file?: File;
@@ -107,6 +110,7 @@ export default function ManagementProduct() {
       file: undefined,
       imageGalery: [],
       galleryImages: [],
+      typeEcommerce: "",
     },
   });
 
@@ -211,7 +215,7 @@ export default function ManagementProduct() {
                 : "",
               stock: product.stock,
               stockMin: product.stockMin,
-
+              typeEcommerce: product.typeEcommerce,
               sucursalesId: product.ProductSucursales.map((suc) => ({
                 sucursalId: suc.sucursalId,
                 numberStand: suc.numberStand,
@@ -259,8 +263,6 @@ export default function ManagementProduct() {
       const existFather = categoriesData.find(
         (cat) => cat.id === product.categoria.fatherId
       );
-
-      console.log(existFather);
 
       if (existFather) {
         if (existFather.fatherId === null) {
@@ -378,6 +380,7 @@ export default function ManagementProduct() {
       stockMin: values.stockMin,
       categoria: categoriaId,
       sucursalesId: values.sucursalesId,
+      typeEcommerce: values.typeEcommerce,
       file: values.file,
       imageGalery: values.imageGalery,
       galleryImages: gallery.map((img) => img.toString()),
@@ -554,6 +557,39 @@ export default function ManagementProduct() {
                 )}
               </div>
             </div>
+
+            <div className="flex flex-col lg:flex-row items-start gap-5 mt-5">
+                <div className="flex flex-col space-y-2 w-full">
+                    <Label htmlFor="typeEcommerce">Tipo de Ecommerce</Label>
+                    <Controller
+                        name="typeEcommerce"
+                        control={control}
+                        rules={{ required: 'Tipo de ecommerce es requerido' }}
+                        render={({ field }) => (
+                            <SelectShadcn disabled={isSubmitting} onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Seleccione un tipo de ecommerce" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {typeEcommerce.map((type) => (
+                                    <SelectItem key={type.value} value={type.value}>
+                                        {type.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                            </SelectShadcn>
+                        )}
+                    />
+                    {errors.typeEcommerce && (
+                    <p className="text-red-600 text-sm ml-2">
+                        {errors.typeEcommerce.message}
+                    </p>
+                    )}
+                </div>
+
+                <div className="w-full"></div>
+            </div>
+
             <div className="flex flex-col space-y-2 mt-6">
               <Label htmlFor="description">Descripción Completa</Label>
               <Editor

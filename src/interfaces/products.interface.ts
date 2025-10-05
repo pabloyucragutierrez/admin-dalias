@@ -55,11 +55,11 @@ export interface Product {
   father?: Product;
   mainImage?: string;
   galleryImages?: string[];
+  typeEcommerce: string;
   categoria: CategoriasProduct;
   ProductImages: ProductImage[];
   stockProducts?: StockProduct[];
   terminoProducts?: TerminoProduct[];
-
   ProductSucursales: ProductSucursal[];
 }
 
@@ -122,6 +122,7 @@ export interface ProductDto {
   stock: number;
   stockMin: number;
   categoria: string;
+  typeEcommerce: string;
   sucursalesId: SucursalesProductDTO[];
   file?: File;
   imageGalery?: File[];

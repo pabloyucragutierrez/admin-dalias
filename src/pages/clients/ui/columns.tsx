@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { Cliente } from "@/interfaces/client.interface";
-import { formatDateTime } from "@/utils";
+import { formatDateTime, getEcommerceTypeLabel } from "@/utils";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Edit, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -70,6 +70,15 @@ export function getColumns(
         {
             accessorKey: "phone",
             header: "Teléfono",
+        },
+        {
+            accessorKey: 'typeEcommerce',
+            header: 'Tipo de Ecommerce',
+            cell: ({ row }) => (
+                <div className="text-sm text-gray-500">
+                    {getEcommerceTypeLabel(row.original.typeEcommerce)}
+                </div>
+            ),
         },
         {
             accessorKey: "createAt",

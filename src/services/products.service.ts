@@ -48,6 +48,7 @@ export const createProduct = async (payload: ProductDto) => {
     formData.append("stock", payload.stock.toString());
     formData.append("stockMin", payload.stockMin.toString());
     formData.append(`categoryId`, payload.categoria);
+    formData.append(`typeEcommerce`, payload.typeEcommerce);
     payload.sucursalesId.forEach((sucursal, index) => {
       formData.append(
         `sucursalesId[${index}][sucursalId]`,
@@ -99,6 +100,7 @@ export const updateProduct = async (id: string, payload: ProductDto) => {
     formData.append("stock", payload.stock.toString());
     formData.append("stockMin", payload.stockMin.toString());
     formData.append(`categoryId`, payload.categoria);
+    formData.append(`typeEcommerce`, payload.typeEcommerce);
     payload.sucursalesId.forEach((sucursal, index) => {
       formData.append(
         `sucursalesId[${index}][sucursalId]`,
