@@ -1,4 +1,4 @@
-import type { ApiResponse } from "@/interfaces";
+import type { ApiResponse, StatusDto } from "@/interfaces";
 import type { Cliente, ClientManagementPayload } from "@/interfaces/client.interface";
 import api from "@/lib/api";
 
@@ -25,5 +25,23 @@ export async function getClientById(id: string): Promise<Cliente | null> {
   } catch (e) {
     console.error('Error fetching client:', e);
     return null;
+  }
+}
+
+export async function activeOrInactiveClientes(id: string, payload: StatusDto) {
+  try {
+    const response = await api.patch(`/clients/inactivoOrActivo/${id}`, payload);
+    return response.data as ApiResponse<Cliente>;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function activeOrInactiveClientesPrivate(id: string, payload: StatusDto) {
+  try {
+    const response = await api.patch(`/clients/inactivoOrActivoPrivate/${id}`, payload);
+    return response.data as ApiResponse<Cliente>;
+  } catch (e) {
+    console.log(e);
   }
 }

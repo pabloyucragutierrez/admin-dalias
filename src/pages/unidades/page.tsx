@@ -228,7 +228,7 @@ export default function UnidadesPage() {
 
             <p className="text-gray-600 font-medium">
               ¿Estás seguro de que deseas{" "}
-              {unidadSelect?.status ? "desactivar" : "activar"} la unidad:{" "}
+              {unidadSelect?.status ? "desactivar" : "activar"} la unidad: 
               {unidadSelect?.name}?
             </p>
 

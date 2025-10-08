@@ -85,15 +85,6 @@ export function getColumns(
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(row.original.id);
-                toast("ID copiado");
-              }}
-            >
-              <Copy size={18} />
-              <span className="text-sm ml-2">Copiar ID de unidad</span>
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onSelect={() => onEdit(row.original)}

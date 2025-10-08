@@ -33,7 +33,8 @@ export interface Cliente {
   codeVerify: any
   verifiedAt: any
   status: boolean
-   typeEcommerce: string;
+  statusPrivate: boolean
+  typeEcommerce: string;
   createAt: string
   updatedAt: string
 }

@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { Cliente } from "@/interfaces/client.interface";
 import { formatDateTime, getEcommerceTypeLabel } from "@/utils";
+import { DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Edit, MoreHorizontal } from "lucide-react";
+import { BadgeCheck, Edit, FolderX, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export const columnNames: Record<string, string> = {
@@ -34,6 +35,8 @@ export const stateFilter = [
 
 
 export function getColumns(
+    onChangeStatus: (cliente: Cliente) => void,
+    activeStatusPrivate: (cliente: Cliente) => void,
 ): ColumnDef<Cliente>[] {
     const navigate = useNavigate();
     return [
@@ -99,6 +102,25 @@ export function getColumns(
             ),
         },
         {
+            accessorKey: 'statusPrivate',
+            header: 'Estado Privado',
+            cell: ({ row }) => {
+                if (row.original.typeEcommerce.includes('PRIVATE')) {
+                    return (
+                        <Badge variant={row.original.statusPrivate ? "success" : "destructive"}>
+                            {row.original.statusPrivate ? "Activo" : "Inactivo"}
+                        </Badge>
+                    );
+                } else {
+                    return (
+                        <div className="flex w-full text-center ml-2">
+                            <span className="text-sm text-gray-500 text-center">-</span>
+                        </div>
+                    );
+                }
+            },
+        },
+        {
             id: "actions",
             header: "Acciones",
             cell: ({ row }) => (
@@ -111,11 +133,36 @@ export function getColumns(
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
                     onSelect={() => navigate(`/clientes/${row.original.id}`)}
                     >
                     <Edit size={18} />
                     <span className="text-sm ml-2">Editar</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                    onSelect={() => onChangeStatus(row.original)}
+                    >
+                    {row.original.status ? (
+                        <FolderX size={18} />
+                    ) : (
+                        <BadgeCheck size={18} />
+                    )}
+                    <span className="text-sm ml-2">
+                        {row.original.status ? "Desactivar Cliente" : "Activar Cliente"}
+                    </span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                    onSelect={() => activeStatusPrivate(row.original)}
+                    >
+                        {row.original.statusPrivate ? (
+                            <FolderX size={18} />
+                        ) : (
+                            <BadgeCheck size={18} />
+                        )}
+                        <span className="text-sm ml-2">
+                        {row.original.statusPrivate ? "Desactivar Acceso a la Tienda Privada" : "Activar Acceso a la Tienda Privada"}
+                    </span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
         </DropdownMenu>
