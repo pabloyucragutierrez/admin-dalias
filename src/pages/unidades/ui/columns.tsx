@@ -9,8 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BadgeCheck, Copy, Edit, FolderX, MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
+import { BadgeCheck, Edit, FolderX, MoreHorizontal } from "lucide-react";
 import type { Unidades } from "@/interfaces";
 import type { ColumnDef } from "@tanstack/react-table";
 
