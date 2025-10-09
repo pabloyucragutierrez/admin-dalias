@@ -25,7 +25,7 @@ export const genderTypes: OptionSelect[] = [
 export const typeEcommerce: OptionSelect[] = [
   { value: "PUBLIC", label: "Ecommerce Publico" },
   { value: "PRIVATE", label: "Ecommerce Privado" },
-  { value: 'PUBLIC,PRIVATE', label: 'Ecommerce Publico y Privado' }
+  { value: 'PUBLIC,PRIVATE', label: 'Ecommerce Mix' }
 ];
 
 export const typeMoney: OptionSelect[] = [

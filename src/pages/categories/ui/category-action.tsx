@@ -10,7 +10,6 @@ import {
 import type { Categorias } from "@/interfaces";
 import {
   BadgeCheck,
-  Copy,
   Edit,
   Loader2,
   MoreHorizontal,
@@ -69,15 +68,6 @@ export default function ActionsCategory({ category, onRefresh }: Props) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => {
-              navigator.clipboard.writeText(category.id);
-              toast("ID copiado");
-            }}
-          >
-            <Copy size={18} />
-            <span className="text-sm ml-2">Copiar ID de categoria</span>
-          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onSelect={(event) => {

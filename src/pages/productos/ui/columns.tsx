@@ -74,7 +74,7 @@ export function getColumns(
           className="text-sm font-medium text-gray-900 hover:underline hover:cursor-pointer"
           onClick={() => navigate(`/products/${row.original.id}`)}
         >
-          {row.original.sku}
+          {row.original.codigoOriginal}
         </button>
       ),
     },
@@ -82,7 +82,13 @@ export function getColumns(
       accessorKey: "name",
       header: "Nombre",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-500">{row.original.name}</div>
+        <div className="text-sm text-gray-500"><button
+          type="button"
+          className="text-sm font-medium text-gray-900 hover:underline hover:cursor-pointer"
+          onClick={() => navigate(`/products/${row.original.id}`)}
+        >
+          {row.original.name}
+        </button></div>
       ),
     },
     {
@@ -90,7 +96,7 @@ export function getColumns(
       header: "Código de fabricante",
       cell: ({ row }) => (
         <div className="text-sm text-gray-500">
-          {row.original.codigoOriginal}
+          {row.original.sku}
         </div>
       ),
     },

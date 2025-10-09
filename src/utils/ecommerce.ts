@@ -9,7 +9,7 @@ export function detectEcommerceTypes(input: string): { isPublic: boolean; isPriv
 }
 
 export function getEcommerceLabel(isPublic: boolean, isPrivate: boolean): string {
-  if (isPublic && isPrivate) return "Ecommerce Publico y Privado";
+  if (isPublic && isPrivate) return "Ecommerce Mix";
   if (isPublic) return "Ecommerce Publico";
   if (isPrivate) return "Ecommerce Privado";
   return "Ecommerce";

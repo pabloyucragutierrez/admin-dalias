@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 import { createBanner, getBanners } from '@/services/banner.service';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { typeEcommerce } from '@/utils/data';
 
 interface FormInputs {
   url: string;
+  typeEcommerce: string;
   imageWeb: FileList;
   imageMovil: FileList;
 }
@@ -23,9 +27,11 @@ const NewBanner: React.FC = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm<FormInputs>({
     defaultValues: {
       url: '',
+      typeEcommerce: '',
       imageWeb: undefined,
       imageMovil: undefined,
     },
@@ -60,6 +66,7 @@ const NewBanner: React.FC = () => {
     setLoading(true);
     const formData = new FormData();
     formData.append('url', data.url);
+    formData.append('typeEcommerce', data.typeEcommerce);
     if (data.imageWeb[0]) {
       formData.append('file', data.imageWeb[0]);
     }
@@ -123,6 +130,35 @@ const NewBanner: React.FC = () => {
                 />
                 {errors.url && <p className="text-red-600 text-sm">{errors.url.message}</p>}
               </div>
+
+               <div className="flex flex-col space-y-2 w-full">
+                    <Label htmlFor="typeEcommerce">Tipo de Ecommerce</Label>
+                    <Controller
+                        name="typeEcommerce"
+                        control={control}
+                        rules={{ required: 'Tipo de ecommerce es requerido' }}
+                        render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Seleccione un tipo de ecommerce" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {typeEcommerce.map((type) => (
+                                    <SelectItem key={type.value} value={type.value}>
+                                        {type.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                            </Select>
+                        )}
+                    />
+                    {errors.typeEcommerce && (
+                    <p className="text-red-600 text-sm ml-2">
+                        {errors.typeEcommerce.message}
+                    </p>
+                    )}
+                </div>
+
               <div className="flex flex-col space-y-2">
                 <label htmlFor="imageWeb" className="text-sm font-medium text-gray-700">Imagen Web</label>
                 <input

@@ -1,7 +1,7 @@
 import type { FilterConfig } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import type { Categorias } from "@/interfaces";
-import { formatDateTime } from "@/utils";
+import { formatDateTime, getEcommerceTypeLabel } from "@/utils";
 import type { ColumnDef } from "@tanstack/react-table";
 import ActionsCategory from "./category-action";
 
@@ -40,6 +40,15 @@ export const getColumns = (
     accessorKey: "name",
     header: "Nombre",
   },
+  {
+      accessorKey: "typeEcommerce",
+      header: "Tipo de Ecommerce",
+      cell: ({ row }) => (
+        <div className="text-sm text-gray-500">
+          {getEcommerceTypeLabel(row.original.typeEcommerce)}
+        </div>
+      ),
+    }, 
   {
     accessorKey: "createAt",
     header: "Fecha de creación",

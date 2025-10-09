@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { createBanner } from '@/services/carrusel.service';
 import { useNavigate } from 'react-router';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { typeEcommerce } from '@/utils/data';
 
 interface FormInputs {
   url: string;
+  typeEcommerce: string;
 }
 
 const NewCarrusel: React.FC = () => {
@@ -24,9 +27,11 @@ const NewCarrusel: React.FC = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm<FormInputs>({
     defaultValues: {
       url: '',
+      typeEcommerce: '',
     },
   });
 
@@ -53,6 +58,7 @@ const NewCarrusel: React.FC = () => {
     if (webFile) formData.append('file', webFile);
     if (mobileFile) formData.append('movil', mobileFile);
     formData.append('url', data.url);
+    formData.append('typeEcommerce', data.typeEcommerce);
 
     try {
       const response = await createBanner(formData);
@@ -113,6 +119,35 @@ const NewCarrusel: React.FC = () => {
                 />
                 {errors.url && <p className="text-red-600 text-sm">{errors.url.message}</p>}
               </div>
+
+              <div className="flex flex-col space-y-2 w-full">
+                    <Label htmlFor="typeEcommerce">Tipo de Ecommerce</Label>
+                    <Controller
+                        name="typeEcommerce"
+                        control={control}
+                        rules={{ required: 'Tipo de ecommerce es requerido' }}
+                        render={({ field }) => (
+                            <Select  onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Seleccione un tipo de ecommerce" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {typeEcommerce.map((type) => (
+                                    <SelectItem key={type.value} value={type.value}>
+                                        {type.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                            </Select>
+                        )}
+                    />
+                    {errors.typeEcommerce && (
+                    <p className="text-red-600 text-sm ml-2">
+                        {errors.typeEcommerce.message}
+                    </p>
+                    )}
+                </div>
+
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="webImage">Imagen Web (obligatoria)</Label>
                 <div className="relative">

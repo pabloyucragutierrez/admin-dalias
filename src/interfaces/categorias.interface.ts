@@ -1,7 +1,9 @@
 export interface Categorias {
   id: string;
   linea: string | null;
+  lineasId: string | null;
   name: string;
+  typeEcommerce: string;
   status: boolean;
   createAt: string;
   updatedAt: string;

@@ -10,10 +10,12 @@ import type { Linea } from "@/interfaces/lineas.interface";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { typeEcommerce } from "@/utils/data";
 
 interface FormData {
   linea: string;
   name: string;
+  typeEcommerce: string;
   children: {
     categoria: string;
     subfamilias: { nombre: string }[];
@@ -36,6 +38,7 @@ export default function ManagementCategory() {
     defaultValues: {
       linea: "",
       name: "",
+      typeEcommerce: "",
       children: [{ categoria: "", subfamilias: [{ nombre: "" }] }],
     },
   });
@@ -60,7 +63,8 @@ export default function ManagementCategory() {
     try {
       const response: Categorias = await fetchCategoriaById(categoryId);
       reset({
-        linea: response.linea || "",
+        linea: response.lineasId || "",
+        typeEcommerce: response.typeEcommerce || "",
         name: response.name || "",
         children: response.children?.map((familia) => ({
           categoria: familia.name,
@@ -90,6 +94,7 @@ export default function ManagementCategory() {
       const payload = {
         linea: values.linea || "",
         name: values.name,
+        typeEcommerce: values.typeEcommerce || "",
         familia: values.children.map((familia) => ({
           name: familia.categoria,
           id: "", // Backend generará IDs para nuevas familias
@@ -168,6 +173,27 @@ export default function ManagementCategory() {
                   })}
                 />
                 {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="typeEcommerce">Tipo de Ecommerce</Label>
+                <select
+                  id="typeEcommerce"
+                  className="border border-gray-300 rounded-md p-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register("typeEcommerce", {
+                    required: "Tipo de Ecommerce es requerido",
+                  })}
+                >
+                  <option value="">Selecciona un tipo de ecommerce</option>
+                  {typeEcommerce.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.typeEcommerce && <p className="text-red-500 text-sm">{errors.typeEcommerce.message}</p>}
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { getBanners, deleteBanner } from '@/services/carrusel.service';
 import type { Banner } from '@/interfaces/carrusel.interface';
 import { useNavigate } from 'react-router';
+import { getEcommerceTypeLabel } from '@/utils';
 
 const CarruselPage: React.FC = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -155,6 +156,14 @@ const CarruselPage: React.FC = () => {
                       </button>
                     </div>
                   </div>
+
+                  <div className="flex items-center gap-2">
+                    <Airplay className="w-4 h-4" />
+                    <span className="font-medium">Tipo de Ecommerce:</span>
+                     <span className="text-gray-600">{getEcommerceTypeLabel(banner.typeEcommerce)}</span>
+                  </div>
+                 
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">

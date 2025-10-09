@@ -527,27 +527,27 @@ export default function ManagementProduct() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
-                <Label htmlFor="sku">SKU</Label>
+                <Label htmlFor="sku">Código de Fabricante</Label>
                 <Input
                   id="sku"
                   type="text"
-                  placeholder="Introduce el SKU"
+                  placeholder="Introduce el código de fabricante"
                   className="w-full text-base py-2"
-                  {...register("sku", { required: "El SKU es obligatorio" })}
+                  {...register("sku", { required: "El código de fabricante es obligatorio" })}
                 />
                 {errors.sku && (
                   <p className="text-red-600 text-sm">{errors.sku.message}</p>
                 )}
               </div>
               <div className="flex flex-col space-y-2">
-                <Label htmlFor="codigoOrigen">Código de Origen</Label>
+                <Label htmlFor="codigoOrigen">SKU</Label>
                 <Input
                   id="codigoOrigen"
                   type="text"
-                  placeholder="Introduce el código de origen"
+                  placeholder="Introduce el SKU"
                   className="w-full text-base py-2"
                   {...register("codigoOrigen", {
-                    required: "El código de origen es obligatorio",
+                    required: "El SKU es obligatorio",
                   })}
                 />
                 {errors.codigoOrigen && (
