@@ -364,9 +364,9 @@ export default function ManagementProduct() {
     }
 
     const payload: ProductDto = {
-      sku: values.sku,
+      sku: values.sku.trim(),
       name: values.name,
-      codigoOrigen: values.codigoOrigen,
+      codigoOrigen: values.codigoOrigen.trim(),
       description: valueDescrip,
       shortDescription: valueShortDescrip,
       unidadId: "9f487b00-a8f7-483c-9b70-644a879a4be5",
