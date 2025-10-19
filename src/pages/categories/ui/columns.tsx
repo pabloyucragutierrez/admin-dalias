@@ -41,6 +41,33 @@ export const getColumns = (
     header: "Nombre",
   },
   {
+    accessorKey: "origen",
+    header: "Origen",
+    cell: ({ row }) => (
+      <div className="text-sm text-gray-500">
+        {row.original.origen}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "margen",
+    header: "Margen",
+    cell: ({ row }) => (
+      <div className="text-sm text-gray-500">
+        {row.original.margen ? `${row.original.margen} %` : "0 %"}
+      </div>
+    ),
+  }, 
+  {
+    accessorKey: "linea",
+    header: "Línea",
+    cell: ({ row }) => (
+      <div className="text-sm text-gray-500">
+        {row.original.lineas.name}
+      </div>
+    ),
+  },
+  {
       accessorKey: "typeEcommerce",
       header: "Tipo de Ecommerce",
       cell: ({ row }) => (

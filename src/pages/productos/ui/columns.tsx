@@ -35,7 +35,6 @@ export const columnNames: Record<string, string> = {
 export const columnFilter = [
   { id: "name", label: "Nombre" },
   { id: "sku", label: "SKU" },
-  { id: "marca", label: "Marca" },
 ];
 
 export const stateFilter = [

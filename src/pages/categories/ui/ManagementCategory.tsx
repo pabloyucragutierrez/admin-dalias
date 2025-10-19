@@ -16,6 +16,8 @@ interface FormData {
   linea: string;
   name: string;
   typeEcommerce: string;
+  margen: number;
+  origen: { nombre: string }[];
   children: {
     categoria: string;
     subfamilias: { nombre: string }[];
@@ -39,13 +41,21 @@ export default function ManagementCategory() {
       linea: "",
       name: "",
       typeEcommerce: "",
+      margen: 0,
+      origen: [{ nombre: "" }],
       children: [{ categoria: "", subfamilias: [{ nombre: "" }] }],
     },
+    mode: "onChange",
   });
 
   const { fields: familiaFields, append: appendFamilia, remove: removeFamilia } = useFieldArray({
     control,
     name: "children",
+  });
+
+  const { fields: origenFields, append: appendOrigen, remove: removeOrigen } = useFieldArray({
+    control,
+    name: "origen",
   });
 
   const loadLineas = async () => {
@@ -66,6 +76,8 @@ export default function ManagementCategory() {
         linea: response.lineasId || "",
         typeEcommerce: response.typeEcommerce || "",
         name: response.name || "",
+        margen: response.margen || 0,
+        origen: response.origen?.split(",").map((origen) => ({ nombre: origen.trim() })) || [{ nombre: "" }],
         children: response.children?.map((familia) => ({
           categoria: familia.name,
           subfamilias: familia.children?.map((subfamilia) => ({ nombre: subfamilia.name })) || [
@@ -95,6 +107,8 @@ export default function ManagementCategory() {
         linea: values.linea || "",
         name: values.name,
         typeEcommerce: values.typeEcommerce || "",
+        margen: values.margen || 0,
+        origen: values.origen.map((origen) => origen.nombre).join(","),
         familia: values.children.map((familia) => ({
           name: familia.categoria,
           id: "", // Backend generará IDs para nuevas familias
@@ -130,7 +144,7 @@ export default function ManagementCategory() {
   return (
     <div className="w-full mx-auto sm:p-6 p-0">
       <h1 className="text-3xl font-bold text-blue-600 mb-8">
-        {id && id !== "new" ? "Editar Familia" : "Nueva Familia"}
+        {id && id !== "new" ? "Editar Marca" : "Nueva Marca"}
       </h1>
 
       {loading ? (
@@ -141,7 +155,7 @@ export default function ManagementCategory() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Información de la Familia Card */}
           <div className="border rounded-lg p-6 bg-white shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">Información de la Familia</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">Información de la Marca</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="linea">Línea</Label>
@@ -195,7 +209,76 @@ export default function ManagementCategory() {
                 </select>
                 {errors.typeEcommerce && <p className="text-red-500 text-sm">{errors.typeEcommerce.message}</p>}
               </div>
+
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="margen">Margen</Label>
+                <Input
+                  id="margen"
+                  type="number"
+                  placeholder="Margen de la marca"
+                  className="w-full text-base py-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  min="0"
+                  max="100"
+                  {...register("margen", {
+                    required: "Margen es requerido",
+                    min: { value: 0, message: "Margen no puede ser negativo" },
+                    max: { value: 100, message: "Margen no puede ser mayor a 100" },
+                    valueAsNumber: true,
+                  })}
+                />
+                {errors.margen && <p className="text-red-500 text-sm">{errors.margen.message}</p>}
+              </div>
             </div>
+          </div>
+
+          <div className="border rounded-lg p-6 bg-white shadow-md">
+            <div className="flex flex-row justify-between gap-2 sm:gap-0 items-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-800">Lista de Origenes</h2>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => appendOrigen({ nombre: "" })}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Agregar Origen
+                </Button>
+            </div>
+             
+              {origenFields.map((origen, origenIndex) => (
+                <div key={origen.id} className="mb-6 p-4 border rounded-md bg-white relative">
+                  <div className="flex flex-row justify-between gap-2 sm:gap-0 items-center mb-4">
+                    <Label htmlFor={`origen.${origenIndex}.nombre`}>Origen {origenIndex + 1}</Label>
+                    {origenIndex > 0 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => removeOrigen(origenIndex)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="flex flex-col space-y-2 mb-4">
+                    <Input
+                      id={`origen.${origenIndex}.nombre`}
+                      type="text"
+                      placeholder="Nombre del Origen"
+                      className="w-full text-base py-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                      {...register(`origen.${origenIndex}.nombre`, {
+                        required: `Origen ${origenIndex + 1} es requerido`,
+                      })}
+                    />
+                    {errors.origen?.[origenIndex]?.nombre && (
+                      <p className="text-red-500 text-sm">
+                        {errors.origen[origenIndex].nombre?.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+
           </div>
 
           {/* Lista de Familias Card */}
@@ -262,14 +345,14 @@ export default function ManagementCategory() {
               variant="outline"
               onClick={handleCancel}
               disabled={isSubmitting}
-              className="text-base py-2 px-6 border-gray-300 hover:bg-gray-100"
+              className="text-base py-2 px-6 border-gray-300 hover:bg-gray-100 cursor-pointer"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="text-base py-2 px-6 bg-blue-600 hover:bg-blue-700 text-white"
+              className="text-base py-2 px-6 bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
             >
               {isSubmitting ? (
                 <div className="inline-flex items-center gap-2">

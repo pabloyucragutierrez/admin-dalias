@@ -49,7 +49,7 @@ export function getMenuList(): Group[] {
         },
         {
           href: "",
-          label: "Catalogo",
+          label: "E-Catálogo",
           icon: ShoppingBag,
           submenus: [
             {
@@ -58,7 +58,7 @@ export function getMenuList(): Group[] {
             },
             {
               href: "/categorias",
-              label: "Categorias",
+              label: "Marcas",
             },
             {
               href: "/products",

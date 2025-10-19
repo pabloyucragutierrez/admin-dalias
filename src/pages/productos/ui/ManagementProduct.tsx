@@ -610,7 +610,7 @@ export default function ManagementProduct() {
           {/* Categories and Branches Section */}
           <div className="border rounded-lg p-6 bg-white shadow-lg">
             <h2 className="text-xl font-semibold text-gray-700 mb-1">
-              Categorías y Sucursales
+              Marca y Sucursales
             </h2>
             <hr className="mb-5" />
 

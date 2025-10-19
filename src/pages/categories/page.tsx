@@ -17,13 +17,13 @@ export default function CategoriesPage() {
   return (
     <>
       <div className="flex sm:flex-row flex-col sm:gap-0 gap-2 sm:items-center justify-between">
-        <h1 className="text-4xl text-blue-600 font-bold">Categorías</h1>
+        <h1 className="text-4xl text-blue-600 font-bold">Marcas</h1>
         <Button
-          className="bg-blue-600 text-white px-5 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700"
+          className="bg-blue-600 text-white px-5 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 cursor-pointer"
           onClick={() => navigate("/categorias/new")}
         >
           <Plus size={18} />
-          Nueva Categoría
+          Nueva Marca
         </Button>
       </div>
 

@@ -1,9 +1,13 @@
+import type { Linea } from "./lineas.interface";
+
 export interface Categorias {
   id: string;
-  linea: string | null;
+  lineas: Linea;
   lineasId: string | null;
   name: string;
   typeEcommerce: string;
+  margen: number;
+  origen: string;
   status: boolean;
   createAt: string;
   updatedAt: string;
