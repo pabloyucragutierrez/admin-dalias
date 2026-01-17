@@ -51,7 +51,7 @@ export default function Login() {
   };
 
   return (
-    <div className="grid h-screen grid-cols-1 gap-8 p-8 max-lg:grid-cols-1 ">
+    <div className="grid h-screen grid-cols-1 gap-8 px-5 py-3 max-lg:grid-cols-1">
       <div className="flex flex-col justify-between">
         <div className="flex w-full items-center justify-start">
           <img
