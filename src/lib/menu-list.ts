@@ -1,10 +1,6 @@
 import {
   BadgePercent,
-  ContactRound,
-  LayoutGrid,
   Newspaper,
-  Settings,
-  ShoppingBag,
   type LucideIcon,
 } from "lucide-react";
 

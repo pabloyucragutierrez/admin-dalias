@@ -9,8 +9,6 @@ import SucursalesPage from "./pages/sucursales/page";
 import ManagementSucursal from "./pages/sucursales/ui/ManagementSucursal";
 import EmpresasPage from "./pages/empresas/page";
 import ManagementEmpresa from "./pages/empresas/ui/ManagementEmpresa";
-import UsersPage from "./pages/users/page";
-import ManagementUser from "./pages/users/ui/ManagementUser";
 import ProductsPage from "./pages/productos/page";
 import ManagementProduct from "./pages/productos/ui/ManagementProduct";
 import Login from "./pages/login/page";
@@ -95,14 +93,6 @@ export const router = createBrowserRouter([
       {
         path: "empresas/:id",
         element: <ManagementEmpresa />,
-      },
-      {
-        path: "users",
-        element: <UsersPage />,
-      },
-      {
-        path: "users/:id",
-        element: <ManagementUser />,
       },
       {
         path: "products",
