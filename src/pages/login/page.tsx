@@ -47,27 +47,27 @@ export default function Login() {
       login(response?.data?.user, response?.data?.token);
     }
 
-    navigate("/");
+    navigate("/blogs");
   };
 
   return (
-    <div className="grid h-screen grid-cols-2 gap-8 p-8 max-lg:grid-cols-1 ">
+    <div className="grid h-screen grid-cols-1 gap-8 p-8 max-lg:grid-cols-1 ">
       <div className="flex flex-col justify-between">
         <div className="flex w-full items-center justify-start">
           <img
-            src="/logo.png"
-            alt="Dinsides Logo"
+            src="/logo_header2.png"
+            alt="Dalias Logo"
             loading="lazy"
             decoding="async"
-            className="w-20 object-contain"
+            className="w-[10rem] object-contain"
           />
         </div>
-        <main className="flex size-full flex-col justify-center space-y-6">
-          <div className="w-full sm:w-[350px] mx-auto">
-            <h2 className="text-4xl font-bold text-center text-[#0667ff]">
+        <main className="flex justify-center w-full space-y-6">
+          <div className="w-[25rem]">
+            <h2 className="text-4xl font-bold text-center text-[#003e5c]">
               LOGIN
             </h2>
-            <div className="bg-[#0667ff] rounded-lg h-2 w-20 mt-2 mb-10 mx-auto"></div>
+            <div className="bg-[#003e5c] rounded-lg h-2 w-20 mt-2 mb-10 mx-auto"></div>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 <div className="grid w-full items-center gap-1.5">
@@ -76,7 +76,7 @@ export default function Login() {
                     {...register("username", {
                       required: "El nombre de usuario es requerido",
                     })}
-                    type="username"
+                    type="text"
                     id="username"
                     placeholder="Ingrese su nombre de usuario"
                   />
@@ -113,12 +113,12 @@ export default function Login() {
                 </div>
               </div>
               <div className="mt-1">
-                <Link
-                  className="text-sm font-semibold text-[#0667ff] hover:underline"
+                {/* <Link
+                  className="text-sm font-semibold text-[#003e5c] hover:underline"
                   to="/auth"
                 >
                   ¿Olvidó su contraseña?
-                </Link>
+                </Link> */}
               </div>
 
               <Button
@@ -132,35 +132,8 @@ export default function Login() {
           </div>
         </main>
         <footer className="text-center text-sm text-gray-500">
-          Automotiv © 2025. Todos los derechos reservados.
+          Residencia las Dalias © 2026. Todos los derechos reservados.
         </footer>
-      </div>
-      <div className="relative flex select-none flex-col justify-center overflow-hidden rounded-2xl bg-gradient-to-t from-blue-700 to-blue-400 p-10 pb-0 max-lg:hidden">
-        <div className="mb-4 flex flex-col h-[55vh] w-full items-center justify-center">
-          <img
-            src="/image/auth.webp"
-            alt="auth"
-            width={1080}
-            height={500}
-            loading="lazy"
-            decoding="async"
-            className="mx-auto w-full max-w-xl"
-          />
-
-          <div className="flex select-none flex-col gap-2">
-            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold w-fit uppercase text-white">
-              Automatización
-            </div>
-            <h1 className="text-4xl font-bold leading-10 text-white">
-              Automatizar la gestión de empresas
-            </h1>
-            <h4 className="text-lg font-normal leading-6 text-white">
-              Automatizar la gestión de empresas con un análisis de criterios
-              avanzado, garantizando que su equipo de ventas se centre en las
-              oportunidades más prometedoras.
-            </h4>
-          </div>
-        </div>
       </div>
     </div>
   );

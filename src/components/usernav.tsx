@@ -44,17 +44,17 @@ export function UserNav() {
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="#" alt="Avatar" />
                       <AvatarFallback className="bg-transparent">
-                        {user?.person.name.charAt(0).toUpperCase()}
-                        {user?.person.lastName.charAt(0).toUpperCase()}
+                        {user?.nombre.charAt(0).toUpperCase()}
+                        {user?.apellido.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </div>
                 </Button>
                 <div className="flex flex-col text-sm">
                   <h6 className="font-semibold text-pretty">
-                    {user?.person.name} {user?.person.lastName}
+                    {user?.nombre} {user?.apellido}
                   </h6>
-                  <span className="text-gray-600">{user?.role.name}</span>
+                  <span className="text-gray-600">{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuTrigger>
@@ -82,7 +82,7 @@ export function UserNav() {
           onClick={handleLogout}
         >
           <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
-          Cerrar Sessión
+          Cerrar Sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

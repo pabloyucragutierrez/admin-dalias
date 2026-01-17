@@ -117,11 +117,11 @@ export default function StockByIdPage() {
 
   return (
     <div className="w-full mx-auto">
-      <h1 className="text-3xl text-blue-600 font-bold mb-6">Nuevo Manejo de Stock</h1>
+      <h1 className="text-3xl text-[#003e5c] font-bold mb-6">Nuevo Manejo de Stock</h1>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+          <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">

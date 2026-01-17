@@ -1,14 +1,42 @@
-import type { ApiResponse, LoginDto } from "@/interfaces";
+import type { ApiResponse } from "@/interfaces";
 import api from "@/lib/api";
 
-export async function loginAPI(payload: {
+interface LoginRequest {
   username: string;
   password: string;
-}) {
-  try {
-    const response = await api.post("auth", payload);
-    return response.data as ApiResponse<LoginDto>;
-  } catch (e) {
-    console.log(e);
-  }
 }
+
+interface LoginResponse {
+  access_token: string;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    nombre: string;
+    apellido: string;
+  };
+}
+
+export const loginAPI = async (
+  credentials: LoginRequest
+): Promise<ApiResponse<{ user: LoginResponse["user"]; token: string }>> => {
+  try {
+    const response = await api.post<LoginResponse>("/auth/login", credentials);
+
+    return {
+      success: true,
+      data: {
+        user: response.data.user,
+        token: response.data.access_token,
+      },
+      message: "Inicio de sesión exitoso",
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message:
+        error?.response?.data?.message ||
+        "Error al iniciar sesión. Por favor, intente nuevamente.",
+    };
+  }
+};

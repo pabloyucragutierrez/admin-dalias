@@ -11,7 +11,7 @@ interface AuthState {
   logout: () => void;
 }
 
-const STORAGE_KEY = "admin-automotiv-storage";
+const STORAGE_KEY = "dalias-auth-storage";
 
 export const useAuthStore = create<AuthState>()(
   persist(

@@ -178,12 +178,12 @@ export default function BancosForm() {
 
   return (
     <div className="w-full mx-auto">
-      <h1 className="text-3xl text-blue-600 font-bold mb-6">
+      <h1 className="text-3xl text-[#003e5c] font-bold mb-6">
         {id && id !== "new" ? "Editar Banco" : "Nuevo Banco"}
       </h1>
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+          <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -276,7 +276,7 @@ export default function BancosForm() {
                     accept="image/*"
                     onChange={handleImageChange}
                     ref={fileInputRef}
-                    className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                    className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-blue-50 file:text-[#003e5c] hover:file:bg-blue-100"
                   />
                 </div>
               </div>
@@ -370,7 +370,7 @@ export default function BancosForm() {
             <Button
               type="submit"
               disabled={isSubmitting || loading}
-              className="text-base py-2 px-6 bg-blue-600 hover:bg-blue-700 text-white"
+              className="text-base py-2 px-6 bg-[#003e5c] hover:bg-[#003e5c] text-white"
             >
               {isSubmitting || loading ? (
                 <div className="inline-flex items-center gap-2">

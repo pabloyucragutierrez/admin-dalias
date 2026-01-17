@@ -213,14 +213,14 @@ export default function ManagementClient() {
 
     return (
         <div className="w-full mx-auto">
-            <h1 className="text-3xl text-blue-600 font-bold mb-6">
+            <h1 className="text-3xl text-[#003e5c] font-bold mb-6">
                 {id && id !== "nuevo" ? "Editar Cliente" : "Nuevo Cliente"}
             </h1>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 border rounded-lg p-6 bg-white shadow-lg">
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
-                        <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+                        <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
                     </div>
                 ) : (
                     <>

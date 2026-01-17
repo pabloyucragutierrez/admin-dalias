@@ -21,7 +21,7 @@ const buttonVariants = cva(
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         sidebar:
-          "bg-blue-600 text-white shadow-sm hover:bg-secondary/80 hover:text-black",
+          "bg-[#003e5c] text-white shadow-sm hover:bg-secondary/80 hover:text-black",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

@@ -57,9 +57,9 @@ export default function Bancos() {
   return (
     <>
       <div className="flex sm:flex-row flex-col sm:gap-0 gap-2 sm:items-center justify-between">
-        <h1 className="text-4xl text-blue-600 font-bold">Bancos</h1>
+        <h1 className="text-4xl text-[#003e5c] font-bold">Bancos</h1>
         <Button
-          className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
+          className="bg-[#003e5c] flex flex-row items-center gap-2 text-white hover:bg-[#003e5c]"
           onClick={() => navigate("/bancos/new")}
         >
           <Plus size={20} />

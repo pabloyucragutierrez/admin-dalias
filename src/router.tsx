@@ -31,6 +31,8 @@ import ManagementCotizacion from "./pages/cotizacion/ui/management-cotizacion";
 import Clients from "./pages/clients/page";
 import ManagementClient from "./pages/clients/ui/management-client";
 import ViewCotizacion from "./pages/cotizacion/ui/view-cotizacion";
+import BlogsPage from "./pages/blogs/page";
+import ManagementBlog from "./pages/blogs/ui/ManagementBlog";
 
 export const router = createBrowserRouter([
   {
@@ -157,6 +159,14 @@ export const router = createBrowserRouter([
       {
         path: "stock/nuevo",
         element: <StockByIdPage />,
+      },
+      {
+        path: "blogs",
+        element: <BlogsPage />,
+      },
+      {
+        path: "blogs/:id",
+        element: <ManagementBlog />,
       },
     ],
   },

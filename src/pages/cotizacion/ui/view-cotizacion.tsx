@@ -198,7 +198,7 @@ export default function ViewCotizacion() {
         <div className="w-full mx-auto max-w-6xl">
             {/* Header */}
             <div className="flex flex-row items-center justify-between mb-6">
-                <h1 className="text-3xl text-blue-600 font-bold">
+                <h1 className="text-3xl text-[#003e5c] font-bold">
                     {title}
                 </h1>
                 <Button type="button" className="cursor-pointer" onClick={() => navigate("/cotizacion")}>
@@ -463,7 +463,7 @@ export default function ViewCotizacion() {
                             <Separator />
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-semibold">Total:</span>
-                                <span className="text-xl font-bold text-blue-600">{cotizaciontData.typeMoney === 'soles' ? 'S/.' : '$'} {total.toFixed(2)}</span>
+                                <span className="text-xl font-bold text-[#003e5c]">{cotizaciontData.typeMoney === 'soles' ? 'S/.' : '$'} {total.toFixed(2)}</span>
                             </div>
                         </div>
                     </CardContent>

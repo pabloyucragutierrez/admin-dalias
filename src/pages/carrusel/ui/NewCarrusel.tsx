@@ -92,10 +92,10 @@ const NewCarrusel: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-blue-600 mb-6">Nuevo Carrusel</h1>
+      <h1 className="text-3xl font-bold text-[#003e5c] mb-6">Nuevo Carrusel</h1>
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+          <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -162,7 +162,7 @@ const NewCarrusel: React.FC = () => {
                     htmlFor="webImage"
                     className="flex items-center justify-center w-full h-12 px-4 py-2 bg-blue-50 border-2 border-blue-200 rounded-md cursor-pointer hover:bg-blue-100 transition-colors duration-200"
                   >
-                    <span className="text-blue-600 font-medium">Seleccionar imagen para web</span>
+                    <span className="text-[#003e5c] font-medium">Seleccionar imagen para web</span>
                   </label>
                 </div>
                 <p className="text-sm text-gray-500">Dimensiones: 1920x600px</p>
@@ -188,7 +188,7 @@ const NewCarrusel: React.FC = () => {
                     htmlFor="mobileImage"
                     className="flex items-center justify-center w-full h-12 px-4 py-2 bg-blue-50 border-2 border-blue-200 rounded-md cursor-pointer hover:bg-blue-100 transition-colors duration-200"
                   >
-                    <span className="text-blue-600 font-medium">Seleccionar imagen para móvil</span>
+                    <span className="text-[#003e5c] font-medium">Seleccionar imagen para móvil</span>
                   </label>
                 </div>
                 <p className="text-sm text-gray-500">Dimensiones: 600x800px</p>

@@ -151,14 +151,14 @@ const BannersPage: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#003e5c]" />
       </div>
     );
   }
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-blue-600 mb-6">Banners</h1>
+      <h1 className="text-3xl font-bold text-[#003e5c] mb-6">Banners</h1>
       {(() => {
         const publicBanners = banners.filter((b) => (b.typeEcommerce || "").toUpperCase().includes("PUBLIC"));
         const privateBanners = banners.filter((b) => (b.typeEcommerce || "").toUpperCase().includes("PRIVATE"));
@@ -246,7 +246,7 @@ const BannersPage: React.FC = () => {
               </div>
 
               <button
-                className="w-full bg-blue-600 text-white rounded-md py-2 px-4 hover:bg-blue-700 transition-colors"
+                className="w-full bg-[#003e5c] text-white rounded-md py-2 px-4 hover:bg-[#003e5c] transition-colors"
                 onClick={() => handleSave(banner.id, banner.order, banner.typeEcommerce)}
               >
                 Guardar

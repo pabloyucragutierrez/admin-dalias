@@ -102,9 +102,9 @@ const Tarifas: React.FC = () => {
   return (
     <>
       <div className="flex sm:flex-row flex-col sm:gap-0 gap-2 sm:items-center justify-between">
-        <h1 className="text-4xl text-blue-600 font-bold">Tarifas de Envío</h1>
+        <h1 className="text-4xl text-[#003e5c] font-bold">Tarifas de Envío</h1>
         <Button
-          className="bg-blue-600 flex flex-row items-center gap-2 text-white hover:bg-blue-700"
+          className="bg-[#003e5c] flex flex-row items-center gap-2 text-white hover:bg-[#003e5c]"
           onClick={() => navigate("/tarifas/new")}
         >
           <Plus size={20} />
@@ -149,7 +149,7 @@ const Tarifas: React.FC = () => {
                       to={`/tarifas/${rate.id}`}
                       className="flex items-center"
                     >
-                      <button className="text-blue-600 hover:text-blue-800">
+                      <button className="text-[#003e5c] hover:text-blue-800">
                         <Edit className="w-4 h-4" />
                       </button>
                     </Link>

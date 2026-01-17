@@ -32,95 +32,105 @@ export function getMenuList(): Group[] {
     {
       groupLabel: "",
       menus: [
+        // {
+        //   href: "/",
+        //   label: "Dashboard",
+        //   icon: LayoutGrid,
+        // },
         {
-          href: "/",
-          label: "Dashboard",
-          icon: LayoutGrid,
-        },
-        {
-          href: "/cotizacion",
-          label: "Cotizaciones",
+          href: "/blogs",
+          label: "Blogs",
           icon: Newspaper,
         },
         {
-          href: "/clientes",
-          label: "Clientes",
-          icon: ContactRound,
-        },
-        {
-          href: "",
-          label: "E-Catálogo",
-          icon: ShoppingBag,
-          submenus: [
-            {
-              href: "/unidades",
-              label: "Unidades",
-            },
-            {
-              href: "/categorias",
-              label: "Marcas",
-            },
-            {
-              href: "/products",
-              label: "Productos",
-            },
-            {
-              href: "/lineas",
-              label: "Líneas",
-            },
-          ],
-        },
-        {
-          href: "",
-          label: "Publicidad",
+          href: "actividades",
+          label: "Actividades",
           icon: BadgePercent,
-          submenus: [
-            {
-              href: "/carrusel",
-              label: "Carrusel",
-            },
-            {
-              href: "/banners",
-              label: "Banners",
-            },
-          ],
         },
-        {
-          href: "",
-          label: "Configuración",
-          icon: Settings,
-          submenus: [
-            {
-              href: "/roles",
-              label: "Roles",
-            },
-            {
-              href: "/sucursales",
-              label: "Sucursales",
-            },
-            {
-              href: "/empresas",
-              label: "Empresas",
-            },
-            {
-              href: "/users",
-              label: "Usuarios",
-            },
-            {
-              href: "/tarifas",
-              label: "Tarifas",
-            },
-            {
-              href: "/bancos",
-              label: "Bancos",
-            },
-            {
-              href: "/stock",
-              label: "Stock",
-            },
+        // {
+        //   href: "/cotizacion",
+        //   label: "Cotizaciones",
+        //   icon: Newspaper,
+        // },
+        // {
+        //   href: "/clientes",
+        //   label: "Clientes",
+        //   icon: ContactRound,
+        // },
+        // {
+        //   href: "",
+        //   label: "E-Catálogo",
+        //   icon: ShoppingBag,
+        //   submenus: [
+        //     {
+        //       href: "/unidades",
+        //       label: "Unidades",
+        //     },
+        //     {
+        //       href: "/categorias",
+        //       label: "Marcas",
+        //     },
+        //     {
+        //       href: "/products",
+        //       label: "Productos",
+        //     },
+        //     {
+        //       href: "/lineas",
+        //       label: "Líneas",
+        //     },
+        //   ],
+        // },
+        // {
+        //   href: "",
+        //   label: "Publicidad",
+        //   icon: BadgePercent,
+        //   submenus: [
+        //     {
+        //       href: "/carrusel",
+        //       label: "Carrusel",
+        //     },
+        //     {
+        //       href: "/banners",
+        //       label: "Banners",
+        //     },
+        //   ],
+        // },
+        // {
+        //   href: "",
+        //   label: "Configuración",
+        //   icon: Settings,
+        //   submenus: [
+        //     {
+        //       href: "/roles",
+        //       label: "Roles",
+        //     },
+        //     {
+        //       href: "/sucursales",
+        //       label: "Sucursales",
+        //     },
+        //     {
+        //       href: "/empresas",
+        //       label: "Empresas",
+        //     },
+        //     {
+        //       href: "/users",
+        //       label: "Usuarios",
+        //     },
+        //     {
+        //       href: "/tarifas",
+        //       label: "Tarifas",
+        //     },
+        //     {
+        //       href: "/bancos",
+        //       label: "Bancos",
+        //     },
+        //     {
+        //       href: "/stock",
+        //       label: "Stock",
+        //     },
             
-          ],
-        },
+        //   ],
+        // },
       ],
     },
   ];

@@ -29,7 +29,7 @@ export function SheetMenu() {
           >
             <Link to="/" className="flex items-center gap-2">
               <img
-                src="/logo.png"
+                src="/logo_header2.png"
                 alt="Dopitec"
                 className="w-16 object-contain"
               />

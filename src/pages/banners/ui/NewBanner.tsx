@@ -103,10 +103,10 @@ const NewBanner: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-blue-600 mb-6">Nuevo Banner</h1>
+      <h1 className="text-3xl font-bold text-[#003e5c] mb-6">Nuevo Banner</h1>
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+          <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -220,7 +220,7 @@ const NewBanner: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="text-base py-2 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+              className="text-base py-2 px-6 bg-[#003e5c] text-white rounded-md hover:bg-[#003e5c] disabled:bg-blue-400"
               disabled={loading}
             >
               {loading ? (

@@ -433,13 +433,13 @@ export default function ManagementProduct() {
 
   return (
     <div className="w-full mx-auto">
-      <h1 className="text-3xl text-blue-600 font-bold mb-6">
+      <h1 className="text-3xl text-[#003e5c] font-bold mb-6">
         {id && id !== "new" ? "Editar Producto" : "Nuevo Producto"}
       </h1>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+          <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -1078,7 +1078,7 @@ export default function ManagementProduct() {
                   onClick={handleClicGaleryImage}
                   className={`flex items-center justify-center ${
                     gallery.length > 0
-                      ? "w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 transition"
+                      ? "w-12 h-12 rounded-full bg-blue-500 hover:bg-[#003e5c] transition"
                       : "w-40 h-40 border-2 border-dashed rounded-lg bg-gray-50"
                   } cursor-pointer overflow-hidden group`}
                 >

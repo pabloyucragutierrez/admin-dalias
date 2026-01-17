@@ -143,13 +143,13 @@ export default function ManagementCategory() {
 
   return (
     <div className="w-full mx-auto sm:p-6 p-0">
-      <h1 className="text-3xl font-bold text-blue-600 mb-8">
+      <h1 className="text-3xl font-bold text-[#003e5c] mb-8">
         {id && id !== "new" ? "Editar Marca" : "Nueva Marca"}
       </h1>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+          <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -352,7 +352,7 @@ export default function ManagementCategory() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="text-base py-2 px-6 bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+              className="text-base py-2 px-6 bg-[#003e5c] hover:bg-[#003e5c] text-white cursor-pointer"
             >
               {isSubmitting ? (
                 <div className="inline-flex items-center gap-2">
