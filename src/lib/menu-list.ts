@@ -1,6 +1,7 @@
 import {
   BadgePercent,
   Newspaper,
+  User,
   type LucideIcon,
 } from "lucide-react";
 
@@ -43,6 +44,11 @@ export function getMenuList(): Group[] {
           label: "Actividades",
           icon: BadgePercent,
         },
+        {
+          href: "/usuarios",
+          label: "Usuarios",
+          icon: User
+        }
         // {
         //   href: "/cotizacion",
         //   label: "Cotizaciones",
