@@ -39,7 +39,7 @@ export function getMenuList(): Group[] {
           icon: Newspaper,
         },
         {
-          href: "actividades",
+          href: "/actividades",
           label: "Actividades",
           icon: BadgePercent,
         },

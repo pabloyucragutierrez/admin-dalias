@@ -31,6 +31,8 @@ import ManagementClient from "./pages/clients/ui/management-client";
 import ViewCotizacion from "./pages/cotizacion/ui/view-cotizacion";
 import BlogsPage from "./pages/blogs/page";
 import ManagementBlog from "./pages/blogs/ui/ManagementBlog";
+import ActivitiesPage from "./pages/actividad/pages";
+import ManagementActivity from "./pages/actividad/ui/ManagementActivity";
 
 export const router = createBrowserRouter([
   {
@@ -158,6 +160,14 @@ export const router = createBrowserRouter([
         path: "blogs/:id",
         element: <ManagementBlog />,
       },
+      {
+        path: "actividades",
+        element: <ActivitiesPage />,
+      },
+      {
+        path: "actividades/:id",
+        element: <ManagementActivity />,
+      }
     ],
   },
   {
