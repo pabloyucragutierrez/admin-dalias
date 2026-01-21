@@ -76,7 +76,7 @@ export default function ActivitiesPage() {
               <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
             </div>
           ) : (
-            <div className="max-h-[600px] overflow-y-auto">
+            <div className=" overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-[#f0f0f0] sticky top-0">
                   <tr>
@@ -96,6 +96,12 @@ export default function ActivitiesPage() {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
                     >
+                      Subtítulo
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                    >
                       Descripción
                     </th>
                     <th
@@ -109,7 +115,7 @@ export default function ActivitiesPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {activities.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                      <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                         No hay actividades registradas
                       </td>
                     </tr>
@@ -126,6 +132,11 @@ export default function ActivitiesPage() {
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
                             {activity.titulo}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-700 max-w-xs truncate">
+                            {activity.subtitulo || "-"}
                           </div>
                         </td>
                         <td className="px-6 py-4">

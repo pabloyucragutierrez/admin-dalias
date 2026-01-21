@@ -77,7 +77,7 @@ export default function BlogsPage() {
               <Loader2 className="animate-spin h-8 w-8 text-[#003e5c]" />
             </div>
           ) : (
-            <div className="max-h-[600px] overflow-y-auto">
+            <div className=" overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-[#f0f0f0] sticky top-0">
                   <tr>

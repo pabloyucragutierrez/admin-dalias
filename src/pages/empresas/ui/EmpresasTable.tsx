@@ -156,7 +156,7 @@ const EmpresasTable: React.FC<EmpresasTableProps> = ({
       </div>
 
       <div className="overflow-hidden shadow-md sm:rounded-lg">
-        <div className="max-h-[600px] overflow-y-auto">
+        <div className=" overflow-y-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[#f0f0f0] sticky top-0">
               <tr>

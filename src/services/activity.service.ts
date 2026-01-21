@@ -25,6 +25,9 @@ export async function createActivity(payload: ActivityPayload) {
   try {
     const formData = new FormData();
     formData.append("titulo", payload.titulo);
+    if (payload.subtitulo) {
+      formData.append("subtitulo", payload.subtitulo);
+    }
     formData.append("descripcion", payload.descripcion);
     
     if (payload.imagen) {
@@ -55,6 +58,9 @@ export async function updateActivity(id: string, payload: ActivityPayload) {
   try {
     const formData = new FormData();
     formData.append("titulo", payload.titulo);
+    if (payload.subtitulo) {
+      formData.append("subtitulo", payload.subtitulo);
+    }
     formData.append("descripcion", payload.descripcion);
     
     if (payload.imagen) {

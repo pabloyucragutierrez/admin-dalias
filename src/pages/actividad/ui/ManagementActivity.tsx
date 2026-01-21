@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 interface FormInputs {
   titulo: string;
+  subtitulo: string;
   descripcion: string;
 }
 
@@ -31,6 +32,7 @@ export default function ManagementActivity() {
   } = useForm<FormInputs>({
     defaultValues: {
       titulo: "",
+      subtitulo: "",
       descripcion: "",
     },
   });
@@ -48,6 +50,7 @@ export default function ManagementActivity() {
 
       setActivityData(response);
       setValue("titulo", response.titulo || "");
+      setValue("subtitulo", response.subtitulo || "");
       setValue("descripcion", response.descripcion || "");
       setImagePreview(response.imagen || "");
 
@@ -80,6 +83,7 @@ export default function ManagementActivity() {
     try {
       const payload: ActivityPayload = {
         titulo: values.titulo,
+        subtitulo: values.subtitulo,
         descripcion: values.descripcion,
       };
 
@@ -146,6 +150,18 @@ export default function ManagementActivity() {
               {errors.titulo && (
                 <p className="text-red-600 text-sm ml-2">{errors.titulo.message}</p>
               )}
+            </div>
+
+            <div className="flex flex-col space-y-2 w-full">
+              <Label htmlFor="subtitulo">Subtítulo</Label>
+              <Input
+                id="subtitulo"
+                type="text"
+                placeholder="Subtítulo de la actividad (opcional)"
+                disabled={isSubmitting}
+                className="w-full text-base py-2"
+                {...register("subtitulo")}
+              />
             </div>
 
             <div className="flex flex-col space-y-2 w-full">
