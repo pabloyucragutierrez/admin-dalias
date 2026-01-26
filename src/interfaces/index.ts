@@ -12,4 +12,3 @@ export * from "./select.interface";
 export * from "./status.interface";
 export * from "./sucursales.interface";
 export * from "./unidades.interface";
-export * from "./users.interface";

@@ -33,6 +33,8 @@ import BlogsPage from "./pages/blogs/page";
 import ManagementBlog from "./pages/blogs/ui/ManagementBlog";
 import ActivitiesPage from "./pages/actividad/pages";
 import ManagementActivity from "./pages/actividad/ui/ManagementActivity";
+import UsersPage from "./pages/user/page";
+import ManagementUser from "./pages/user/ui/ManagementUser";
 
 export const router = createBrowserRouter([
   {
@@ -144,7 +146,7 @@ export const router = createBrowserRouter([
         path: "bancos/:id",
         element: <BancosForm />,
       },
-       {
+      {
         path: "stock",
         element: <StockPage />,
       },
@@ -167,7 +169,15 @@ export const router = createBrowserRouter([
       {
         path: "actividades/:id",
         element: <ManagementActivity />,
-      }
+      },
+      {
+        path: "usuarios",
+        element: <UsersPage />,
+      },
+      {
+        path: "usuarios/:id",
+        element: <ManagementUser />,
+      },
     ],
   },
   {
