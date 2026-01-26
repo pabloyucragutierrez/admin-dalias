@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { User, UserPayload, UpdateUserPayload } from "@/interfaces/user.interface";
+import type { UserPayload, UpdateUserPayload } from "@/interfaces/user.interface";
 import { createUser, getUserById, updateUser } from "@/services/user.service";
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
