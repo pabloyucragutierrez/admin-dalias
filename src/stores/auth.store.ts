@@ -1,4 +1,5 @@
-import type { User } from "@/interfaces";
+
+import type { User } from "@/interfaces/user.interface";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
