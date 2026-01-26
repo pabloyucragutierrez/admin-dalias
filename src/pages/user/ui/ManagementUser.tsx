@@ -22,7 +22,6 @@ export default function ManagementUser() {
   const { id } = useParams<{ id: string }>();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [userData, setUserData] = useState<User | null>(null);
 
   const {
     handleSubmit,
@@ -50,7 +49,6 @@ export default function ManagementUser() {
         return;
       }
 
-      setUserData(response);
       setValue("username", response.username || "");
       setValue("email", response.email || "");
       setValue("nombre", response.nombre || "");
