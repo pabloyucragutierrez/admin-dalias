@@ -124,7 +124,7 @@ export function getColumns(): ColumnDef<Cotizacion>[] {
             cell: ({ row }) => (
                 <div className="text-sm text-gray-500">
                     {(() => {
-                        const exchangeRate = parseFloat(import.meta.env.VITE_CAMBIO_DOLAR) || 3.75;
+                        const exchangeRate = 3.75;
                         const isSoles = row.original.typeMoney === 'soles';
                         const currencySymbol = isSoles ? 'S/.' : '$';
                         const total = row.original.CotizacionDetail.reduce((sum: number, d: any) => {

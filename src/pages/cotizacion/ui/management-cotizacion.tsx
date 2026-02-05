@@ -281,7 +281,7 @@ export default function ManagementCotizacion() {
     };
 
     // Obtener el tipo de cambio desde las variables de entorno
-    const exchangeRate = parseFloat(import.meta.env.VITE_CAMBIO_DOLAR) || 3.75;
+    const exchangeRate = 3.75;
 
     // Función para obtener el símbolo de moneda
     const getCurrencySymbol = (currency: string) => {

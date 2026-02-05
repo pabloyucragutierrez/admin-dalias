@@ -98,7 +98,7 @@ export default function ViewCotizacion() {
         const processedProducts: ProductWithDetails[] = [];
 
         // Preparar helpers de moneda
-        const exchangeRate = parseFloat(import.meta.env.VITE_CAMBIO_DOLAR) || 3.75;
+        const exchangeRate = 3.75;
         const selectedCurrency = cotizaciontData?.typeMoney || "dolares";
         const convertPrice = (price: number) => selectedCurrency === "soles" ? price * exchangeRate : price;
 
