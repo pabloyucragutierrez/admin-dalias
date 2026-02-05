@@ -6,7 +6,7 @@ export function detectEcommerceTypes(input: string): { isPublic: boolean; isPriv
   const isPrivate = tokens.some((t) => t === "PRIVATE" || t.includes("PRIVATE"));
 
   return { isPublic, isPrivate };
-}
+} 
 
 export function getEcommerceLabel(isPublic: boolean, isPrivate: boolean): string {
   if (isPublic && isPrivate) return "Ecommerce Mix";
