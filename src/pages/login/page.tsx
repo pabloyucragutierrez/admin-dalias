@@ -52,26 +52,26 @@ export default function Login() {
 
   return (
     <div className="grid h-screen grid-cols-1 gap-8 px-5 py-3 max-lg:grid-cols-1">
-      <div className="flex flex-col justify-between">
-        <div className="flex w-full items-center justify-start">
+      <div className="flex flex-col justify-center">
+        {/* <div className="flex w-full items-center justify-start">
           <img
-            src="/logo_header2.png"
+            src="/logo_header.png"
             alt="Dalias Logo"
             loading="lazy"
             decoding="async"
             className="w-[10rem] object-contain"
           />
-        </div>
-        <main className="flex justify-center w-full space-y-6">
+        </div> */}
+        <main className="flex justify-center w-full space-y-6 h-[90dvh] m-auto items-center">
           <div className="w-[25rem]">
             <h2 className="text-4xl font-bold text-center text-[#003e5c]">
-              LOGIN
+              INICIAR SESIÓN
             </h2>
             <div className="bg-[#003e5c] rounded-lg h-2 w-20 mt-2 mb-10 mx-auto"></div>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 <div className="grid w-full items-center gap-1.5">
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="username">Usuario</Label>
                   <Input
                     {...register("username", {
                       required: "El nombre de usuario es requerido",
@@ -131,7 +131,7 @@ export default function Login() {
             </form>
           </div>
         </main>
-        <footer className="text-center text-sm text-gray-500">
+        <footer className="text-center text-sm text-gray-500 flex justify-center items-center">
           Residencia las Dalias © 2026. Todos los derechos reservados.
         </footer>
       </div>

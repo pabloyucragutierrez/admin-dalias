@@ -34,7 +34,7 @@ export function Sidebar() {
         >
           <Link to="/" className="flex items-center gap-2">
             <img
-              src={!getOpenState() ? "/dalias.png" : "/logo_header2.png"}
+              src={!getOpenState() ? "/dalias.png" : "/logo_header.png"}
               alt="Dalias"
               className={`${
                 !getOpenState() ? "w-auto mr-2" : "w-[10rem]"
